@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_contact
  * @since       1.6
  */
-class ContactModelCategories extends JModelLegacy
+class ContactModelCategories extends JModelList
 {
 	/**
 	 * Model context string.
@@ -43,7 +43,7 @@ class ContactModelCategories extends JModelLegacy
 	 *
 	 * @since	1.6
 	 */
-	protected function populateState()
+	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
 		$this->setState('filter.extension', $this->_extension);

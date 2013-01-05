@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_newsfeeds
  * @since       1.6
  */
-class NewsfeedsModelCategories extends JModelLegacy
+class NewsfeedsModelCategories extends JModelList
 {
 	/**
 	 * Model context string.
@@ -43,7 +43,7 @@ class NewsfeedsModelCategories extends JModelLegacy
 	 *
 	 * @since	1.6
 	 */
-	protected function populateState()
+	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
 		$this->setState('filter.extension', $this->_extension);
