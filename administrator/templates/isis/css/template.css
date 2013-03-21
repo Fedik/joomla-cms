@@ -6534,6 +6534,9 @@ h6 {
 	padding-right: 5px;
 	text-align: left;
 }
+.form-horizontal #jform_catid_chzn {
+	vertical-align: middle;
+}
 ul.manager .height-50 .icon-folder-2 {
 	height: 35px;
 	width: 35px;
@@ -6587,4 +6590,7 @@ ul.treeselect ul.dropdown-menu {
 ul.treeselect ul.dropdown-menu li {
 	padding: 0 5px;
 	border: none;
+}
+td.has-context {
+	height: 23px;
 }
