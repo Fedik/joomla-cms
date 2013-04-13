@@ -27,7 +27,7 @@ class JTableCorecontent extends JTable
 	 */
 	public function __construct($db)
 	{
-		parent::__construct('#__core_content', 'core_content_id', $db);
+		parent::__construct('#__ucm_content', 'core_content_id', $db);
 	}
 
 	/**
@@ -186,8 +186,10 @@ class JTableCorecontent extends JTable
 				$this->core_created_user_id = $user->get('id');
 			}
 		}
+
 		// Verify that the alias is unique
 		$table = JTable::getInstance('Corecontent', 'JTable');
+		/*
 		if (
 			$table->load(array('core_alias' => $this->core_alias, 'core_catid' => $this->core_catid))
 			&& ($table->core_content_id != $this->core_content_id || $this->core_content_id == 0)
@@ -196,6 +198,7 @@ class JTableCorecontent extends JTable
 			$this->setError(JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS'));
 			return false;
 		}
+		*/
 
 		return parent::store($updateNulls);
 	}
@@ -243,9 +246,9 @@ class JTableCorecontent extends JTable
 		$query = $this->_db->getQuery(true);
 
 		// Update the publishing state for rows with the given primary keys.
-		$query->update($this->_db->quoteName($this->_tbl));
-		$query->set($this->_db->quoteName('core_state') . ' = ' . (int) $state);
-		$query->where($this->_db->quoteName($k) . 'IN (' . $pksImploded . ')');
+		$query->update($this->_db->quoteName($this->_tbl))
+			->set($this->_db->quoteName('core_state') . ' = ' . (int) $state)
+			->where($this->_db->quoteName($k) . 'IN (' . $pksImploded . ')');
 
 		// Determine if there is checkin support for the table.
 		$checkin = false;
