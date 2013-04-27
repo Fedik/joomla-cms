@@ -53,9 +53,8 @@ class JFormFieldMultiple extends JFormField
 		//get children field type
 		$child_type = (string) ($this->element['children'] ? $this->element['children'] : 'text');
 		$child = JFormHelper::loadFieldType($child_type);
-		//$child->setForm($this->form);
+		$child->setForm($this->form);
 		$child->setup($this->element, '');
-
 
 		//get inputs
 		$html = array();
