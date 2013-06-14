@@ -67,7 +67,7 @@ class UCMMigrateCli extends JApplicationCli
 	 */
 	public function doExecute()
 	{
-		echo 'aaa';
+
 		var_dump($this);
 	}
 
@@ -75,7 +75,39 @@ class UCMMigrateCli extends JApplicationCli
 	 * define objects to migrate
 	 */
 	protected function objectsToMigrate(JInputCli $input = null){
+		//Content
+		$this->to_migrate['com_content'] = array(
+				'table' => JTable::getInstance('Content', 'JTable'),
+		);
 
+		//Tags
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_tags/tables');
+		$this->to_migrate['com_tags'] = array(
+				'table' => JTable::getInstance('Tag', 'TagsTable'),
+		);
+
+		//Weblinks
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_weblinks/tables');
+		$this->to_migrate['com_weblinks'] = array(
+				'table' => JTable::getInstance('Weblink', 'WeblinksTable'),
+		);
+
+		//Newsfeeds
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_newsfeeds/tables');
+		$this->to_migrate['com_newsfeeds'] = array(
+				'table' => JTable::getInstance('Newsfeed', 'NewsfeedsTable'),
+		);
+
+		//Contacts
+		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_contact/tables');
+		$this->to_migrate['com_contact'] = array(
+				'table' => JTable::getInstance('Contact', 'ContactTable'),
+		);
+
+		//Users
+		$this->to_migrate['com_users'] = array(
+				'table' => JTable::getInstance('User', 'JTable'),
+		);
 	}
 
 	public function close($code = 0){

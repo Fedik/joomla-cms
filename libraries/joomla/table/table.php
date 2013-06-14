@@ -178,6 +178,7 @@ abstract class JTable extends JObject
 		{
 			// Search for the class file in the JTable include paths.
 			$path = JPath::find(self::addIncludePath(), strtolower($type) . '.php');
+			var_dump($path);
 			if ($path)
 			{
 				// Import the class file.
