@@ -84,8 +84,24 @@ class UCMMigrateCli extends JApplicationCli
 
 		//each object
 		foreach($this->to_migrate as $key => $info){
+			$alias_arr = explode('.', $info->type_alias);
+			$com = $alias_arr[0];
 
-			var_dump($info);
+			//add table path
+			JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/'.$com.'/tables');
+
+			$ucmContent = new JUcmContent(null, $info->type_alias);
+
+			try {
+				$this->migrate($ucmContent, $ucmContentTable);
+			} catch (Exception $e) {
+				// Display the error
+				$this->out($e->getMessage(), true);
+				// Close the app
+				$this->close($e->getCode());
+			}
+
+
 		}
 
 		//var_dump($this);
@@ -104,25 +120,15 @@ class UCMMigrateCli extends JApplicationCli
 		$query->where('type_id = 1');
 		$this->db->setQuery($query);
 
-		$types = $this->db->loadObjectList();
+		$this->to_migrate = $this->db->loadObjectList();
 
-		if(empty($types)){
-			echo 'No type found!';
-			return;
-		}
+	}
 
-		foreach($types as $type){
-			$alias_arr = explode('.', $type->type_alias);
-			$com = $alias_arr[0];
-
-			//add table path
-			JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/'.$com.'/tables');
-
-			$ucm = new JUcmContent(null, $type->type_alias);
-			$this->to_migrate[$com] = array();
-			$this->to_migrate[$com]['ucm'] = $ucm;
-			$this->to_migrate[$com]['table_info'] = json_decode($ucm->type->type->table);
-		}
+	/**
+	 * do migration
+	 */
+	protected function migrate($ucmContent, $ucmContentTable, $start = null, $limit = null){
+		var_dump($ucmContent, $ucmContentTable);
 
 	}
 
