@@ -93,7 +93,7 @@ class UCMMigrateCli extends JApplicationCli
 			$ucmContent = new JUcmContent(null, $info->type_alias);
 
 			try {
-				$this->migrate($ucmContent, $ucmContentTable);
+				$this->migrate($ucmContent, $ucmContentTable, 0, 3);
 			} catch (Exception $e) {
 				// Display the error
 				$this->out($e->getMessage(), true);
@@ -117,7 +117,7 @@ class UCMMigrateCli extends JApplicationCli
 		$query->select(array('type_id', 'type_alias'));
 		$query->from('#__content_types');
 		//$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
-		$query->where('type_id = 1');
+		$query->where('type_id IN (1)');
 		$this->db->setQuery($query);
 
 		$this->to_migrate = $this->db->loadObjectList();
@@ -127,8 +127,22 @@ class UCMMigrateCli extends JApplicationCli
 	/**
 	 * do migration
 	 */
-	protected function migrate($ucmContent, $ucmContentTable, $start = null, $limit = null){
-		var_dump($ucmContent, $ucmContentTable);
+	protected function migrate($ucmContent, $ucmContentTable, $offset = 0, $limit = 0){
+
+		//table info
+		$tableObject = json_decode($ucmContent->type->type->table);
+		$table = JTable::getInstance($tableObject->special->type, $tableObject->special->prefix);
+
+		//load items
+		$query = $this->db->getQuery(true);
+		$query->select('*');
+		$query->from($tableObject->special->dbtable);
+		$this->db->setQuery($query, $offset, $limit);
+		$items_data = $this->db->loadAssocList();
+
+
+
+		var_dump($tableObject,$items_data);
 
 	}
 
