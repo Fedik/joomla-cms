@@ -69,8 +69,17 @@ class UCMMigrateCli extends JApplicationCli
 		//because empty. tricky? (:
 		JFactory::$application = $this;
 
+
+		//get main types
 		//define objects to migrate
-		$this->objectsToMigrate($input);
+		$query = $this->db->getQuery(true);
+		$query->select(array('type_id', 'type_alias'));
+		$query->from('#__content_types');
+		//$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
+		$query->where('type_id IN (1)');
+		$this->db->setQuery($query);
+
+		$this->to_migrate = $this->db->loadObjectList();
 	}
 	/**
 	 * Entry point for CLI script
@@ -107,22 +116,7 @@ class UCMMigrateCli extends JApplicationCli
 		//var_dump($this);
 	}
 
-	/**
-	 * define objects to migrate
-	 */
-	protected function objectsToMigrate(JInputCli $input = null){
 
-		//get main types
-		$query = $this->db->getQuery(true);
-		$query->select(array('type_id', 'type_alias'));
-		$query->from('#__content_types');
-		//$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
-		$query->where('type_id IN (1)');
-		$this->db->setQuery($query);
-
-		$this->to_migrate = $this->db->loadObjectList();
-
-	}
 
 	/**
 	 * do migration
