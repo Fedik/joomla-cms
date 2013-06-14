@@ -51,11 +51,23 @@ class UCMMigrateCli extends JApplicationCli
 	protected $to_migrate = array();
 
 	/**
+	 * database
+	 */
+
+	protected $db;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct(JInputCli $input = null, JRegistry $config = null, JEventDispatcher $dispatcher = null)
 	{
 		parent::__construct($input, $config, $dispatcher);
+
+		//db driver
+		$this->db = JFactory::getDbo();
+
+		//because empty. tricky? (:
+		JFactory::$application = $this;
 
 		//define objects to migrate
 		$this->objectsToMigrate($input);
@@ -67,47 +79,51 @@ class UCMMigrateCli extends JApplicationCli
 	 */
 	public function doExecute()
 	{
+		//UCM table
+		$ucmContentTable = JTable::getInstance('Corecontent');
 
-		var_dump($this);
+		//each object
+		foreach($this->to_migrate as $key => $info){
+
+			var_dump($info);
+		}
+
+		//var_dump($this);
 	}
 
 	/**
 	 * define objects to migrate
 	 */
 	protected function objectsToMigrate(JInputCli $input = null){
-		//Content
-		$this->to_migrate['com_content'] = array(
-				'table' => JTable::getInstance('Content', 'JTable'),
-		);
 
-		//Tags
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_tags/tables');
-		$this->to_migrate['com_tags'] = array(
-				'table' => JTable::getInstance('Tag', 'TagsTable'),
-		);
+		//get main types
+		$query = $this->db->getQuery(true);
+		$query->select(array('type_id', 'type_alias'));
+		$query->from('#__content_types');
+		//$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
+		$query->where('type_id = 1');
+		$this->db->setQuery($query);
 
-		//Weblinks
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_weblinks/tables');
-		$this->to_migrate['com_weblinks'] = array(
-				'table' => JTable::getInstance('Weblink', 'WeblinksTable'),
-		);
+		$types = $this->db->loadObjectList();
 
-		//Newsfeeds
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_newsfeeds/tables');
-		$this->to_migrate['com_newsfeeds'] = array(
-				'table' => JTable::getInstance('Newsfeed', 'NewsfeedsTable'),
-		);
+		if(empty($types)){
+			echo 'No type found!';
+			return;
+		}
 
-		//Contacts
-		JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_contact/tables');
-		$this->to_migrate['com_contact'] = array(
-				'table' => JTable::getInstance('Contact', 'ContactTable'),
-		);
+		foreach($types as $type){
+			$alias_arr = explode('.', $type->type_alias);
+			$com = $alias_arr[0];
 
-		//Users
-		$this->to_migrate['com_users'] = array(
-				'table' => JTable::getInstance('User', 'JTable'),
-		);
+			//add table path
+			JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/'.$com.'/tables');
+
+			$ucm = new JUcmContent(null, $type->type_alias);
+			$this->to_migrate[$com] = array();
+			$this->to_migrate[$com]['ucm'] = $ucm;
+			$this->to_migrate[$com]['table_info'] = json_decode($ucm->type->type->table);
+		}
+
 	}
 
 	public function close($code = 0){
