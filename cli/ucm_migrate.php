@@ -35,7 +35,7 @@ require_once JPATH_CONFIGURATION . '/configuration.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$_SERVER['argv'] = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
+//$_SERVER['argv'] = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
 
 /**
  * A command line cron job to move existing conetnt to UCM.
@@ -74,8 +74,8 @@ class UCMMigrateCli extends JApplicationCli
 		$query = $this->db->getQuery(true);
 		$query->select(array('type_id', 'type_alias'));
 		$query->from('#__content_types');
-		//$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
-		$query->where('type_id IN (1)');
+		$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
+		//$query->where('type_id IN (1)');
 		$this->db->setQuery($query);
 
 		$this->to_migrate = $this->db->loadObjectList();
@@ -101,7 +101,7 @@ class UCMMigrateCli extends JApplicationCli
 			$ucmContent = new JUcmContent(null, $info->type_alias);
 
 			try {
-				$this->migrate($ucmContent, $ucmContentTable, 0, 8);
+				$this->migrate($ucmContent, $ucmContentTable, 0, 0);
 			} catch (Exception $e) {
 				// Display the error
 				$this->out($e->getMessage(), true);
@@ -142,7 +142,7 @@ class UCMMigrateCli extends JApplicationCli
 						&& $ucmContentTable->store()
 						;
 			//reset
-			$ucmContentTable->reset();
+			$ucmContentTable = $this->tableReset($ucmContentTable);
 
 			$message = 'Type: ' . $tableObject->special->type . '; '
 					. 'ID: ' . $data['id'] . '; '
@@ -151,18 +151,38 @@ class UCMMigrateCli extends JApplicationCli
 					. '; ';
 
 			if($result){
-				//$this->out($message . ' Success!', true);
+				$this->out($message . ' Success!', true);
 			} else {
-				//$this->out($message . ' Failure!', true);
+				$this->out($message . ' Failure!', true);
 			}
-			var_dump($message, $result, $ucmContentTable);
+			//var_dump($message, $result);
 		}
 
 	}
 
- 	public function close($code = 0){
- 		echo $code.' be be be!';
- 	}
+	/**
+	 * use own reset, cause JTable::reset() do not reset the primary key
+	 *
+	 * @param JTable $table
+	 */
+
+	protected function tableReset($table){
+		// Get the default values for the class from the table.
+		foreach ($table->getFields() as $k => $v)
+		{
+			// If the property is not the private, reset it.
+			if (strpos($k, '_') !== 0)
+			{
+				$table->$k = $v->Default;
+			}
+		}
+
+		return $table;
+	}
+
+//  	public function close($code = 0){
+//  		echo $code.' be be be!';
+//  	}
 }
 // Instantiate the application object, passing the class name to JCli::getInstance
 // and use chaining to execute the application.
