@@ -38,7 +38,7 @@ ini_set('display_errors', 1);
 //$_SERVER['argv'] = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
 
 /**
- * A command line cron job to move existing conetnt to UCM.
+ * A command line tool for move existing conetnt to UCM.
  *
  * @package  Joomla.CLI
  */
