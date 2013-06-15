@@ -35,8 +35,7 @@ require_once JPATH_CONFIGURATION . '/configuration.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-//???
-$_SERVER['argv'] = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
+//$_SERVER['argv'] = isset($_SERVER['argv']) ? $_SERVER['argv'] : array();
 
 /**
  * A command line cron job to move existing conetnt to UCM.
@@ -66,7 +65,7 @@ class UCMMigrateCli extends JApplicationCli
 		//db driver
 		$this->db = JFactory::getDbo();
 
-		//because empty. tricky? (:
+		//because empty ;-p ... tricky? (:
 		JFactory::$application = $this;
 
 
@@ -102,18 +101,14 @@ class UCMMigrateCli extends JApplicationCli
 			$ucmContent = new JUcmContent(null, $info->type_alias);
 
 			try {
-				$this->migrate($ucmContent, $ucmContentTable, 0, 4);
+				$this->migrate($ucmContent, $ucmContentTable, 0, 0);
 			} catch (Exception $e) {
 				// Display the error
 				$this->out($e->getMessage(), true);
 				// Close the app
 				$this->close($e->getCode());
 			}
-
-
 		}
-
-		//var_dump($this);
 	}
 
 
@@ -122,10 +117,8 @@ class UCMMigrateCli extends JApplicationCli
 	 * do migration
 	 */
 	protected function migrate($ucmContent, $ucmContentTable, $offset = 0, $limit = 0){
-
 		//table info
 		$tableObject = json_decode($ucmContent->type->type->table);
-		//$table = JTable::getInstance($tableObject->special->type, $tableObject->special->prefix);
 
 		//load items
 		$query = $this->db->getQuery(true);
@@ -145,8 +138,8 @@ class UCMMigrateCli extends JApplicationCli
 			}
 			//$ucmContentTable->load($primaryId);
 			$result = $ucmContentTable->bind($ucmData['common'])
-						&& $ucmContentTable->check();
-						//&& $ucmContentTable->store();
+						&& $ucmContentTable->check()
+						&& $ucmContentTable->store();
 
 			$message = 'Type: ' . $tableObject->special->type . '; '
 					. 'ID: ' . $data['id'] . '; '
@@ -155,25 +148,17 @@ class UCMMigrateCli extends JApplicationCli
 					. '; ';
 
 			if($result){
-				//$this->out($message . ' Success!', true);
-				var_dump($message . ' Success!');
+				$this->out($message . ' Success!', true);
 			} else {
-				//$this->out($message . ' Failure!', true);
-				var_dump($message . ' Failure!');
+				$this->out($message . ' Failure!', true);
 			}
-
-			//var_dump($data);
 		}
 
-
-
-		//var_dump($tableObject);
-
 	}
 
-	public function close($code = 0){
-		echo $code.' be be be!';
-	}
+// 	public function close($code = 0){
+// 		echo $code.' be be be!';
+// 	}
 }
 // Instantiate the application object, passing the class name to JCli::getInstance
 // and use chaining to execute the application.
