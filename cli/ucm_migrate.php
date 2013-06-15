@@ -142,7 +142,7 @@ class UCMMigrateCli extends JApplicationCli
 						&& $ucmContentTable->store()
 						;
 			//reset
-			$ucmContentTable = $this->tableReset($ucmContentTable);
+			$this->tableReset($ucmContentTable);
 
 			$message = 'Type: ' . $tableObject->special->type . '; '
 					. 'ID: ' . $data['id'] . '; '
