@@ -75,8 +75,8 @@ class UCMMigrateCli extends JApplicationCli
 		$query = $this->db->getQuery(true);
 		$query->select(array('type_id', 'type_alias'));
 		$query->from('#__content_types');
-		//$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
-		$query->where('type_id IN (1)');
+		$query->where('type_id IN (1,2,3,4,5,6,7,8,9,10)');
+		//$query->where('type_id IN (1,2)');
 		$this->db->setQuery($query);
 
 		$this->to_migrate = $this->db->loadObjectList();
@@ -102,7 +102,7 @@ class UCMMigrateCli extends JApplicationCli
 			$ucmContent = new JUcmContent(null, $info->type_alias);
 
 			try {
-				$this->migrate($ucmContent, $ucmContentTable, 0, 3);
+				$this->migrate($ucmContent, $ucmContentTable, 0, 4);
 			} catch (Exception $e) {
 				// Display the error
 				$this->out($e->getMessage(), true);
@@ -143,18 +143,31 @@ class UCMMigrateCli extends JApplicationCli
 				//already moved
 				continue;
 			}
-			var_dump($primaryId);
 			//$ucmContentTable->load($primaryId);
-			$ucmContentTable->bind($ucmData['common']);
-			$ucmContentTable->check();
-			//$result = $ucmContentTable->store();
+			$result = $ucmContentTable->bind($ucmData['common'])
+						&& $ucmContentTable->check();
+						//&& $ucmContentTable->store();
 
-			var_dump($data['id'], $ucmContentTable);
+			$message = 'Type: ' . $tableObject->special->type . '; '
+					. 'ID: ' . $data['id'] . '; '
+					. 'Title: '
+					. (isset($data['title']) ? $data['title'] : (isset($data['name'])? $data['name'] : ''))
+					. '; ';
+
+			if($result){
+				//$this->out($message . ' Success!', true);
+				var_dump($message . ' Success!');
+			} else {
+				//$this->out($message . ' Failure!', true);
+				var_dump($message . ' Failure!');
+			}
+
+			//var_dump($data);
 		}
 
 
 
-		var_dump($tableObject);
+		//var_dump($tableObject);
 
 	}
 
