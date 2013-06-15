@@ -102,7 +102,7 @@ class UCMMigrateCli extends JApplicationCli
 			$ucmContent = new JUcmContent(null, $info->type_alias);
 
 			try {
-				$this->migrate($ucmContent, $ucmContentTable, 0, 6);
+				$this->migrate($ucmContent, $ucmContentTable, 0, 3);
 			} catch (Exception $e) {
 				// Display the error
 				$this->out($e->getMessage(), true);
@@ -138,12 +138,18 @@ class UCMMigrateCli extends JApplicationCli
 		foreach($items_data as $data){
 			$ucmData = $ucmContent->mapData($data);
 			$primaryId = $ucmContent->getPrimaryKey($ucmData['common']['core_type_id'], $ucmData['common']['core_content_item_id']);
-			$ucmContentTable->load($primaryId);
+
+			if($primaryId){
+				//already moved
+				continue;
+			}
+			var_dump($primaryId);
+			//$ucmContentTable->load($primaryId);
 			$ucmContentTable->bind($ucmData['common']);
 			$ucmContentTable->check();
-			$result = $ucmContentTable->store();
+			//$result = $ucmContentTable->store();
 
-			var_dump($data['id'], $ucmContentTable->core_content_id, $result);
+			var_dump($data['id'], $ucmContentTable);
 		}
 
 
