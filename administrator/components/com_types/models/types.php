@@ -45,8 +45,6 @@ class TypesModeltypes extends JModelList
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
 	 * @return  JTable  A JTable object
-	 *
-	 * @since   3.1
 	 * /
 	public function getTable($type = 'Contenttype', $prefix = 'JTable', $config = array())
 	{
@@ -62,7 +60,6 @@ class TypesModeltypes extends JModelList
 	 * @param   string  $direction  An optional direction (asc|desc).
 	 *
 	 * @return    void
-	 * @since    3.1
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -86,8 +83,6 @@ class TypesModeltypes extends JModelList
 	 * Method to get a JDatabaseQuery object for retrieving the data set from a database.
 	 *
 	 * @return  JDatabaseQuery   A JDatabaseQuery object to retrieve the data set.
-	 *
-	 * @since   3.1
 	 */
 	protected function getListQuery()
 	{

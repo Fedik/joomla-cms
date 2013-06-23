@@ -83,7 +83,7 @@ $sortFields = $this->getSortFields();
 				<td class="nowrap has-context">
 					<div class="pull-left">
 						<?php if ($canEdit) : ?>
-							<a href="<?php echo JRoute::_('index.php?option=com_types&task=type.edit&id=' . $item->type_id); ?>" title="<?php echo JText::_('JACTION_EDIT'); ?>">
+							<a href="<?php echo JRoute::_('index.php?option=com_types&task=type.edit&type_id=' . $item->type_id); ?>" title="<?php echo JText::_('JACTION_EDIT'); ?>">
 								<?php echo $this->escape($item->type_title); ?></a>
 						<?php else : ?>
 							<span title="<?php echo JText::sprintf('JFIELD_ALIAS_LABEL', $this->escape($item->type_alias)); ?>"><?php echo $this->escape($item->type_title); ?></span>
