@@ -42,6 +42,10 @@ class TypesModelType extends JModelAdmin
 	public function getItem($pk = null)
 	{
 		$item = parent::getItem($pk);
+
+		//fields info
+		$item->set('fields', array());
+
 		return $item;
 	}
 
@@ -55,8 +59,33 @@ class TypesModelType extends JModelAdmin
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		$form = null;
+		// Get the form.
+		$form = $this->loadForm('com_types.type', 'type', array('control' => 'jform', 'load_data' => $loadData));
+		if (empty($form))
+		{
+			return false;
+		}
 		return $form;
+	}
+
+	/**
+	 * Method to get the data that should be injected in the form.
+	 *
+	 * @return  mixed  The data for the form.
+	 */
+	protected function loadFormData()
+	{
+		// Check the session for previously entered form data.
+		$data = JFactory::getApplication()->getUserState('com_types.edit.type.data', array());
+
+		if (empty($data))
+		{
+			$data = $this->getItem();
+		}
+
+		$this->preprocessData('com_types.type', $data);
+
+		return $data;
 	}
 
 

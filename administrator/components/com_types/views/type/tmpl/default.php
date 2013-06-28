@@ -9,4 +9,4 @@
 
 defined('_JEXEC') or die;
 
-var_dump($this->item);
+var_dump($this);

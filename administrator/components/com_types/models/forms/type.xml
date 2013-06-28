@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="base">
+		<field
+			name="type_id"
+			type="text"
+			class="readonly"
+			label="JGLOBAL_FIELD_ID_LABEL"
+			description ="JGLOBAL_FIELD_ID_DESC"
+			default="0"
+			readonly="true"
+		/>
+
+		<field
+			name="type_title"
+			type="text"
+			class="inputbox"
+			label="JGLOBAL_TITLE"
+			description="JFIELD_TITLE_DESC"
+			size="40"
+			required="true"
+		/>
+
+		<field
+			name="type_alias"
+			type="text"
+			class="readonly"
+			label="JFIELD_ALIAS_LABEL"
+			description="JFIELD_ALIAS_DESC"
+			size="40"
+		/>
+	</fields>
+
+	<fields name="view">
+		<field
+			name="view_type"
+			type="text"
+			class="readonly"
+			label="COM_TYPES_FIELD_VIEW_TYPE_LABEL"
+			description ="COM_TYPES_FIELD_VIEW_TYPE_DESC"
+			default="input"
+			readonly="true"
+		/>
+
+		<field
+			name="fields"
+			type="field"
+			label="COM_TYPES_FIELD_FIELDS_LABEL"
+			description ="COM_TYPES_FIELD_FIELDS_DESC"
+			default=""
+		/>
+	</fields>
+
+</form>
