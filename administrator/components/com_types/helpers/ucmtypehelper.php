@@ -56,7 +56,7 @@ class UCMTypeHelper
 		// Get a original form.
 		try
 		{
-			$form = JForm::getInstance($type_alias, $source, array(), true);
+			$form = UCMForm::getInstance($type_alias, $source, array(), true);
 			//$fields = JForm::getInstance($type_alias, $source, array(), true, 'descendant-or-self::field');
 			//$names = JForm::getInstance($type_alias, $source, array(), true, '//@name');
 
