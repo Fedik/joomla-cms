@@ -19,6 +19,7 @@
 			<folder>languages</folder>
 			<folder>models</folder>
 			<folder>views</folder>
+			<folder>helpers</folder>
 			<filename>ucmmigrate.php</filename>
 			<filename>controller.php</filename>
 			<filename>index.html</filename>

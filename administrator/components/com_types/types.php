@@ -14,6 +14,7 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_types'))
 	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
+JLoader::register('UCMTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
 
 $controller = JControllerLegacy::getInstance('Types');
 $controller->execute(JFactory::getApplication()->input->get('task'));

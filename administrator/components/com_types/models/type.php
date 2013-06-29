@@ -17,6 +17,62 @@ defined('_JEXEC') or die;
  */
 class TypesModelType extends JModelAdmin
 {
+	/**
+	 * Constructor.
+	 *
+	 * @param   array  $config  An optional associative array of configuration settings.
+	 *
+	 * @see     JModelLegacy
+	 */
+	public function __construct($config = array())
+	{
+		if (isset($config['event_after_delete']))
+		{
+			$this->event_after_delete = $config['event_after_delete'];
+		}
+		elseif (empty($this->event_after_delete))
+		{
+			$this->event_after_delete = 'onTypeAfterDelete';
+		}
+
+		if (isset($config['event_after_save']))
+		{
+			$this->event_after_save = $config['event_after_save'];
+		}
+		elseif (empty($this->event_after_save))
+		{
+			$this->event_after_save = 'onTypeAfterSave';
+		}
+
+		if (isset($config['event_before_delete']))
+		{
+			$this->event_before_delete = $config['event_before_delete'];
+		}
+		elseif (empty($this->event_before_delete))
+		{
+			$this->event_before_delete = 'onTypeBeforeDelete';
+		}
+
+		if (isset($config['event_before_save']))
+		{
+			$this->event_before_save = $config['event_before_save'];
+		}
+		elseif (empty($this->event_before_save))
+		{
+			$this->event_before_save = 'onTypeBeforeSave';
+		}
+
+		if (isset($config['event_change_state']))
+		{
+			$this->event_change_state = $config['event_change_state'];
+		}
+		elseif (empty($this->event_change_state))
+		{
+			$this->event_change_state = 'onTypeChangeState';
+		}
+
+		parent::__construct($config);
+	}
 
 	/**
 	 * Method to get a table object, load it if necessary.
@@ -33,6 +89,21 @@ class TypesModelType extends JModelAdmin
 	}
 
 	/**
+	 * Stock method to auto-populate the model state.
+	 *
+	 * @return  void
+	 */
+	protected function populateState()
+	{
+		parent::populateState();
+		$app = JFactory::getApplication();
+
+		// Get Item View (Item Layout) name and save in to state
+		$item_view = $app->input->get('item_view', 'form');
+		$this->setState('item_view', $item_view);
+	}
+
+	/**
 	 * Method to get a single record.
 	 *
 	 * @param   integer  $pk  The id of the primary key.
@@ -43,8 +114,14 @@ class TypesModelType extends JModelAdmin
 	{
 		$item = parent::getItem($pk);
 
-		//fields info
-		$item->set('fields', array());
+		//get fields info
+		$item_view = $this->getState('item_view');
+		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
+		//find default
+		if(empty($fields)){
+			$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
+		}
+		$item->set('fields', $fields);
 
 		return $item;
 	}
