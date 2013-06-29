@@ -67,10 +67,12 @@ class UCMTypeHelper
 			return array();
 		}
 
-		// XML Fields elements
+		// Fields elements
 		$elements = $form->getGroup(null);
 
-		$fields = array();
+		return empty($elements) ? array() : array_values($elements);
+
+		/* $fields = array();
 		$i = 0;
 		foreach ($elements as $element){
 			$type = strtolower($element->type);
@@ -100,7 +102,7 @@ class UCMTypeHelper
 
 		}
 
-		return $fields;
+		return $fields; */
 	}
 
 }

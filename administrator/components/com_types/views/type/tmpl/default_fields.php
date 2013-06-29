@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+var_dump($this->item->fields[0]);
 ?>
 <div class="row-fluid">
 	<div class="span10">
