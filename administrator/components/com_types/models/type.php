@@ -99,6 +99,7 @@ class TypesModelType extends JModelAdmin
 		$app = JFactory::getApplication();
 
 		// Get Item View (Item Layout) name and save in to state
+		// TODO: bad place for it ???
 		$item_view = $app->input->get('item_view', 'form');
 		$this->setState('item_view', $item_view);
 	}
@@ -119,7 +120,7 @@ class TypesModelType extends JModelAdmin
 		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
 		//find default
 		if(empty($fields)){
-			$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
+			//$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
 		}
 
 		$item->set('item_view', $item_view);

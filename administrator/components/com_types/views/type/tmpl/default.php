@@ -15,17 +15,26 @@ defined('_JEXEC') or die;
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<!-- Base Type Info -->
-			<?php foreach ($this->form->getGroup('base') as $field) : ?>
 			<div class="control-group">
-				<?php if (!$field->hidden) : ?>
-					<?php echo $field->label; ?>
-				<?php endif; ?>
+				<?php echo $this->form->getLabel('type_id'); ?>
 				<div class="controls">
-					<?php echo $field->input; ?>
+					<?php echo $this->form->getInput('type_id'); ?>
 				</div>
 			</div>
-			<?php endforeach; ?>
+			<div class="control-group">
+				<?php echo $this->form->getLabel('type_title'); ?>
+				<div class="controls">
+					<?php echo $this->form->getInput('type_title'); ?>
+				</div>
+			</div>
+			<div class="control-group">
+				<?php echo $this->form->getLabel('type_alias'); ?>
+				<div class="controls">
+					<?php echo $this->form->getInput('type_alias'); ?>
+				</div>
+			</div>
 
+			<!-- Fields Configuration -->
 			<div class="row-fluid">
 				<div class="span10">
 					Fields
@@ -33,7 +42,9 @@ defined('_JEXEC') or die;
 			</div>
 		</div>
 	</div>
+
 	<!-- Hidden -->
+	<?php echo $this->form->getInput('item_view'); ?>
 	<input type="hidden" name="task" value="" />
 	<?php echo JHtml::_('form.token'); ?>
 </form>
