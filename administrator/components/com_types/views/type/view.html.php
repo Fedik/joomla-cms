@@ -26,7 +26,7 @@ class TypesViewType extends JViewLegacy
 		$app = JFactory::getApplication();
 		$this->state = $this->get('State');
 		$this->form  = $this->get('Form');
-		//$this->item  = $this->get('Item');
+		$this->item  = $this->get('Item');
 
 
 

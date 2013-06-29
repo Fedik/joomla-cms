@@ -1,37 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fields name="base">
-		<field
-			name="type_id"
-			type="text"
-			class="readonly"
-			label="JGLOBAL_FIELD_ID_LABEL"
-			description ="JGLOBAL_FIELD_ID_DESC"
-			default="0"
-			readonly="true"
+		<field name="type_id"	type="text"
+			default="0"	size="6" readonly="true"
+			class="readonly" labelclass="control-label"
+			label="JGLOBAL_FIELD_ID_LABEL" description ="JGLOBAL_FIELD_ID_DESC"
 		/>
 
-		<field
-			name="type_title"
-			type="text"
-			class="inputbox"
-			label="JGLOBAL_TITLE"
-			description="JFIELD_TITLE_DESC"
-			size="40"
-			required="true"
+		<field name="type_title" type="text"
+			size="40" required="true"
+			class="inputbox" labelclass="control-label"
+			label="JGLOBAL_TITLE" description="JFIELD_TITLE_DESC"
 		/>
 
-		<field
-			name="type_alias"
-			type="text"
-			class="readonly"
-			label="JFIELD_ALIAS_LABEL"
-			description="JFIELD_ALIAS_DESC"
+		<field name="type_alias" type="text"
 			size="40"
+			class="readonly" labelclass="control-label"
+			label="JFIELD_ALIAS_LABEL" description="JFIELD_ALIAS_DESC"
 		/>
 	</fields>
 
 	<fields name="view">
+		<field name="item_view" type="hidden" />
+<!--
 		<field
 			name="view_type"
 			type="text"
@@ -41,13 +32,9 @@
 			default="input"
 			readonly="true"
 		/>
-
-		<field
-			name="fields"
-			type="field"
-			label="COM_TYPES_FIELD_FIELDS_LABEL"
-			description ="COM_TYPES_FIELD_FIELDS_DESC"
-			default=""
+-->
+		<field name="fields" type="field"
+			label="COM_TYPES_FIELD_FIELDS_LABEL" description ="COM_TYPES_FIELD_FIELDS_DESC"
 		/>
 	</fields>
 

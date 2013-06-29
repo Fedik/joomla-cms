@@ -73,30 +73,31 @@ class UCMTypeHelper
 		$fields = array();
 		$i = 0;
 		foreach ($elements as $element){
-			// TODO: make JForm::getAtributes() ho ho ho!!!
-			$refl = new ReflectionClass($element);
-			$property = $refl->getProperty('element');
-			$property->setAccessible(true);
-			$element_xml = $property->getValue($element);
+			$type = strtolower($element->type);
 
-			$attributes = (array) $element_xml;
-			$attributes = $attributes['@attributes'];
+			// Skip Spacer
+			if($type == 'spacer')
+			{
+				continue;
+			}
 
 			$field = array(
-				'field_id' => 0,
-				'type' => $attributes['type'],
-				'name' => $attributes['name'],
-				'label' => isset($attributes['label']) ? $attributes['label'] : '',
-				'default' => isset($attributes['default']) ? $attributes['default'] : '',
+				'field_id' => null,
+				'type' => $type,
+				'name' => $element->name,
+				'label' => $element->title,
+				'default' => $element->default,
 				'ordering' => $i,
 				'state' => 1,
 				'view' => 'form',
 				'view_type' => 'input',
-				'params' => $attributes,
+				'field' => $element,
 			);
 
 			$fields[] = $field;
 			$i++;
+
+
 		}
 
 		return $fields;

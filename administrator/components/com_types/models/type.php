@@ -115,12 +115,14 @@ class TypesModelType extends JModelAdmin
 		$item = parent::getItem($pk);
 
 		//get fields info
-		$item_view = $this->getState('item_view');
+		$item_view = $this->getState('item_view', 'form');
 		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
 		//find default
 		if(empty($fields)){
 			$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
 		}
+
+		$item->set('item_view', $item_view);
 		$item->set('fields', $fields);
 
 		return $item;
