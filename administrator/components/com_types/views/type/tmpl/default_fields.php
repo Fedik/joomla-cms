@@ -9,10 +9,28 @@
 
 defined('_JEXEC') or die;
 
-var_dump($this->item->fields[0]);
+$active = array();
+$inactive = array();
+
+foreach($this->item->fields as $field) {
+	// TODO: bad place for this !!!
+	$field->setForm($this->form);
+
+	//var_dump($field);
+	break;
+}
 ?>
 <div class="row-fluid">
-	<div class="span10">
-		Fields config
+	<div class="">
+		<h4><?php echo JText::_('COM_TYPES_FIELDS_ACTIVE_LABEL'); ?></h4>
+		<div class="control-group">
+			<?php echo implode("\n", $active); ?>
+		</div>
+	</div>
+	<div class="">
+		<h4><?php echo JText::_('COM_TYPES_FIELDS_INACTIVE_LABEL'); ?></h4>
+		<div class="control-group">
+			<?php echo implode("\n", $inactive); ?>
+		</div>
 	</div>
 </div>
