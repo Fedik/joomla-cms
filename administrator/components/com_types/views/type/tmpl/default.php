@@ -35,11 +35,7 @@ defined('_JEXEC') or die;
 			</div>
 
 			<!-- Fields Configuration -->
-			<div class="row-fluid">
-				<div class="span10">
-					Fields
-				</div>
-			</div>
+			<?php echo $this->loadTemplate('fields'); ?>
 		</div>
 	</div>
 

@@ -120,7 +120,7 @@ class TypesModelType extends JModelAdmin
 		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
 		//find default
 		if(empty($fields)){
-			//$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
+			$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
 		}
 
 		$item->set('item_view', $item_view);
