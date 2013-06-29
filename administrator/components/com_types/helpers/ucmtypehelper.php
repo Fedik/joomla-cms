@@ -66,7 +66,7 @@ class UCMTypeHelper
 			$app->enqueueMessage($e->getMessage(), 'error');
 			return array();
 		}
-
+var_dump($form);
 		// Fields elements
 		$elements = $form->getGroup(null);
 
