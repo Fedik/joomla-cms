@@ -149,8 +149,23 @@ class UCMFormField //extends JFormField
 		// Get form object
 		if(!$this->coniguration_form)
 		{
-			// TODO: load related
-			$this->coniguration_form = 'form';
+			// TODO: load field configuration form
+			try
+			{
+				//JForm::addFormPath(JPATH_LIBRARIES . '/form/fields');
+
+				$form = JForm::getInstance($this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]');
+				$form->bind($this);
+
+				$this->coniguration_form = $form;
+			}
+			catch (Exception $e)
+			{
+				var_dump(JFormHelper::addFormPath());
+				// TODO: What to do here ???
+				JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			}
+
 		}
 
 		return $this->coniguration_form;

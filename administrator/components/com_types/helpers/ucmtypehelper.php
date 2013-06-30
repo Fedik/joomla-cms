@@ -27,6 +27,7 @@ class UCMTypeHelper
 	 */
 	public static function getFields($type_alias, $view = 'form', $published_only = true)
 	{
+		// TODO: load fields from database eg #__fields_layouts or something
 		return array();
 	}
 

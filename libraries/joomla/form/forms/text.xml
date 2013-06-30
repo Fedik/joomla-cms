@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="input">
+		<field name="field_id" type="hidden" />
+
+		<field name="label"	type="text"
+			default=""	size="6" required="true"
+			label="JGLOBAL_FIELD_LABEL_LABEL" description ="JGLOBAL_FIELD_LABEL_DESC"
+		/>
+	</fieldset>
+
+	<fieldset name="value">
+		<field name="field_id" type="hidden" />
+
+		<field name="label"	type="text"
+			default=""	size="6" required="true"
+			label="JGLOBAL_FIELD_LABEL_LABEL" description ="JGLOBAL_FIELD_LABEL_DESC"
+		/>
+
+	</fieldset>
+</form>
