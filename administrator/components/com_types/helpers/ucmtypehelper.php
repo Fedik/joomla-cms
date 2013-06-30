@@ -46,6 +46,8 @@ class UCMTypeHelper
 			return $fields_cache[$type_alias];
 		}
 
+		JLoader::import('cms.form.ucmfield');
+
 		$app = JFactory::getApplication();
 
 		// Find file name
@@ -120,7 +122,7 @@ class UCMTypeHelper
 
 
 		}
-var_dump($fields_cache[$type_alias]);
+
 		return $fields_cache[$type_alias];;
 	}
 

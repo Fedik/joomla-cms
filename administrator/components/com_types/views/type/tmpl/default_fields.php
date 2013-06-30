@@ -13,8 +13,14 @@ $active = array();
 $inactive = array();
 
 foreach($this->item->fields as $field) {
-	// TODO: bad place for this !!!
-	//$field->setForm($this->form);
+	if($field->status)
+	{
+		$active[] = $this->loadTemplate('field_config');
+	}
+	else
+	{
+		$inactive[] = $this->loadTemplate('field_config');
+	}
 
 	//var_dump($field);
 	break;
