@@ -93,14 +93,47 @@ class UCMFormField //extends JFormField
 
 		return $this;
 	}
-
 	/**
-	 * Method to get the field input markup.
+	 * Method to get certain otherwise inaccessible properties from the form field object.
 	 *
-	 * @return  string  The field input markup.
+	 * @param   string  $name  The property name for which to the the value.
+	 *
+	 * @return  mixed  The property value or null.
 	 */
-	protected function getInput()
+	public function __get($name)
 	{
-		return '';
+		switch ($name)
+		{
+			case 'input':
+				if($this->element)
+				{
+					return $this->element->input;
+				}
+				break;
+
+			case 'label':
+				if ($this->element)
+				{
+					return $this->element->getLabel();
+				}
+				return $this->label;
+
+			case 'title':
+				if ($this->element)
+				{
+					return $this->element->getTitle();
+				}
+				return $this->label;
+
+			default:
+				if(isset($this->$name))
+				{
+					return $this->$name;
+				}
+				break;
+		}
+
+		return null;
 	}
+
 }
