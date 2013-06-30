@@ -70,7 +70,8 @@ class UCMTypeHelper
 			//$fields = JForm::getInstance($type_alias, $source, array(), true, 'descendant-or-self::field');
 			// Get fields out from groups
 			// @TODO: hm ???
-			// @TODO: need more safe way to get the main fields, eg: title, text;
+			// @TODO: need strong separation betwen main fields and addittional fields
+			//		  need more safe way to get the main fields, eg: title, text;
 			//		  and skip metadata, options, language etc.
 			$fields = JForm::getInstance($type_alias, $source, array(), true,
 					'field'

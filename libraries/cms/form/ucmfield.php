@@ -132,6 +132,8 @@ class UCMFormField //extends JFormField
 
 	/**
 	 * Set Up Field from array info
+	 *
+	 * TODO: need something for field configuration !!!
 	 */
 	public function setup($options)
 	{
@@ -143,21 +145,36 @@ class UCMFormField //extends JFormField
 	}
 
 	/**
+	 * Get all properties
+	 */
+	public function getProperties()
+	{
+		// Get all properties
+		$properties = get_object_vars($this);
+		unset($properties['element']);
+		return $properties;
+	}
+
+	/**
 	 * Return form for a field configuration
 	 */
 	public function getFormConfiguration () {
 		// Get form object
 		if(!$this->coniguration_form)
 		{
-			// TODO: load field configuration form
 			try
 			{
+				// TODO: need better place for field.xml form !!!
 				//JForm::addFormPath(JPATH_LIBRARIES . '/form/fields');
 
-				$form = JForm::getInstance($this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]');
-				$form->bind($this);
+				// TODO: need a two form:
+				//	first - main configuration, eg: id, type, label, access, validation, filter
+				//	second - comes from {type}.xml addittional configuration, eg: default, class, options and other possible field atributes
 
-				$this->coniguration_form = $form;
+				$form = JForm::getInstance($this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]');
+				$form->bind($this->getProperties());
+
+				$this->coniguration_form['addittional'] = $form;
 			}
 			catch (Exception $e)
 			{
