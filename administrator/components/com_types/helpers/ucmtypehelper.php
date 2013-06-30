@@ -39,6 +39,13 @@ class UCMTypeHelper
 	 */
 	public static function getFieldsDefault($type_alias)
 	{
+		// Cache!
+		static $fields_cache;
+
+		if (isset($fields_cache[$type_alias])) {
+			return $fields_cache[$type_alias];
+		}
+
 		$app = JFactory::getApplication();
 
 		// Find file name
@@ -64,7 +71,7 @@ class UCMTypeHelper
 			//		  and skip metadata, options, language etc.
 			$fields = JForm::getInstance($type_alias, $source, array(), true,
 					'field'
-					. ' | descendant::fieldset[not(@name)]/field'
+					. ' | descendant::fieldset[not(@name)]/field' // The user form have fieldset[@name]
 					. ' | descendant::fields[not(@name)]/field'
 					. ' | descendant::fields[not(@name)]/fieldset/field'
 					);
@@ -79,10 +86,9 @@ class UCMTypeHelper
 
 		// Fields elements
 		$elements = $fields->getGroup(null);
-		var_dump(count($elements));
-		return empty($elements) ? array() : array_values($elements);
+		//return empty($elements) ? array() : array_values($elements);
 
-		/* $fields = array();
+		$fields_cache[$type_alias] = array();
 		$i = 0;
 		foreach ($elements as $element){
 			$type = strtolower($element->type);
@@ -93,7 +99,9 @@ class UCMTypeHelper
 				continue;
 			}
 
-			$field = array(
+			$field = new UCMFormField();
+
+			$field->setup(array(
 				'field_id' => null,
 				'type' => $type,
 				'name' => $element->name,
@@ -103,16 +111,17 @@ class UCMTypeHelper
 				'state' => 1,
 				'view' => 'form',
 				'view_type' => 'input',
-				'field' => $element,
-			);
+				'value' => $element->value,
+				'element' => $element,
+			));
 
-			$fields[] = $field;
+			$fields_cache[$type_alias][] = $field;
 			$i++;
 
 
 		}
-
-		return $fields; */
+var_dump($fields_cache[$type_alias]);
+		return $fields_cache[$type_alias];;
 	}
 
 }

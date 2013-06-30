@@ -14,7 +14,7 @@ $inactive = array();
 
 foreach($this->item->fields as $field) {
 	// TODO: bad place for this !!!
-	$field->setForm($this->form);
+	//$field->setForm($this->form);
 
 	//var_dump($field);
 	break;
