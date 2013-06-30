@@ -56,8 +56,18 @@ class UCMTypeHelper
 		// Get a original form.
 		try
 		{
-			$form = UCMForm::getInstance($type_alias, $source, array(), true);
+			//$form = JForm::getInstance($type_alias, $source, array(), true);
 			//$fields = JForm::getInstance($type_alias, $source, array(), true, 'descendant-or-self::field');
+			// Get fields out from groups
+			// @TODO: hm ???
+			// @TODO: need more safe way to get the main fields, eg: title, text;
+			//		  and skip metadata, options, language etc.
+			$fields = JForm::getInstance($type_alias, $source, array(), true,
+					'field'
+					. ' | descendant::fieldset[not(@name)]/field'
+					. ' | descendant::fields[not(@name)]/field'
+					. ' | descendant::fields[not(@name)]/fieldset/field'
+					);
 			//$names = JForm::getInstance($type_alias, $source, array(), true, '//@name');
 
 		}
@@ -66,10 +76,10 @@ class UCMTypeHelper
 			$app->enqueueMessage($e->getMessage(), 'error');
 			return array();
 		}
-var_dump($form);
-		// Fields elements
-		$elements = $form->getGroup(null);
 
+		// Fields elements
+		$elements = $fields->getGroup(null);
+		var_dump(count($elements));
 		return empty($elements) ? array() : array_values($elements);
 
 		/* $fields = array();
