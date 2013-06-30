@@ -73,6 +73,11 @@ class UCMFormField //extends JFormField
 	protected $element;
 
 	/**
+	 * Field Configuration form
+	 */
+	protected $coniguration_form;
+
+	/**
 	 * Construct.
 	 *
 	 * @param   JFormField  $field  The field object.
@@ -82,17 +87,6 @@ class UCMFormField //extends JFormField
 		//parent::__construct($form);
 	}
 
-	/**
-	 * Set Up Field from array info
-	 */
-	public function setup($options)
-	{
-		foreach($options as $k => $value){
-			$this->{$k} = $value;
-		}
-
-		return $this;
-	}
 	/**
 	 * Method to get certain otherwise inaccessible properties from the form field object.
 	 *
@@ -134,6 +128,32 @@ class UCMFormField //extends JFormField
 		}
 
 		return null;
+	}
+
+	/**
+	 * Set Up Field from array info
+	 */
+	public function setup($options)
+	{
+		foreach($options as $k => $value){
+			$this->{$k} = $value;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Return form for a field configuration
+	 */
+	public function getFormConfiguration () {
+		// Get form object
+		if(!$this->coniguration_form)
+		{
+			// TODO: load related
+			$this->coniguration_form = 'form';
+		}
+
+		return $this->coniguration_form;
 	}
 
 }

@@ -35,7 +35,7 @@ defined('_JEXEC') or die;
 			</div>
 
 			<!-- Fields Configuration -->
-			<?php echo $this->loadTemplate('fields'); ?>
+			<?php echo JLayoutHelper::render('joomla.edit.metadata', $this);//$this->loadTemplate('fields'); ?>
 		</div>
 	</div>
 
