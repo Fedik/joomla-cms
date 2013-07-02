@@ -17,11 +17,11 @@ $inactive = array();
 foreach($displayData as $field) {
 	if($field->state)
 	{
-		$active[] = JLayoutHelper::render('UCM.type.edit.field', $field);
+		$active[] = JLayoutHelper::render('ucm.type.edit.field', $field);
 	}
 	else
 	{
-		$inactive[] = JLayoutHelper::render('UCM.type.edit.field', $field);
+		$inactive[] = JLayoutHelper::render('ucm.type.edit.field', $field);
 	}
 
 	//var_dump($field);
