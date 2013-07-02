@@ -130,7 +130,7 @@ class UCMFormField //extends JFormField
 				return $this->label;
 
 			default:
-				if(isset($this->$name))
+				if(property_exists($this, $name))
 				{
 					return $this->$name;
 				}
@@ -143,12 +143,21 @@ class UCMFormField //extends JFormField
 	/**
 	 * Set Up Field from array info
 	 *
-	 * TODO: need something for field configuration !!!
+	 * TODO: hm
 	 */
 	public function setup($options)
 	{
 		foreach($options as $k => $value){
-			$this->{$k} = $value;
+			// Check whether it is known option
+			// Other way it is part of params
+			if(property_exists($this, $k))
+			{
+				$this->$k = $value;
+			}
+			else
+			{
+				$this->params->set($k, $value);
+			}
 		}
 
 		return $this;
@@ -170,6 +179,8 @@ class UCMFormField //extends JFormField
 	 */
 	public function getFormConfiguration ()
 	{
+		// TODO: return form for defaul params
+		// 		eg. id, type, label, access, validation, filter
 		return $this->form_configuration;
 	}
 
