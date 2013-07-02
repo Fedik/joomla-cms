@@ -73,9 +73,19 @@ class UCMFormField //extends JFormField
 	protected $element;
 
 	/**
+	 * Configuration for a Field
+	 */
+	public $params;
+
+	/**
 	 * Field Configuration form
 	 */
-	protected $coniguration_form;
+	protected $form_coniguration;
+
+	/**
+	 * Field Addittional Configuration form
+	 */
+	protected $form_coniguration_addittional;
 
 	/**
 	 * Construct.
@@ -84,7 +94,7 @@ class UCMFormField //extends JFormField
 	 */
 	public function __construct($field = null)
 	{
-		//parent::__construct($form);
+		$this->params = new JRegistry();
 	}
 
 	/**
@@ -156,11 +166,20 @@ class UCMFormField //extends JFormField
 	}
 
 	/**
-	 * Return form for a field configuration
+	 * Return form for a field main configuration
 	 */
-	public function getFormConfiguration () {
+	public function getFormConfiguration ()
+	{
+		return $this->form_configuration;
+	}
+
+	/**
+	 * Return form for a field addittional configuration
+	 */
+	public function getFormConfigurationAddittinal ()
+	{
 		// Get form object
-		if(!$this->coniguration_form)
+		if(!$this->form_coniguration_addittional)
 		{
 			try
 			{
@@ -174,7 +193,7 @@ class UCMFormField //extends JFormField
 				$form = JForm::getInstance($this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]');
 				$form->bind($this->getProperties());
 
-				$this->coniguration_form['addittional'] = $form;
+				$this->form_coniguration_addittional = $form;
 			}
 			catch (Exception $e)
 			{
@@ -185,7 +204,7 @@ class UCMFormField //extends JFormField
 
 		}
 
-		return $this->coniguration_form;
+		return $this->form_coniguration_addittional;
 	}
 
 

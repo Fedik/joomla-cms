@@ -11,8 +11,9 @@ defined('_JEXEC') or die;
 
 //$displayData - is UCMFormField object
 
-$form = $displayData->getFormConfiguration();
-var_dump($form);
+$form_main = $displayData->getFormConfiguration();
+$form_add = $displayData->getFormConfigurationAddittinal();
+var_dump($form_main, $form_add);
 ?>
 <div class="field">
  <?php echo 'a'; ?>
