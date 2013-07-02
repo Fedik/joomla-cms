@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ucm component="com_content">
+	<types>
+		<!-- Define conetnt type -->
+		<!-- Define the main Fields and possible metatada -->
+		<type name="article" metadata="true" publishoptions="true" permissions="true">
+			<fields>
+				<!-- Main Fields related to this content type -->
+
+				<field name="id"  type="text" class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
+					description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0"
+					readonly="true" />
+				<field name="title" type="text" label="JGLOBAL_TITLE"
+					description="JFIELD_TITLE_DESC" class="input-xlarge" size="30"
+					required="true" labelclass="control-label" />
+
+				<field name="alias" type="text" label="JFIELD_ALIAS_LABEL"
+					description="JFIELD_ALIAS_DESC" class="inputbox" size="45" labelclass="control-label" />
+
+				<field name="catid" type="categoryedit"
+					label="JCATEGORY" description="JFIELD_CATEGORY_DESC"
+					class="inputbox" required="true" />
+
+				<field name="tags"	type="tag" label="JTAG" description="JTAG_DESC"
+					class="inputbox span12 small" multiple="true" />
+
+				<field name="image" type="media" store="images/{Y-m-d}/"
+					label="COM_CONTENT_FIELD_IMAGE_LABEL"
+					description="COM_CONTENT_FIELD_IMAGE_DESC"
+					labelclass="control-label"/>
+
+				<field name="articletext" type="editor" class="inputbox"
+					label="COM_CONTENT_FIELD_ARTICLETEXT_LABEL" description="COM_CONTENT_FIELD_ARTICLETEXT_DESC"
+					filter="JComponentHelper::filterText" buttons="true" />
+
+			</fields>
+			<config>
+				<!-- Configuration fields if need any -->
+			</config>
+
+			<views>
+				<!-- Default views -->
+				<view name="form">
+					<!-- Related fields list -->
+					<!-- For Form - we use same attributes -->
+					<field name="id" access="4" />
+					<field name="title" access="4" />
+					<field name="alias" access="4" />
+					<field name="catid" access="4" />
+					<field name="tags" access="4" />
+					<field name="image" access="4"
+						preview="300x150" previewscalle="crop"
+						lightbox="1024x800" lightboxscalle="fit" />
+					<field name="articletext" access="4" />
+				</view>
+				<view name="intro">
+					<!-- Related fields list -->
+					<!--
+						Each view can contain also any fields from common form
+						eg: metadata, publishoptions, permissions
+					-->
+					<field name="title" access="1"
+						some-configuration-params="" />
+
+					<field name="created" format="%Y-%m-%d %H:%M:%S" access="1"
+						label="COM_CONTENT_FIELD_CREATED_LABEL" />
+
+					<field name="created_by" access="1"
+						label="COM_CONTENT_FIELD_CREATED_BY_LABEL" />
+
+					<field name="catid" access="1"
+						some-configuration-params="" />
+
+					<field name="image" access="1"
+						preview="300x150" previewscalle="crop" previewfilter="grayscale"
+						display="with link" />
+
+					<field name="articletext" access="1"
+						some-configuration-params="" display="intro" />
+
+					<field name="tags" access="1" />
+				</view>
+				<view name="fullview">
+					<!-- Related fields list -->
+					<field name="title" access="1"
+						some-configuration-params="" />
+
+					<field name="created" format="%Y-%m-%d %H:%M:%S" access="1"
+						label="COM_CONTENT_FIELD_CREATED_LABEL" />
+
+					<field name="created_by" access="1"
+						label="COM_CONTENT_FIELD_CREATED_BY_LABEL" />
+
+					<field name="catid" access="1"
+						some-configuration-params="" />
+
+					<field name="image" access="4"
+						preview="300x150" previewscalle="crop" previewfilter="grayscale"
+						lightbox="1024x800" lightboxscalle="fit" />
+
+					<field name="articletext" access="1"
+						some-configuration-params="" display="full" />
+
+					<field name="tags" access="1" />
+				</view>
+				<view name="feed">
+					<!-- Maybe better make this view not here -->
+					<!-- Related fields list -->
+					<field name="title" access="1"
+						some-configuration-params="" />
+
+					<field name="created" format="%Y-%m-%d %H:%M:%S" access="1"
+						label="COM_CONTENT_FIELD_CREATED_LABEL" />
+
+					<field name="image" access="1"
+						preview="300x150" previewscalle="crop" previewfilter="grayscale"
+						display="with link" />
+
+					<field name="articletext" access="1"
+						some-configuration-params="" display="intro" />
+				</view>
+
+			</views>
+		</type>
+	</types>
+	<tables>
+		<!-- Table description -->
+		<table  type="special" name="#__content" key="id">
+			<field type="int" name="id" default="" extra="AUTO_INCREMENT"
+				description="Primary key" />
+
+			<field type="mediumtext" name="fulltext" default=""
+				description="Store Full Text" />
+		</table>
+	</tables>
+	<administrator>
+		<!--
+			Describe the table of content for display the items list
+			eg. display the table with columns id/title/created/author
+		-->
+	</administrator>
+</ucm>
