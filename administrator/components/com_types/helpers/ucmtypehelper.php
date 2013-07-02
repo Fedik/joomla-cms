@@ -37,6 +37,10 @@ class UCMTypeHelper
 	 * @param   string  $type_alias  Type alias.
 	 *
 	 * @return  array Array with fields
+	 *
+	 * @TODO: wrong way, change!
+	 * 		better: try use ucm.xml for define a base fields,
+	 * 		store these fields in database, and then load...
 	 */
 	public static function getFieldsDefault($type_alias)
 	{
