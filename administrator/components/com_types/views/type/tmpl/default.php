@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-//var_dump($this->form);
+
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_types&layout=edit&id=' . (int) $this->item->type_id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate form-horizontal">
 	<div class="row-fluid">
