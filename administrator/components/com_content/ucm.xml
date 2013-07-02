@@ -4,9 +4,8 @@
 		<!-- Define conetnt type -->
 		<!-- Define the main Fields and possible metatada -->
 		<type name="article" metadata="true" publishoptions="true" permissions="true">
+			<!-- Main Fields related to this content type -->
 			<fields>
-				<!-- Main Fields related to this content type -->
-
 				<field name="id"  type="text" class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
 					description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0"
 					readonly="true" />
@@ -52,6 +51,18 @@
 						preview="300x150" previewscalle="crop"
 						lightbox="1024x800" lightboxscalle="fit" />
 					<field name="articletext" access="4" />
+
+					<!--
+						Would be cool to have a some separator for allow the multisteps form
+						eg:
+							part 1:
+								fields list
+							part 2:
+								fields list
+							part 3:
+								fields list
+					-->
+
 				</view>
 				<view name="intro">
 					<!-- Related fields list -->

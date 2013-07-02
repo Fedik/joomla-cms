@@ -33,14 +33,11 @@ class UCMTypeHelper
 
 	/**
 	 * Return Default Content type Fields.
+	 * Take fields from ucm.xml of Content Type defination.
 	 *
 	 * @param   string  $type_alias  Type alias.
 	 *
 	 * @return  array Array with fields
-	 *
-	 * @TODO: wrong way, change!
-	 * 		better: try use ucm.xml for define a base fields,
-	 * 		store these fields in database, and then load...
 	 */
 	public static function getFieldsDefault($type_alias)
 	{
@@ -50,6 +47,7 @@ class UCMTypeHelper
 		if (isset($fields_cache[$type_alias])) {
 			return $fields_cache[$type_alias];
 		}
+		$fields_cache[$type_alias] = array();
 
 		JLoader::import('cms.form.ucmfield');
 
@@ -57,79 +55,61 @@ class UCMTypeHelper
 
 		// Find file name
 		$alias_parts = explode('.', $type_alias);
-		$source = empty($alias_parts[1]) ? $alias_parts[0] : $alias_parts[1];
-
-		// Add include folders
-		$path_administrator = JPATH_ADMINISTRATOR . '/components/' . $alias_parts[0];
-
-		JForm::addFormPath($path_administrator . '/models/forms');
-		//JForm::addFieldPath($path_administrator . '/models/fields');
-		JForm::addFormPath($path_administrator . '/model/form');
-		//JForm::addFieldPath($path_administrator . '/model/field');
-
-		// Get a original form.
-		try
+		if(count($alias_parts) != 2)
 		{
-			//$form = JForm::getInstance($type_alias, $source, array(), true);
-			//$fields = JForm::getInstance($type_alias, $source, array(), true, 'descendant-or-self::field');
-			// Get fields out from groups
-			// @TODO: hm ???
-			// @TODO: need strong separation betwen main fields and addittional fields
-			//		  need more safe way to get the main fields, eg: title, text;
-			//		  and skip metadata, options, language etc.
-			$fields = JForm::getInstance($type_alias, $source, array(), true,
-					'field'
-					. ' | descendant::fieldset[not(@name)]/field' // The user form have fieldset[@name]
-					. ' | descendant::fields[not(@name)]/field'
-					. ' | descendant::fields[not(@name)]/fieldset/field'
-					);
-			//$names = JForm::getInstance($type_alias, $source, array(), true, '//@name');
-
+			// TODO: wrong alias. Need a message or throw
 		}
-		catch (Exception $e)
+		$component = $alias_parts[0];
+		$type = $alias_parts[1];
+
+		// Path to ucm.xml file
+		$ucmFile = JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component . '/ucm.xml');
+
+		if (!file_exists($ucmFile) || !$ucmXML = simplexml_load_file($ucmFile))
 		{
-			$app->enqueueMessage($e->getMessage(), 'error');
-			return array();
+			//TODO: need throw here ???
+			return $fields_cache[$type_alias];
 		}
 
-		// Fields elements
-		$elements = $fields->getGroup(null);
-		//return empty($elements) ? array() : array_values($elements);
+		// Ok file exist move on
+		// Get default fields
+		$elements = $ucmXML->xpath('/ucm/types/type[@name="' . $type . '"]/fields/field');
 
-		$fields_cache[$type_alias] = array();
 		$i = 0;
 		foreach ($elements as $element){
-			$type = strtolower($element->type);
+			// Prepare
+			$attributes = $element->attributes();
+			$field_name = (string) $attributes->name;
+			$field = new UCMFormField();
+			$JFormField = null;
 
-			// Skip Spacer
-			if($type == 'spacer')
+			// TODO: realy nee it ???
+			if($JFormField = JFormHelper::loadFieldType((string) $attributes->type))
 			{
-				continue;
+				$JFormField->setup($element, '');
 			}
 
-			$field = new UCMFormField();
-
+			// Setup,
+			// TODO: looks ugly no? (:
 			$field->setup(array(
 				'field_id' => null,
-				'type' => $type,
-				'name' => $element->name,
-				'label' => $element->title,
-				'default' => $element->default,
+				'type' => (string) $attributes->type,
+				'name' => $field_name,
+				'label' => (string) $attributes->label,
+				'default' => (string) $attributes->default,
 				'ordering' => $i,
 				'state' => 1,
 				'view' => 'form',
 				'view_type' => 'input',
-				'value' => $element->value,
-				'element' => $element,
+				'value' => (string) $attributes->value,
+				'element' => $JFormField,
 			));
 
-			$fields_cache[$type_alias][] = $field;
-			$i++;
-
-
+			$fields_cache[$type_alias][$field_name] = $field;
 		}
 
-		return $fields_cache[$type_alias];;
+		return $fields_cache[$type_alias];
+
 	}
 
 }
