@@ -32,12 +32,15 @@ foreach($displayData as $field) {
 	<div class="">
 		<h4><?php echo JText::_('COM_TYPES_FIELDS_ACTIVE_LABEL'); ?></h4>
 		<div class="control-group">
+			<!-- Display active fields -->
+			<!-- With posibility change status by Drag-and-Drop -->
 			<?php echo implode("\n", $active); ?>
 		</div>
 	</div>
 	<div class="">
 		<h4><?php echo JText::_('COM_TYPES_FIELDS_INACTIVE_LABEL'); ?></h4>
 		<div class="control-group">
+			<!-- Display inactive fields -->
 			<?php echo implode("\n", $inactive); ?>
 		</div>
 	</div>

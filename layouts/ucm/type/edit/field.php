@@ -16,5 +16,12 @@ $form_add = $displayData->getFormConfigurationAddittinal();
 var_dump($form_main, $form_add);
 ?>
 <div class="field">
- <?php echo 'a'; ?>
+	<!-- Render inputs for a main configuration  -->
+
+	<!--
+		Render inputs for the addittional configuration if exist,
+		Show/Hide this fields using SlideDown/SlideUp after click
+		on Addittional configuration button
+	 -->
+
 </div>

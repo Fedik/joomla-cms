@@ -27,7 +27,10 @@ class UCMTypeHelper
 	 */
 	public static function getFields($type_alias, $view = 'form', $published_only = true)
 	{
-		// TODO: load fields from database eg #__fields_layouts or something
+		// TODO: load fields from database;
+		//		main fields stored in table like #__ucm_fields;
+		//		fields relation to View stored in separated table like #__ucm_layouts;
+		//		or something
 		return array();
 	}
 
@@ -83,7 +86,7 @@ class UCMTypeHelper
 			$field = new UCMFormField();
 			$JFormField = null;
 
-			// TODO: realy nee it ???
+			// TODO: realy need it ???
 			if($JFormField = JFormHelper::loadFieldType((string) $attributes->type))
 			{
 				$JFormField->setup($element, '');
