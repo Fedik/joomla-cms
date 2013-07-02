@@ -119,6 +119,15 @@
 			<option value="1">JYES</option>
 		</field>
 
+		<field name="tags" 
+			type="tag"
+			label="JTAG"
+			description="JTAG_DESC"
+			class="inputbox span12 small"
+			multiple="true"
+		>
+		</field>
+
 		<field name="rules" type="rules" label="JFIELD_RULES_LABEL"
 			translate_label="false" class="inputbox" filter="rules"
 			component="com_content" section="article" validate="rules"
@@ -797,12 +806,7 @@
 	<fields name="metadata">
 		<fieldset name="jmetadata"
 			label="JGLOBAL_FIELDSET_METADATA_OPTIONS">
-				<field name="tags" type="tag"
-					label="JTAG" description="JTAG_DESC"
-					class="inputbox span12 small" multiple="true"
-				>
-				</field>
-
+	
 				<field name="robots"
 					type="list"
 					label="JFIELD_METADATA_ROBOTS_LABEL"
@@ -815,11 +819,11 @@
 					<option value="index, nofollow">JGLOBAL_INDEX_NOFOLLOW</option>
 					<option value="noindex, nofollow">JGLOBAL_NOINDEX_NOFOLLOW</option>
 				</field>
-
+	
 				<field name="author" type="text"
 					label="JAUTHOR" description="JFIELD_METADATA_AUTHOR_DESC"
 					size="20" labelclass="control-label" />
-
+	
 				<field name="rights" type="textarea" label="JFIELD_META_RIGHTS_LABEL"
 					description="JFIELD_META_RIGHTS_DESC" required="false" filter="string"
 					cols="30" rows="2" labelclass="control-label" />
