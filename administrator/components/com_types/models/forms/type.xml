@@ -31,10 +31,10 @@
 		default="input"
 		readonly="true"
 	/>
--->
+
 	<field name="fields" type="field"
 		label="COM_TYPES_FIELD_FIELDS_LABEL" description ="COM_TYPES_FIELD_FIELDS_DESC"
 	/>
-
+-->
 
 </form>
