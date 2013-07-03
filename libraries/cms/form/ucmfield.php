@@ -88,6 +88,12 @@ class UCMFormField //extends JFormField
 	public $params;
 
 	/**
+	 * The form control prefix for field names.
+	 * TODO: ho ho ho !!! Should be more smart way !!!
+	 */
+	protected $form_coniguration_control;
+
+	/**
 	 * Field Configuration form
 	 */
 	protected $form_coniguration;
@@ -173,6 +179,7 @@ class UCMFormField //extends JFormField
 		return $this;
 	}
 
+
 	/**
 	 * Get all properties
 	 */
@@ -197,7 +204,12 @@ class UCMFormField //extends JFormField
 
 			try
 			{
-				$form = JForm::getInstance('main.' . $this->type . '.' . $this->name, 'field', array(), true, '//fieldset[@name="' . $this->view_type . '"]');
+				$form = JForm::getInstance(
+						'main.' . $this->type . '.' . $this->name,
+						'field',
+						array('control' => $this->form_coniguration_control),
+						true,
+						'//fieldset[@name="' . $this->view_type . '"]');
 				$form->bind($this->getProperties());
 
 				$this->form_configuration = $form;

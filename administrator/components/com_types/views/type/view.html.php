@@ -29,7 +29,14 @@ class TypesViewType extends JViewLegacy
 		$this->item  = $this->get('Item');
 		$this->state = $this->get('State');
 
-
+		//TODO: ho ho ho !!!
+		// 		Should be more smart way !!!
+		foreach($this->item->fields as $field){
+			$field->setup(array(
+				'form_coniguration_control' => 'jform[fields]['.$field->name.']'
+			));
+		}
+		//var_dump($this->item->fields);
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {

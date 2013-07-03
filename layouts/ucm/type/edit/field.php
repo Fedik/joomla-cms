@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 
 $form_main = $displayData->getFormConfiguration();
 $form_add = $displayData->getFormConfigurationAddittinal();
-//var_dump($form_main->getFieldset(), $form_add);
+//var_dump($form_main, $form_add);
 ?>
 <div class="field">
 	<!-- Render inputs for a main configuration  -->
