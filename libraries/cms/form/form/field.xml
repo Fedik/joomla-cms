@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="input">
+		<field name="field_id" type="hidden" />
+
+		<!--
+			TODO: need the Select list for:
+					- select one of the available types
+					- slect Validation
+					- select Filter
+		-->
+
+		<field name="type" type="hidden" />
+
+		<field name="label"	type="text"
+			default=""	size="10"
+			label="JGLOBAL_FIELD_LABEL_LABEL" description ="JGLOBAL_FIELD_LABEL_DESC"
+		/>
+
+		<field name="state" type="checkbox"
+			filter="intval" default="1"
+			label="JSTATUS" description="JFIELD_PUBLISHED_DESC" />
+
+		<field name="validation" type="list"
+			label="JFIELD_VALIDATION_LABEL"	description="JFIELD_VALIDATION_DESC"
+		>
+			<option value="0">JNONE</option>
+			<option value="required">JREQUIRED</option>
+			<option value="email">JGLOBAL_EMAIL</option>
+			<option value="url">URL</option>
+		</field>
+
+		<field name="filter" type="list" default="string"
+			label="JGLOBAL_FILTER_LABEL" description="JGLOBAL_FILTER_DESC"
+		>
+			<option value="string">STRING</option>
+			<option value="integer">INTEGER</option>
+			<option value="float">FLOAT</option>
+			<option value="html">HTML</option>
+		</field>
+
+
+	</fieldset>
+
+	<fieldset name="value">
+		<field name="field_id" type="hidden" />
+
+		<field name="label"	type="text"
+			default=""	size="10"
+			label="JGLOBAL_FIELD_LABEL_LABEL" description ="JGLOBAL_FIELD_LABEL_DESC"
+		/>
+
+		<!--
+			TODO: what else we need here ???
+		-->
+
+	</fieldset>
+</form>

@@ -68,6 +68,16 @@ class UCMFormField //extends JFormField
 	protected $value;
 
 	/**
+	 * Validation type
+	 */
+	protected $validation;
+
+	/**
+	 * Filter for filter value
+	 */
+	protected $filter;
+
+	/**
 	 * Field JFormField Element
 	 */
 	protected $element;
@@ -181,6 +191,23 @@ class UCMFormField //extends JFormField
 	{
 		// TODO: return form for defaul params
 		// 		eg. id, type, label, access, validation, filter
+		if(!$this->form_configuration)
+		{
+			JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
+
+			try
+			{
+				$form = JForm::getInstance('main.' . $this->type . '.' . $this->name, 'field', array(), true, '//fieldset[@name="' . $this->view_type . '"]');
+				$form->bind($this->getProperties());
+
+				$this->form_configuration = $form;
+			}
+			catch (Exception $e)
+			{
+				// TODO: What to do here ???
+				JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			}
+		}
 		return $this->form_configuration;
 	}
 
@@ -201,8 +228,8 @@ class UCMFormField //extends JFormField
 				//	first - main configuration, eg: id, type, label, access, validation, filter
 				//	second - comes from {type}.xml addittional configuration, eg: default, class, options and other possible field atributes
 
-				$form = JForm::getInstance($this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]');
-				$form->bind($this->getProperties());
+				$form = JForm::getInstance('addittional.' . $this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]');
+				$form->bind($this->params->toArray());
 
 				$this->form_coniguration_addittional = $form;
 			}
