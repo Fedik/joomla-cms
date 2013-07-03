@@ -216,6 +216,9 @@ class UCMFormField //extends JFormField
 	 */
 	public function getFormConfigurationAddittinal ()
 	{
+		// temporary disable
+		return $this->form_coniguration_addittional;
+
 		// Get form object
 		if(!$this->form_coniguration_addittional)
 		{
@@ -228,7 +231,7 @@ class UCMFormField //extends JFormField
 				//	first - main configuration, eg: id, type, label, access, validation, filter
 				//	second - comes from {type}.xml addittional configuration, eg: default, class, options and other possible field atributes
 
-				$form = JForm::getInstance('addittional.' . $this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]');
+				$form = JForm::getInstance('addittional.' . $this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]/field');
 				$form->bind($this->params->toArray());
 
 				$this->form_coniguration_addittional = $form;

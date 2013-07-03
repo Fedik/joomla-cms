@@ -125,7 +125,7 @@ class TypesModelType extends JModelAdmin
 		if(empty($fields)){
 			$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
 		}
-var_dump($this);
+
 		$item->set('item_view', $item_view);
 		$item->set('fields', $fields);
 

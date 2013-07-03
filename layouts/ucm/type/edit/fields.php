@@ -25,7 +25,7 @@ foreach($displayData as $field) {
 	}
 
 	//var_dump($field);
-	break;
+	//break;
 }
 ?>
 <div class="row-fluid">

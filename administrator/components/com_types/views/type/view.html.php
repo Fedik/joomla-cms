@@ -47,7 +47,10 @@ class TypesViewType extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
+		JToolbarHelper::title(JText::_('COM_TYPES'));
 
+		JToolbarHelper::apply('tag.apply');
+		JToolbarHelper::save('tag.save');
 	}
 
 
