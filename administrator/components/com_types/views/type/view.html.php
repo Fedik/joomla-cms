@@ -33,7 +33,7 @@ class TypesViewType extends JViewLegacy
 		// 		Should be more smart way !!!
 		foreach($this->item->fields as $field){
 			$field->setup(array(
-				'form_coniguration_control' => 'jform[fields]['.$field->name.']'
+				'form_config_control' => 'jform[fields]['.$field->name.']'
 			));
 		}
 		//var_dump($this->item->fields);

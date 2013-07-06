@@ -91,17 +91,7 @@ class UCMFormField //extends JFormField
 	 * The form control prefix for field names.
 	 * TODO: ho ho ho !!! Should be more smart way !!!
 	 */
-	protected $form_coniguration_control;
-
-	/**
-	 * Field Configuration form
-	 */
-	protected $form_coniguration;
-
-	/**
-	 * Field Addittional Configuration form
-	 */
-	protected $form_coniguration_addittional;
+	protected $form_config_control;
 
 	/**
 	 * Construct.
@@ -194,70 +184,63 @@ class UCMFormField //extends JFormField
 	/**
 	 * Return form for a field main configuration
 	 */
-	public function getFormConfiguration ()
+	public function getFormConfig()
 	{
 		// TODO: return form for defaul params
 		// 		eg. id, type, label, access, validation, filter
-		if(!$this->form_configuration)
+
+		JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
+		try
 		{
-			JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
+			$form = JForm::getInstance(
+					'main.' . $this->type . '.' . $this->name,
+					'field',
+					array('control' => $this->form_config_control),
+					true,
+					'//fieldset[@name="' . $this->view_type . '"]');
+			$form->bind($this->getProperties());
 
-			try
-			{
-				$form = JForm::getInstance(
-						'main.' . $this->type . '.' . $this->name,
-						'field',
-						array('control' => $this->form_coniguration_control),
-						true,
-						'//fieldset[@name="' . $this->view_type . '"]');
-				$form->bind($this->getProperties());
-
-				$this->form_configuration = $form;
-			}
-			catch (Exception $e)
-			{
-				// TODO: What to do here ???
-				JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-			}
+			return $form;
 		}
-		return $this->form_configuration;
+		catch (Exception $e)
+		{
+			// TODO: What to do here ???
+			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+		}
+
+		return null;
 	}
 
 	/**
 	 * Return form for a field addittional configuration
 	 */
-	public function getFormConfigurationAddittinal ()
+	public function getFormConfigMore()
 	{
 		// temporary disable
-		return $this->form_coniguration_addittional;
+		return null;
 
 		// Get form object
-		if(!$this->form_coniguration_addittional)
+		try
 		{
-			try
-			{
-				// TODO: need better place for field.xml form !!!
-				//JForm::addFormPath(JPATH_LIBRARIES . '/form/fields');
+			// TODO: need better place for field.xml form !!!
+			//JForm::addFormPath(JPATH_LIBRARIES . '/form/fields');
 
-				// TODO: need a two form:
-				//	first - main configuration, eg: id, type, label, access, validation, filter
-				//	second - comes from {type}.xml addittional configuration, eg: default, class, options and other possible field atributes
+			// TODO: need a two form:
+			//	first - main configuration, eg: id, type, label, access, validation, filter
+			//	second - comes from {type}.xml addittional configuration, eg: default, class, options and other possible field atributes
 
-				$form = JForm::getInstance('addittional.' . $this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]/field');
-				$form->bind($this->params->toArray());
+			$form = JForm::getInstance('addittional.' . $this->type . '.' . $this->name, $this->type, array(), true, '//fieldset[@name="' . $this->view_type . '"]/field');
+			$form->bind($this->params->toArray());
 
-				$this->form_coniguration_addittional = $form;
-			}
-			catch (Exception $e)
-			{
-				var_dump(JFormHelper::addFormPath());
-				// TODO: What to do here ???
-				JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-			}
-
+			return $form;
+		}
+		catch (Exception $e)
+		{
+			// TODO: What to do here ???
+			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 		}
 
-		return $this->form_coniguration_addittional;
+		return null;
 	}
 
 
