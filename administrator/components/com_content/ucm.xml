@@ -3,6 +3,13 @@
 	<types>
 		<!-- Define conetnt type -->
 		<!-- Define the main Fields and possible metatada -->
+		<!--
+			name - content type name;
+			metadata - whether use and display the form for metadata;
+			publishoptions - display the form for Publish Options, it will used in any case,
+							 just will be hiden when publishoptions="false";
+			permissions - whether use and display form for permissions;
+		-->
 		<type name="article" metadata="true" publishoptions="true" permissions="true">
 			<!-- Main Fields related to this content type -->
 			<fields>
@@ -136,6 +143,7 @@
 	</types>
 	<tables>
 		<!-- Table description -->
+		<!-- Table for the fields that do not exist in common table -->
 		<table  type="special" name="#__content" key="id">
 			<field type="int" name="id" default="" extra="AUTO_INCREMENT"
 				description="Primary key" />
@@ -149,5 +157,42 @@
 			Describe the table of content for display the items list
 			eg. display the table with columns id/title/created/author
 		-->
+		<view name="table" contenttype="article" label="COM_CONTENT_ARTICLES_TITLE">
+			<!-- Define the Fields used for build the table -->
+			<column label="JGRID_HEADING_ID" class="hidden-phone">
+				<field name="id" filter="true" sort="true" />
+			</column>
+
+			<column label="JSTATUS" class="hidden-phone">
+				<field name="state" filter="true" sort="true" />
+			</column>
+
+			<column label="JGLOBAL_TITLE">
+				<field name="title" filter="true" sort="true" />
+				<field name="catid" filter="true" sort="true"
+					label="JCATEGORY" />
+			</column>
+
+			<column label="JFIELD_ACCESS_LABEL" class="nowrap hidden-phone">
+				<field name="access" filter="true" sort="true" />
+			</column>
+
+			<column label="JAUTHOR" class="nowrap hidden-phone">
+				<field name="created_by" filter="true" sort="true" />
+			</column>
+
+			<column label="JGRID_HEADING_LANGUAGE" class="nowrap hidden-phone">
+				<field name="language" filter="true" sort="true" />
+			</column>
+
+			<column label="JDATE" class="nowrap hidden-phone">
+				<field name="created" filter="true" sort="true"
+					format="%Y-%m-%d" />
+			</column>
+
+			<column label="JGLOBAL_HITS" class="nowrap hidden-phone">
+				<field name="hits" filter="true" sort="true" />
+			</column>
+		</view>
 	</administrator>
 </ucm>
