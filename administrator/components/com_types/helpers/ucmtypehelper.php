@@ -45,10 +45,95 @@ class UCMTypeHelper
 		$db = JFactory::getDbo();
 		$typeTable = JTable::getInstance('Contenttype', 'JTable');
 
+		// TODO: Import/modify types and their views
 
-		var_dump($ucmXML, $typeTable);
 
-		return false;
+		// TODO: Import/modify admin views
+
+		// TODO: Create or modify tables
+
+		return true;
+		// not works!
+		$tablesXML = $ucmXML->xpath('/ucm[@component="' . $component . '"]/tables/table');
+		foreach($tablesXML as $tableXML) {
+			$tableAttributes = $tableXML->attributes();
+			$name = (string) $tableAttributes->name;
+			$tableFieldsXML = $tableXML->xpath('field[@name]');
+
+			// Check if exist
+			$table = null;
+			try{
+				$table = $db->getTableCreate($name);
+			}
+			catch (Exception $e){}
+
+			if (!$table)
+			{
+				// TODO: Create new table, need a better way !!!
+				$field_query = array();
+				$query = 'CREATE TABLE ' . $db->quoteName($name) . ' (' . "\n";
+
+				foreach($tableFieldsXML as $k => $tableField) {
+					$fieldAttributes = $tableField->attributes();
+					$field_name = (string) $fieldAttributes->name;
+					$field_type = JString::strtoupper((string) $fieldAttributes->type);
+					if(!$field_type) {
+						$field_type = 'VARCHAR';
+					}
+					$field_lenght = (int) $fieldAttributes->lenght;
+					if(!$field_lenght && $field_type == 'VARCHAR') {
+						$field_lenght = 255;
+					}
+					$field_extra = (string) $fieldAttributes->extra;
+					$field_default = (string) $fieldAttributes->default;
+					$field_comment = (string) $fieldAttributes->comment;
+
+					$field_query[$k] = $db->quoteName($field_name);
+					$field_query[$k] .= ' ' . $field_type;
+					$field_query[$k] .= $field_lenght ? '(' . $field_lenght . ')' : '';
+					$field_query[$k] .= ' ' . $field_extra;
+					if($field_default)
+					{
+						$field_query[$k] .= ' DEFAULT ' . $db->quote($field_default);
+					}
+					if($field_comment)
+					{
+						$field_query[$k] .= ' COMMENT ' . $db->quote($field_comment);
+					}
+
+				}
+				$query .= implode(",\n", $field_query);
+				// Finish query
+				$table_extra = (string) $tableAttributes->extra;
+				if($table_extra) {
+					// TODO: noooo! need know what is extra exactly eg ENGINE/CHARSET ...
+					$query .= ') ' . $table_extra . ';';
+				}
+				else {
+					$query .= ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+				}
+
+				$db->setQuery($query);
+
+				try{
+					$db->execute();
+				}
+				catch (Exception $e){
+					$app->enqueueMessage($e->getMessage(), 'error');
+					return false;
+				}
+
+
+
+			}
+			else
+			{
+				// TODO: Compare the differences and modify table
+			}
+
+		}
+
+		return true;
 	}
 
 	/**

@@ -637,11 +637,13 @@
 	<tables>
 		<!-- Table description -->
 		<!-- Table for the fields that do not exist in common table -->
-		<table  type="special" name="#__content" key="id">
-			<field type="int" name="id" default="" extra="AUTO_INCREMENT"
+		<table  type="special" name="#__content_t" key="id">
+			<field type="int" lenght="10" name="id" default=""
+				extra="NOT NULL AUTO_INCREMENT"
 				comment="Primary key" />
 
 			<field type="mediumtext" name="fulltext" default=""
+				extra="NOT NULL"
 				comment="Store Full Text" />
 		</table>
 	</tables>
