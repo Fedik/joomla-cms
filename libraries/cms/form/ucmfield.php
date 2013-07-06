@@ -78,6 +78,11 @@ class UCMFormField //extends JFormField
 	protected $filter;
 
 	/**
+	 * Whether the field is multiple
+	 */
+	protected $multiple;
+
+	/**
 	 * Field JFormField Element
 	 */
 	protected $element;

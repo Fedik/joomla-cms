@@ -127,6 +127,7 @@ class TypesModelType extends JModelAdmin
 		}
 		//TODO: ho ho ho !!!
 		// 		Should be more smart way !!!
+		// 		such thing should be in getForm()
 		foreach($fields as $field){
 			$field->setup(array(
 				'form_config_control' => 'jform[fields]['.$field->name.']'
