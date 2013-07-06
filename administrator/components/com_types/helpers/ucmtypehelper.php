@@ -43,10 +43,41 @@ class UCMTypeHelper
 		// init main variables
 		$app = JFactory::getApplication();
 		$db = JFactory::getDbo();
-		$typeTable = JTable::getInstance('Contenttype', 'JTable');
 
-		// TODO: Import/modify types and their views
+		// TODO: Import/modify types, their fields and their views
+		$typesXML = $ucmXML->xpath('/ucm[@component="' . $component . '"]/types/type');
+		foreach($typesXML as $typeXML) {
+			$typeTable = JTable::getInstance('Contenttype', 'JTable');
 
+			$typeAttributes = $typeXML->attributes();
+			$type_name = (string) $typeAttributes->name;
+
+			if(!$type_name) continue;
+
+			// Get info
+			$type_alias = $component . '.' . $type_name;
+			$type_title = empty($typeAttributes->title) ? $type_name : (string) $typeAttributes->title;
+			$type_metadata = !isset($typeAttributes->metadata) || $typeAttributes->metadata == 'true' || $typeAttributes->metadata == '1' ? 1 : 0 ;
+			$type_publishoptions = !isset($typeAttributes->publishoptions) || $typeAttributes->publishoptions == 'true' || $typeAttributes->publishoptions == '1' ? 1 : 0 ;
+			$type_permissions = !isset($typeAttributes->permissions) || $typeAttributes->permissions == 'true' || $typeAttributes->permissions == '1' ? 1 : 0 ;
+
+			// load
+			$typeTable->load(array('type_alias' => $type_alias));
+			$typeTable->bind(array(
+				'type_title' => $type_title,
+				'type_alias' => $type_alias,
+				'metadata' => $type_metadata,
+				'publish_options' => $type_publishoptions,
+				'permissions' => $type_permissions,
+			));
+
+			if(!$typeTable->check() || !$typeTable->store())
+			{
+				// Something wrong
+				return false;
+			}
+
+		}
 
 		// TODO: Import/modify admin views
 
