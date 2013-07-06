@@ -26,12 +26,18 @@ $form_add = $displayData->getFormConfigMore();
 		<a href="#" class="show-addittional">More ...</a>
 	<?php endif;?>
 	</div>
-	<div class="addittional">
+	<div class="addittional control-group form-inline">
 		<!--
 			Render inputs for the addittional configuration if exist,
 			Show/Hide this fields using SlideDown/SlideUp after click
 			on Addittional configuration button
 		 -->
-	 </div>
+	<?php if($form_add): ?>
+		<?php foreach($form_add->getFieldset() as $field): ?>
+			<?php echo $field->label; ?>
+			<?php echo $field->input; ?>
+		<?php endforeach; ?>
+	<?php endif;?>
+	</div>
 
 </div>

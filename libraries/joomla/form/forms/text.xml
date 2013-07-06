@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset name="input">
-		<field name="field_id" type="hidden" />
+		<!-- Configurations for possible field attributes -->
+		<field name="default" type="text"
+			label="Default" description="Default Value"
+		/>
 
-		<field name="label"	type="text"
-			default=""	size="6" required="true"
-			label="JGLOBAL_FIELD_LABEL_LABEL" description ="JGLOBAL_FIELD_LABEL_DESC"
+		<field name="size"	type="text"
+			default="6"	size="6" filter="int"
+			label="Size" description="Field Size"
+		/>
+
+		<field name="maxlength"	type="text"
+			size="6" filter="int"
+			label="Max Length" description="Max Length"
+		/>
+
+		<field name="class"	type="text"
+			label="Class" description="Field class"
+		/>
+
+		<field name="onchange"	type="text"
+			label="Onchange" description="Onchange attribute"
 		/>
 	</fieldset>
 
