@@ -17,6 +17,41 @@ defined('_JEXEC') or die;
 class UCMTypeHelper
 {
 	/**
+	 * Import New Content type from content ucm.xml
+	 *
+	 * @param string $component Component name, eg com_content
+	 *
+	 * @return bool true on success
+	 */
+	public static function importContentType ($component)
+	{
+		// Find ucm.xml in component folder
+		$ucmFile = JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component . '/ucm.xml');
+		if (!file_exists($ucmFile) || !$ucmXML = simplexml_load_file($ucmFile))
+		{
+			// Something went wrong
+			return false;
+		}
+
+		// It is right component?
+		if(!$ucmXML->xpath('/ucm[@component="' . $component . '"]'))
+		{
+			// No Componet found
+			return false;
+		}
+		// ok move on
+		// init main variables
+		$app = JFactory::getApplication();
+		$db = JFactory::getDbo();
+		$typeTable = JTable::getInstance('Contenttype', 'JTable');
+
+
+		var_dump($ucmXML, $typeTable);
+
+		return false;
+	}
+
+	/**
 	 * Return Content type Fields for given View.
 	 *
 	 * @param   string  $type_alias  Type alias.

@@ -16,6 +16,10 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_types'))
 
 JLoader::register('UCMTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
 
+//test here hehe
+UCMTypeHelper::importContentType('com_content');
+return;
+
 $controller = JControllerLegacy::getInstance('Types');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();
