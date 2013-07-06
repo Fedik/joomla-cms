@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+	Here we:
+	- define the content types related to current componet
+	- defaine the main table and addittional tables(if need)
+	- define viwes, for display the content items, for frontend and for backend
+-->
 <ucm component="com_content">
 	<types>
 		<!-- Define conetnt type -->
@@ -9,55 +15,551 @@
 			publishoptions - display the form for Publish Options, it will used in any case,
 							 just will be hiden when publishoptions="false";
 			permissions - whether use and display form for permissions;
+			table - table where store the main fields, can be omitted, default is #__ucm_content
 		-->
-		<type name="article" metadata="true" publishoptions="true" permissions="true">
+		<type name="article" metadata="true" publishoptions="true" permissions="true" table="#__ucm_content">
 			<!-- Main Fields related to this content type -->
 			<fields>
-				<field name="id"  type="text" class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
+				<field name="core_content_item_id"  type="text" class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
 					description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0"
 					readonly="true" />
-				<field name="title" type="text" label="JGLOBAL_TITLE"
+
+				<field name="core_title" type="text" label="JGLOBAL_TITLE"
 					description="JFIELD_TITLE_DESC" class="input-xlarge" size="30"
 					required="true" labelclass="control-label" />
 
-				<field name="alias" type="text" label="JFIELD_ALIAS_LABEL"
+				<field name="core_alias" type="text" label="JFIELD_ALIAS_LABEL"
 					description="JFIELD_ALIAS_DESC" class="inputbox" size="45" labelclass="control-label" />
 
-				<field name="catid" type="categoryedit"
+				<field name="core_catid" type="categoryedit"
 					label="JCATEGORY" description="JFIELD_CATEGORY_DESC"
 					class="inputbox" required="true" />
 
 				<field name="tags"	type="tag" label="JTAG" description="JTAG_DESC"
 					class="inputbox span12 small" multiple="true" />
 
-				<field name="image" type="media" store="images/{Y-m-d}/"
-					label="COM_CONTENT_FIELD_IMAGE_LABEL"
-					description="COM_CONTENT_FIELD_IMAGE_DESC"
-					labelclass="control-label"/>
-
-				<field name="articletext" type="editor" class="inputbox"
+				<field name="core_body" type="editor" class="inputbox"
 					label="COM_CONTENT_FIELD_ARTICLETEXT_LABEL" description="COM_CONTENT_FIELD_ARTICLETEXT_DESC"
 					filter="JComponentHelper::filterText" buttons="true" />
+
+				<!--
+					What to do with images and links ???
+				-->
 
 			</fields>
 			<config>
 				<!-- Configuration fields if need any -->
+				<!--
+					ok, looks bad!
+					in 90% have no sense in UCM case, because almost any of this
+					can be achieved by adding/removing the field in to related View
+				-->
+				<fieldset name="basic" label="COM_CONTENT_ATTRIBS_FIELDSET_LABEL">
+					<field
+						name="show_title"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_TITLE_LABEL"
+						description="JGLOBAL_SHOW_TITLE_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">JHIDE</option>
+						<option value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="link_titles"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_LINKED_TITLES_LABEL"
+						description="JGLOBAL_LINKED_TITLES_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JNO</option>
+						<option value="1">JYES</option>
+					</field>
+
+					<field name="show_tags" type="radio"
+						class="btn-group"
+						label="COM_CONTENT_FIELD_SHOW_TAGS_LABEL"
+						description="COM_CONTENT_FIELD_SHOW_TAGS_DESC"
+						labelclass="control-label"
+					>
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">JHIDE</option>
+						<option value="1">JSHOW</option>
+					</field>
+
+					<field name="show_intro"
+						type="radio"
+						class="btn-group"
+						description="JGLOBAL_SHOW_INTRO_DESC"
+						label="JGLOBAL_SHOW_INTRO_LABEL"
+						labelclass="control-label"
+						>
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">JHIDE</option>
+						<option value="1">JSHOW</option>
+					</field>
+					<field
+						name="info_block_position"
+						type="list"
+						default=""
+						label="COM_CONTENT_FIELD_INFOBLOCK_POSITION_LABEL"
+						description="COM_CONTENT_FIELD_INFOBLOCK_POSITION_DESC">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">COM_CONTENT_FIELD_OPTION_ABOVE</option>
+						<option value="1">COM_CONTENT_FIELD_OPTION_BELOW</option>
+						<option value="2">COM_CONTENT_FIELD_OPTION_SPLIT</option>
+					</field>
+
+					<field
+						name="show_category"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_CATEGORY_LABEL"
+						description="JGLOBAL_SHOW_CATEGORY_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="link_category"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_LINK_CATEGORY_LABEL"
+						description="JGLOBAL_LINK_CATEGORY_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JNO</option>
+						<option	value="1">JYES</option>
+					</field>
+
+					<field
+						name="show_parent_category"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
+						description="JGLOBAL_SHOW_PARENT_CATEGORY_DESC"
+						labelclass="control-label">
+						<option	value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="link_parent_category"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_LINK_PARENT_CATEGORY_LABEL"
+						description="JGLOBAL_LINK_PARENT_CATEGORY_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JNO</option>
+						<option	value="1">JYES</option>
+					</field>
+
+					<field
+						name="show_author"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_AUTHOR_LABEL"
+						description="JGLOBAL_SHOW_AUTHOR_DESC"
+						labelclass="control-label">
+						<option	value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="link_author"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_LINK_AUTHOR_LABEL"
+						description="JGLOBAL_LINK_AUTHOR_DESC"
+						labelclass="control-label">
+						<option	value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JNO</option>
+						<option	value="1">JYES</option>
+					</field>
+
+					<field
+						name="show_create_date"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_CREATE_DATE_LABEL"
+						description="JGLOBAL_SHOW_CREATE_DATE_DESC"
+						labelclass="control-label">
+						<option	value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_modify_date"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_MODIFY_DATE_LABEL"
+						description="JGLOBAL_SHOW_MODIFY_DATE_DESC"
+						labelclass="control-label">
+						<option	value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_publish_date"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_PUBLISH_DATE_LABEL"
+						description="JGLOBAL_SHOW_PUBLISH_DATE_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_item_navigation"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_NAVIGATION_LABEL"
+						description="JGLOBAL_SHOW_NAVIGATION_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_icons"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_ICONS_LABEL"
+						description="JGLOBAL_SHOW_ICONS_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_print_icon"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
+						description="JGLOBAL_SHOW_PRINT_ICON_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_email_icon"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
+						description="JGLOBAL_SHOW_EMAIL_ICON_DESC"
+						labelclass="control-label">
+						<option	value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_vote"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_VOTE_LABEL"
+						description="JGLOBAL_SHOW_VOTE_DESC"
+						labelclass="control-label"
+					>
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_hits"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_HITS_LABEL"
+						description="JGLOBAL_SHOW_HITS_DESC"
+						labelclass="control-label">
+						<option	value="">JGLOBAL_USE_GLOBAL</option>
+						<option	value="0">JHIDE</option>
+						<option	value="1">JSHOW</option>
+					</field>
+
+					<field
+						name="show_noauth"
+						type="radio"
+						class="btn-group"
+						label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
+						description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC"
+						labelclass="control-label">
+								<option value="">JGLOBAL_USE_GLOBAL</option>
+								<option value="0">JNO</option>
+								<option value="1">JYES</option>
+					</field>
+
+					<field
+						name="urls_position"
+						type="radio"
+						class="btn-group"
+						label="COM_CONTENT_FIELD_URLSPOSITION_LABEL"
+						description="COM_CONTENT_FIELD_URLSPOSITION_DESC"
+						labelclass="control-label">
+						<option value="">JGLOBAL_USE_GLOBAL</option>
+						<option value="0">COM_CONTENT_FIELD_OPTION_ABOVE</option>
+						<option value="1">COM_CONTENT_FIELD_OPTION_BELOW</option>
+					</field>
+
+					<field
+						name="spacer2"
+						type="spacer"
+						hr="true"
+					/>
+
+					<field name="alternative_readmore" type="inputbox"
+						label="JFIELD_READMORE_LABEL"
+						description="JFIELD_READMORE_DESC"
+						class="inputbox" size="25" labelclass="control-label" />
+
+					<field name="article_layout" type="componentlayout"
+						label="JFIELD_ALT_LAYOUT_LABEL"
+						description="JFIELD_ALT_COMPONENT_LAYOUT_DESC"
+						useglobal="true"
+						extension="com_content" view="article" labelclass="control-label"
+					/>
+				</fieldset>
+
+				<fieldset name="editorConfig">
+					<field
+						name="show_publishing_options"
+						type="radio"
+						class="btn-group"
+						default=""
+						label="COM_CONTENT_SHOW_PUBLISHING_OPTIONS_LABEL"
+						description="COM_CONTENT_SHOW_PUBLISHING_OPTIONS_DESC" labelclass="control-label"
+						>
+								<option value="">JGLOBAL_USE_GLOBAL</option>
+								<option value="0">JNO</option>
+								<option value="1">JYES</option>
+
+					</field>
+					<field
+						name="show_article_options"
+						type="radio"
+						class="btn-group"
+						default=""
+						label="COM_CONTENT_SHOW_ARTICLE_OPTIONS_LABEL"
+						description="COM_CONTENT_SHOW_ARTICLE_OPTIONS_DESC"
+						labelclass="control-label"
+						>
+								<option value="">JGLOBAL_USE_GLOBAL</option>
+								<option value="0">JNO</option>
+								<option value="1">JYES</option>
+
+					</field>
+					<field
+						name="show_urls_images_backend"
+						type="radio"
+						class="btn-group"
+						default=""
+						label="COM_CONTENT_SHOW_IMAGES_URLS_BACK_LABEL"
+						description="COM_CONTENT_SHOW_IMAGES_URLS_BACK_DESC"
+						labelclass="control-label"
+						>
+								<option value="">JGLOBAL_USE_GLOBAL</option>
+								<option value="0">JNO</option>
+								<option value="1">JYES</option>
+
+					</field>
+					<field
+						name="show_urls_images_frontend"
+						type="radio"
+						class="btn-group"
+						default=""
+						label="COM_CONTENT_SHOW_IMAGES_URLS_FRONT_LABEL"
+						description="COM_CONTENT_SHOW_IMAGES_URLS_FRONT_DESC"
+						labelclass="control-label"
+						>
+								<option value="">JGLOBAL_USE_GLOBAL</option>
+								<option value="0">JNO</option>
+								<option value="1">JYES</option>
+					</field>
+				</fieldset>
+
+				<fieldset name="basic-limited" label="COM_CONTENT_ATTRIBS_FIELDSET_LABEL">
+					<field
+						name="show_title"
+						type="hidden"
+						label="JGLOBAL_SHOW_TITLE_LABEL"
+						description="JGLOBAL_SHOW_TITLE_DESC"
+						>
+
+					</field>
+
+					<field
+						name="link_titles"
+						type="hidden"
+						label="JGLOBAL_LINKED_TITLES_LABEL"
+						description="JGLOBAL_LINKED_TITLES_DESC">
+					</field>
+
+					<field name="show_intro"
+						type="hidden"
+						description="JGLOBAL_SHOW_INTRO_DESC"
+						label="JGLOBAL_SHOW_INTRO_LABEL"
+						>
+					</field>
+
+					<field
+						name="show_category"
+						type="hidden"
+						label="JGLOBAL_SHOW_CATEGORY_LABEL"
+						description="JGLOBAL_SHOW_CATEGORY_DESC">
+					</field>
+
+					<field
+						name="link_category"
+						type="hidden"
+						label="JGLOBAL_LINK_CATEGORY_LABEL"
+						description="JGLOBAL_LINK_CATEGORY_DESC">
+					</field>
+
+					<field
+						name="show_parent_category"
+						type="hidden"
+						label="JGLOBAL_SHOW_PARENT_CATEGORY_LABEL"
+						description="JGLOBAL_SHOW_PARENT_CATEGORY_DESC">
+					</field>
+
+					<field
+						name="link_parent_category"
+						type="hidden"
+						label="JGLOBAL_LINK_PARENT_CATEGORY_LABEL"
+						description="JGLOBAL_LINK_PARENT_CATEGORY_DESC">
+					</field>
+
+					<field
+						name="show_author"
+						type="hidden"
+						label="JGLOBAL_SHOW_AUTHOR_LABEL"
+						description="JGLOBAL_SHOW_AUTHOR_DESC">
+					</field>
+
+					<field
+						name="link_author"
+						type="hidden"
+						label="JGLOBAL_LINK_AUTHOR_LABEL"
+						description="JGLOBAL_LINK_AUTHOR_DESC">
+					</field>
+
+					<field
+						name="show_create_date"
+						type="hidden"
+						label="JGLOBAL_SHOW_CREATE_DATE_LABEL"
+						description="JGLOBAL_SHOW_CREATE_DATE_DESC">
+					</field>
+
+					<field
+						name="show_modify_date"
+						type="hidden"
+						label="JGLOBAL_SHOW_MODIFY_DATE_LABEL"
+						description="JGLOBAL_SHOW_MODIFY_DATE_DESC">
+					</field>
+
+					<field
+						name="show_publish_date"
+						type="hidden"
+						label="JGLOBAL_SHOW_PUBLISH_DATE_LABEL"
+						description="JGLOBAL_SHOW_PUBLISH_DATE_DESC">
+					</field>
+
+					<field
+						name="show_item_navigation"
+						type="hidden"
+						label="JGLOBAL_SHOW_NAVIGATION_LABEL"
+						description="JGLOBAL_SHOW_NAVIGATION_DESC">
+					</field>
+
+					<field
+						name="show_icons"
+						type="hidden"
+						label="JGLOBAL_SHOW_ICONS_LABEL"
+						description="JGLOBAL_SHOW_ICONS_DESC">
+					</field>
+
+					<field
+						name="show_print_icon"
+						type="hidden"
+						label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
+						description="JGLOBAL_SHOW_PRINT_ICON_DESC">
+					</field>
+
+					<field
+						name="show_email_icon"
+						type="hidden"
+						label="JGLOBAL_SHOW_EMAIL_ICON_LABEL"
+						description="JGLOBAL_SHOW_EMAIL_ICON_DESC">
+					</field>
+					<field
+						name="show_vote"
+						type="hidden"
+						label="JGLOBAL_SHOW_VOTE_LABEL"
+						description="JGLOBAL_SHOW_VOTE_DESC"
+					>
+					</field>
+					<field
+						name="show_hits"
+						type="hidden"
+						label="JGLOBAL_SHOW_HITS_LABEL"
+						description="JGLOBAL_SHOW_HITS_DESC">
+					</field>
+
+					<field
+						name="show_noauth"
+						type="hidden"
+						label="JGLOBAL_SHOW_UNAUTH_LINKS_LABEL"
+						description="JGLOBAL_SHOW_UNAUTH_LINKS_DESC">
+					</field>
+
+					<field name="alternative_readmore" type="hidden"
+						label="JFIELD_READMORE_LABEL"
+						description="JFIELD_READMORE_DESC"
+						class="inputbox" size="25" />
+
+					<field name="article_layout" type="hidden"
+						label="JFIELD_ALT_LAYOUT_LABEL"
+						description="JFIELD_ALT_COMPONENT_LAYOUT_DESC"
+						useglobal="true"
+						extension="com_content" view="article"
+					/>
+				</fieldset>
 			</config>
 
 			<views>
 				<!-- Default views -->
 				<view name="form">
 					<!-- Related fields list -->
-					<!-- For Form - we use same attributes -->
-					<field name="id" access="4" />
-					<field name="title" access="4" />
-					<field name="alias" access="4" />
-					<field name="catid" access="4" />
+					<!-- For Form, here we use same attributes -->
+					<field name="core_content_item_id" access="4" />
+					<field name="core_title" access="4" />
+					<field name="core_alias" access="4" />
+					<field name="core_catid" access="4" />
 					<field name="tags" access="4" />
+					<field name="core_body" access="4" />
+
+					<!--
 					<field name="image" access="4"
 						preview="300x150" previewscalle="crop"
 						lightbox="1024x800" lightboxscalle="fit" />
-					<field name="articletext" access="4" />
+					 -->
 
 					<!--
 						Would be cool to have a some separator for allow the multisteps form
@@ -77,8 +579,7 @@
 						Each view can contain also any fields from common form
 						eg: metadata, publishoptions, permissions
 					-->
-					<field name="title" access="1"
-						some-configuration-params="" />
+					<field name="core_title" access="1"	/>
 
 					<field name="created" format="%Y-%m-%d %H:%M:%S" access="1"
 						label="COM_CONTENT_FIELD_CREATED_LABEL" />
@@ -86,22 +587,16 @@
 					<field name="created_by" access="1"
 						label="COM_CONTENT_FIELD_CREATED_BY_LABEL" />
 
-					<field name="catid" access="1"
-						some-configuration-params="" />
+					<field name="core_catid" access="1"	/>
 
-					<field name="image" access="1"
-						preview="300x150" previewscalle="crop" previewfilter="grayscale"
-						display="with link" />
-
-					<field name="articletext" access="1"
-						some-configuration-params="" display="intro" />
+					<field name="core_body" access="1"
+						display="introtext" />
 
 					<field name="tags" access="1" />
 				</view>
 				<view name="fullview">
 					<!-- Related fields list -->
-					<field name="title" access="1"
-						some-configuration-params="" />
+					<field name="core_title" access="1"	/>
 
 					<field name="created" format="%Y-%m-%d %H:%M:%S" access="1"
 						label="COM_CONTENT_FIELD_CREATED_LABEL" />
@@ -109,33 +604,31 @@
 					<field name="created_by" access="1"
 						label="COM_CONTENT_FIELD_CREATED_BY_LABEL" />
 
-					<field name="catid" access="1"
-						some-configuration-params="" />
-
+					<field name="core_catid" access="1"	/>
+					<!--
 					<field name="image" access="4"
 						preview="300x150" previewscalle="crop" previewfilter="grayscale"
 						lightbox="1024x800" lightboxscalle="fit" />
-
-					<field name="articletext" access="1"
-						some-configuration-params="" display="full" />
+ 					-->
+					<field name="core_body" access="1"
+						display="fulltext" />
 
 					<field name="tags" access="1" />
 				</view>
 				<view name="feed">
 					<!-- Maybe better make this view not here -->
 					<!-- Related fields list -->
-					<field name="title" access="1"
-						some-configuration-params="" />
+					<field name="core_title" access="1"	/>
 
 					<field name="created" format="%Y-%m-%d %H:%M:%S" access="1"
 						label="COM_CONTENT_FIELD_CREATED_LABEL" />
-
+					<!--
 					<field name="image" access="1"
 						preview="300x150" previewscalle="crop" previewfilter="grayscale"
 						display="with link" />
-
-					<field name="articletext" access="1"
-						some-configuration-params="" display="intro" />
+					-->
+					<field name="core_body" access="1"
+						display="introtext" />
 				</view>
 
 			</views>
@@ -146,10 +639,10 @@
 		<!-- Table for the fields that do not exist in common table -->
 		<table  type="special" name="#__content" key="id">
 			<field type="int" name="id" default="" extra="AUTO_INCREMENT"
-				description="Primary key" />
+				comment="Primary key" />
 
 			<field type="mediumtext" name="fulltext" default=""
-				description="Store Full Text" />
+				comment="Store Full Text" />
 		</table>
 	</tables>
 	<administrator>
