@@ -1,60 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 	<fieldset name="input">
-		<field name="field_id" type="hidden" />
-		<field name="ordering" type="hidden" />
+		<fields name="fields">
+			<fields name="{FIELD_NAME}">
+				<field name="field_id" type="hidden" />
+				<field name="ordering" type="hidden" />
 
-		<!--
-			TODO: need the Select list for:
-					- select one of the available types
-					- slect Validation
-					- select Filter
-		-->
+				<!--
+					TODO: need the Select list for:
+							- select one of the available types
+							- slect Validation
+							- select Filter
+				-->
 
-		<field name="type" type="hidden" />
+				<field name="type" type="hidden" />
 
-		<field name="label"	type="text"
-			default=""	size="10"
-			label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
-		/>
+				<field name="label"	type="text"
+					default=""	size="10"
+					label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
+				/>
 
-		<field name="state" type="checkbox"
-			filter="intval" default="1"
-			label="JSTATUS" description="JFIELD_PUBLISHED_DESC" />
+				<field name="state" type="checkbox"
+					filter="intval" default="1"
+					label="JSTATUS" description="JFIELD_PUBLISHED_DESC" />
 
-		<field name="validation" type="list"
-			label="COM_TYPES_FIELD_VALIDATION_LABEL"	description="COM_TYPES_FIELD_VALIDATION_DESC"
-		>
-			<option value="0">JNONE</option>
-			<option value="required">JREQUIRED</option>
-			<option value="email">COM_TYPES_FIELD_EMAIL</option>
-			<option value="url">URL</option>
-		</field>
+				<field name="validation" type="list"
+					label="COM_TYPES_FIELD_VALIDATION_LABEL"	description="COM_TYPES_FIELD_VALIDATION_DESC"
+				>
+					<option value="0">JNONE</option>
+					<option value="required">JREQUIRED</option>
+					<option value="email">COM_TYPES_FIELD_EMAIL</option>
+					<option value="url">URL</option>
+				</field>
 
-		<field name="filter" type="list" default="string"
-			label="COM_TYPES_FIELD_FILTER_LABEL" description="COM_TYPES_FIELD_FILTER_DESC"
-		>
-			<option value="string">STRING</option>
-			<option value="integer">INTEGER</option>
-			<option value="float">FLOAT</option>
-			<option value="html">HTML</option>
-		</field>
-
-
+				<field name="filter" type="list" default="string"
+					label="COM_TYPES_FIELD_FILTER_LABEL" description="COM_TYPES_FIELD_FILTER_DESC"
+				>
+					<option value="string">STRING</option>
+					<option value="integer">INTEGER</option>
+					<option value="float">FLOAT</option>
+					<option value="html">HTML</option>
+				</field>
+			</fields>
+		</fields>
 	</fieldset>
 
 	<fieldset name="value">
-		<field name="field_id" type="hidden" />
-		<field name="ordering" type="hidden" />
+		<fields name="fields">
+			<fields name="{FIELD_NAME}">
+				<field name="field_id" type="hidden" />
+				<field name="ordering" type="hidden" />
 
-		<field name="label"	type="text"
-			default=""	size="10"
-			label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
-		/>
+				<field name="label"	type="text"
+					default=""	size="10"
+					label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
+				/>
 
-		<!--
-			TODO: what else we need here ???
-		-->
-
+				<!--
+					TODO: what else we need here ???
+				-->
+			</fields>
+		</fields>
 	</fieldset>
+
 </form>

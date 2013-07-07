@@ -184,7 +184,14 @@ class UCMTypeHelper
 		//		or something
 
 		// use defaults for test
-		return self::getFieldsDefault($type_alias);
+		$fieldsDef = self::getFieldsDefault($type_alias);
+		$fields = array();
+		foreach($fieldsDef as $def){
+			$fields[$def->name] = (object) $def->getProperties();
+			$fields[$def->name]->params = $def->params->toArray();
+		}
+
+		return $fields;
 	}
 
 	/**

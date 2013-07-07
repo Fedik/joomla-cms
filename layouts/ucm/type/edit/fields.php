@@ -9,13 +9,23 @@
 
 defined('_JEXEC') or die;
 
-//$displayData - is array with a fields
 
 $active = array();
 $inactive = array();
 
-foreach($displayData as $field) {
-	if($field->state)
+foreach($displayData->item->get('fields') as $field_data) {
+	// Get field group for main configuration
+	$main = $displayData->form->getGroup('fields.' . $field_data->name);
+	// .... and for Params
+	$params = $displayData->form->getGroup('fields.' . $field_data->name . '.params');
+
+	$field = array(
+		'main' => $main,
+		'params' => empty($params) ? array() : $params,
+	);
+
+	// All this dance was just for split the fields by the field state
+	if($field_data->state)
 	{
 		$active[] = JLayoutHelper::render('ucm.type.edit.field', $field);
 	}
@@ -24,8 +34,6 @@ foreach($displayData as $field) {
 		$inactive[] = JLayoutHelper::render('ucm.type.edit.field', $field);
 	}
 
-	//var_dump($field);
-	//break;
 }
 ?>
 <div class="row-fluid">

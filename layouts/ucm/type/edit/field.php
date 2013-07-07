@@ -9,20 +9,20 @@
 
 defined('_JEXEC') or die;
 
-//$displayData - is UCMFormField object
+//$displayData - is array that contain the fields for Main and Params
 
-$form_main = $displayData->getFormConfig();
-$form_add = $displayData->getFormConfigMore();
-//var_dump($form_main, $form_add);
 ?>
 <div class="field">
 	<!-- Render inputs for a main configuration  -->
 	<div class="main control-group form-inline">
-	<?php foreach($form_main->getFieldset() as $field): ?>
+	<?php foreach($displayData['main'] as $field): ?>
 		<?php echo $field->label; ?>
 		<?php echo $field->input; ?>
 	<?php endforeach; ?>
-	<?php if($form_add): ?>
+	<?php if($displayData['params']): ?>
+		<!--
+			For show/hide .addittional using JavaScript
+		-->
 		<a href="#" class="show-addittional">More ...</a>
 	<?php endif;?>
 	</div>
@@ -30,10 +30,10 @@ $form_add = $displayData->getFormConfigMore();
 		<!--
 			Render inputs for the addittional configuration if exist,
 			Show/Hide this fields using SlideDown/SlideUp after click
-			on Addittional configuration button
+			on "More ..." button
 		 -->
-	<?php if($form_add): ?>
-		<?php foreach($form_add->getFieldset() as $field): ?>
+	<?php if($displayData['params']): ?>
+		<?php foreach($displayData['params'] as $field): ?>
 			<?php echo $field->label; ?>
 			<?php echo $field->input; ?>
 		<?php endforeach; ?>

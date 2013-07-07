@@ -134,15 +134,6 @@ class TypesModelType extends JModelAdmin
 		$item_view = $this->getState('item_view', 'form');
 		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
 
-		//TODO: ho ho ho !!!
-		// 		Should be more smart way !!!
-		// 		such thing should be in getForm()
-// 		foreach($fields as $field){
-// 			$field->setup(array(
-// 				'form_config_control' => 'jform[fields]['.$field->name.']'
-// 			));
-// 		}
-
 		$item->set('item_view', $item_view);
 		$item->set('fields', $fields);
 
@@ -201,47 +192,43 @@ class TypesModelType extends JModelAdmin
 	 * @return  void
 	 *
 	 * @see     JModelForm::preprocessForm()
+	 *
 	 */
 	protected function preprocessForm(JForm $form, $data, $group = 'content')
 	{
 		// Get the form file for a fields main configuration
 		JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
-		$field_form_file = JPath::find(JForm::addFormPath(), 'field.xml');
+		$field_main_file = JPath::find(JForm::addFormPath(), 'field.xml');
 
-		$fields = $data->get('fields');
+		$fields = $data ? $data->get('fields') : null;
 
-		if($fields && $field_form_file
-			&& $fieldMainXML = simplexml_load_file($field_form_file))
+		if($fields && $field_main_file
+			&& $fieldMainXMLRaw = file_get_contents($field_main_file))
 		{
 
 			foreach($fields as $field) {
-				// Take configuration fields only for current field view_type
-				$confFields = $fieldMainXML->xpath('//fieldset[@name="' . $field->view_type . '"]/field');
-				// Put it in to current form
-				$field_group = 'fields.' . $field->name;
-				$form->setFields($confFields, $field_group);
-				// Load form for the field configuration
-				//$form->loadFile('field', true, '//fieldset[@name="' . $field->view_type . '"]/field');
-// 				$control = $form->getFormControl() . '[fields]['.$field->name.']';
+				// Prepare XML data, overwrite {FIELD_NAME}
+				$newFieldMain = str_replace('{FIELD_NAME}', $field->name,  $fieldMainXMLRaw);
 
-// 				$fieldForm = JForm::getInstance('main.' . $field->type . '.' . $field->name,
-// 						'field',
-// 						array('control' => $control),
-// 						true, '//fieldset[@name="' . $field->view_type . '"]');
+				// Load form for the main field configuration
+				$form->load($newFieldMain, true, '//fieldset[@name="' . $field->view_type . '"]/fields');
 
-				break;
+				// Now what about the addittional configurations...
+				// TODO: this can be cached by TYPE
+				$field_more_file = JPath::find(JForm::addFormPath(), $field->type . '.xml');
+				if(!$field_more_file || !$fieldMoreXMLRaw = file_get_contents($field_more_file))
+				{
+					continue;
+				}
+
+				// Ok! Same procedure...
+				$newFieldMore = str_replace('{FIELD_NAME}', $field->name,  $fieldMoreXMLRaw);
+				$form->load($newFieldMore, true, '//fieldset[@name="' . $field->view_type . '"]/fields');
+
 			}
 		}
 
-// 		$refl = new ReflectionClass($form);
-// 		$property = $refl->getProperty('xml');
-// 		$property->setAccessible(true);
-		//var_dump($property->getValue($form));
-		var_dump($form);
-
 		parent::preprocessForm($form, $data, $group);
 	}
-
-
 
 }

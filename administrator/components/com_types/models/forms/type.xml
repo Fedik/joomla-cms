@@ -31,14 +31,14 @@
 		default="input"
 		readonly="true"
 	/>
--->
+
 	<field name="fields" type="fields"
 		label="COM_TYPES_FIELD_FIELDS_LABEL" description ="COM_TYPES_FIELD_FIELDS_DESC"
 	/>
 
 	<fields name="fields">
-		<field name="test_test" type="text" />
-	</fields>
 
+	</fields>
+-->
 
 </form>

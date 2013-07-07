@@ -9,13 +9,12 @@
 
 defined('JPATH_PLATFORM') or die;
 
-//JLoader::import('joomla.form.form');
-
 /**
  * UCM Form Field Class
  *
  * @package     Joomla.Libraries
  * @subpackage  UCM
+ *
  */
 class UCMFormField //extends JFormField
 {
@@ -188,6 +187,7 @@ class UCMFormField //extends JFormField
 
 	/**
 	 * Return form for a field main configuration
+	 * TODO: remove me
 	 */
 	public function getFormConfig()
 	{
@@ -218,6 +218,7 @@ class UCMFormField //extends JFormField
 
 	/**
 	 * Return form for a field addittional configuration
+	 * TODO: remove me
 	 */
 	public function getFormConfigMore()
 	{

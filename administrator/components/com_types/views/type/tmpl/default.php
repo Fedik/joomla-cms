@@ -35,9 +35,9 @@ defined('_JEXEC') or die;
 			</div>
 
 			<!-- Fields Configuration -->
-			<?php //echo JLayoutHelper::render('ucm.type.edit.fields', $this->item->fields); ?>
+			<?php echo JLayoutHelper::render('ucm.type.edit.fields', $this); ?>
 			<?php //echo $this->loadTemplate('fields'); ?>
-			<?php echo $this->form->getInput('fields'); ?>
+
 		</div>
 	</div>
 
