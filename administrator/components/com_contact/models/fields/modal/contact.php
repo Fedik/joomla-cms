@@ -132,12 +132,12 @@ class JFormFieldModal_Contact extends JFormField
 		// The current contact display field.
 		$html[] = '<span class="input-append">';
 		$html[] = '<input type="text" class="input-medium" id="'.$this->id.'_name" value="'.$title.'" disabled="disabled" size="35" />';
-		$html[] = '<a class="modal btn" title="'.JText::_('COM_CONTACT_CHANGE_CONTACT').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}"><i class="icon-file"></i> '.JText::_('JSELECT').'</a>';
+		$html[] = '<a class="modal btn hasTooltip" title="'.JHtml::tooltipText('COM_CONTACT_CHANGE_CONTACT').'"  href="'.$link.'&amp;'.JSession::getFormToken().'=1" rel="{handler: \'iframe\', size: {x: 800, y: 450}}"><i class="icon-file"></i> '.JText::_('JSELECT').'</a>';
 
 		// Edit article button
 		if ($allowEdit)
 		{
-			$html[] = '<a class="btn'.($value ? '' : ' hidden').'" href="index.php?option=com_contact&layout=modal&tmpl=component&task=contact.edit&id=' . $value. '" target="_blank" title="'.JText::_('COM_CONTACT_EDIT_CONTACT').'" ><span class="icon-edit"></span> ' . JText::_('JACTION_EDIT') . '</a>';
+			$html[] = '<a class="btn hasTooltip'.($value ? '' : ' hidden').'" href="index.php?option=com_contact&layout=modal&tmpl=component&task=contact.edit&id=' . $value. '" target="_blank" title="'.JHtml::tooltipText('COM_CONTACT_EDIT_CONTACT').'" ><span class="icon-edit"></span> ' . JText::_('JACTION_EDIT') . '</a>';
 		}
 
 		// Clear contact button
@@ -155,7 +155,7 @@ class JFormFieldModal_Contact extends JFormField
 			$class = ' class="required modal-value"';
 		}
 
-		$html[].= '<input type="hidden" id="'.$this->id.'_id"'.$class.' name="'.$this->name.'" value="'.$value.'" />';
+		$html[] .= '<input type="hidden" id="'.$this->id.'_id"'.$class.' name="'.$this->name.'" value="'.$value.'" />';
 
 		return implode("\n", $html);
 	}
