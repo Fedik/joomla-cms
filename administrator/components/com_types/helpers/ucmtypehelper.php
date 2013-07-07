@@ -66,9 +66,9 @@ class UCMTypeHelper
 			$typeTable->bind(array(
 				'type_title' => $type_title,
 				'type_alias' => $type_alias,
-				'metadata' => $type_metadata,
-				'publish_options' => $type_publishoptions,
-				'permissions' => $type_permissions,
+				'metadata' => $type_metadata, // TODO: use params instead of a table column
+				'publish_options' => $type_publishoptions, // TODO: use params instead of a table column
+				'permissions' => $type_permissions, // TODO: use params instead of a table column
 			));
 
 			if(!$typeTable->check() || !$typeTable->store())
@@ -182,7 +182,9 @@ class UCMTypeHelper
 		//		main fields stored in table like #__ucm_fields;
 		//		fields relation to View stored in separated table like #__ucm_layouts;
 		//		or something
-		return array();
+
+		// use defaults for test
+		return self::getFieldsDefault($type_alias);
 	}
 
 	/**
@@ -256,7 +258,7 @@ class UCMTypeHelper
 				'view' => 'form',
 				'view_type' => 'input',
 				'value' => (string) $attributes->value,
-				'element' => $JFormField,
+//				'element' => $JFormField,
 			));
 
 			$fields_cache[$type_alias][$field_name] = $field;

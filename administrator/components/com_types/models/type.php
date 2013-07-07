@@ -5,6 +5,7 @@
  *
  * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ *
  */
 
 defined('_JEXEC') or die;
@@ -14,6 +15,7 @@ defined('_JEXEC') or die;
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
+ *
  */
 class TypesModelType extends JModelAdmin
 {
@@ -23,6 +25,7 @@ class TypesModelType extends JModelAdmin
 	 * @param   array  $config  An optional associative array of configuration settings.
 	 *
 	 * @see     JModelLegacy
+	 *
 	 */
 	public function __construct($config = array())
 	{
@@ -71,6 +74,15 @@ class TypesModelType extends JModelAdmin
 			$this->event_change_state = 'onTypeChangeState';
 		}
 
+		if (isset($config['event_clean_cache']))
+		{
+			$this->event_clean_cache = $config['event_clean_cache'];
+		}
+		elseif (empty($this->event_clean_cache))
+		{
+			$this->event_clean_cache = 'onTypeCleanCache';
+		}
+
 		parent::__construct($config);
 	}
 
@@ -82,6 +94,7 @@ class TypesModelType extends JModelAdmin
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
 	 * @return  JTable  A JTable object
+	 *
 	 */
 	public function getTable($type = 'Contenttype', $prefix = 'JTable', $config = array())
 	{
@@ -92,6 +105,7 @@ class TypesModelType extends JModelAdmin
 	 * Stock method to auto-populate the model state.
 	 *
 	 * @return  void
+	 *
 	 */
 	protected function populateState()
 	{
@@ -110,6 +124,7 @@ class TypesModelType extends JModelAdmin
 	 * @param   integer  $pk  The id of the primary key.
 	 *
 	 * @return  mixed    Object on success, false on failure.
+	 *
 	 */
 	public function getItem($pk = null)
 	{
@@ -119,20 +134,14 @@ class TypesModelType extends JModelAdmin
 		$item_view = $this->getState('item_view', 'form');
 		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
 
-		//find default
-		// TODO: all fields should be already in database,
-		//		so this no need here
-		if(empty($fields)){
-			$fields = UCMTypeHelper::getFieldsDefault($item->type_alias);
-		}
 		//TODO: ho ho ho !!!
 		// 		Should be more smart way !!!
 		// 		such thing should be in getForm()
-		foreach($fields as $field){
-			$field->setup(array(
-				'form_config_control' => 'jform[fields]['.$field->name.']'
-			));
-		}
+// 		foreach($fields as $field){
+// 			$field->setup(array(
+// 				'form_config_control' => 'jform[fields]['.$field->name.']'
+// 			));
+// 		}
 
 		$item->set('item_view', $item_view);
 		$item->set('fields', $fields);
@@ -147,6 +156,7 @@ class TypesModelType extends JModelAdmin
 	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
 	 *
 	 * @return  mixed  A JForm object on success, false on failure
+	 *
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -156,6 +166,7 @@ class TypesModelType extends JModelAdmin
 		{
 			return false;
 		}
+
 		return $form;
 	}
 
@@ -163,6 +174,7 @@ class TypesModelType extends JModelAdmin
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return  mixed  The data for the form.
+	 *
 	 */
 	protected function loadFormData()
 	{
@@ -177,6 +189,57 @@ class TypesModelType extends JModelAdmin
 		$this->preprocessData('com_types.type', $data);
 
 		return $data;
+	}
+
+	/**
+	 * Method to allow derived classes to preprocess the form.
+	 *
+	 * @param   JForm   $form   A JForm object.
+	 * @param   mixed   $data   The data expected for the form.
+	 * @param   string  $group  The name of the plugin group to import (defaults to "content").
+	 *
+	 * @return  void
+	 *
+	 * @see     JModelForm::preprocessForm()
+	 */
+	protected function preprocessForm(JForm $form, $data, $group = 'content')
+	{
+		// Get the form file for a fields main configuration
+		JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
+		$field_form_file = JPath::find(JForm::addFormPath(), 'field.xml');
+
+		$fields = $data->get('fields');
+
+		if($fields && $field_form_file
+			&& $fieldMainXML = simplexml_load_file($field_form_file))
+		{
+
+			foreach($fields as $field) {
+				// Take configuration fields only for current field view_type
+				$confFields = $fieldMainXML->xpath('//fieldset[@name="' . $field->view_type . '"]/field');
+				// Put it in to current form
+				$field_group = 'fields.' . $field->name;
+				$form->setFields($confFields, $field_group);
+				// Load form for the field configuration
+				//$form->loadFile('field', true, '//fieldset[@name="' . $field->view_type . '"]/field');
+// 				$control = $form->getFormControl() . '[fields]['.$field->name.']';
+
+// 				$fieldForm = JForm::getInstance('main.' . $field->type . '.' . $field->name,
+// 						'field',
+// 						array('control' => $control),
+// 						true, '//fieldset[@name="' . $field->view_type . '"]');
+
+				break;
+			}
+		}
+
+// 		$refl = new ReflectionClass($form);
+// 		$property = $refl->getProperty('xml');
+// 		$property->setAccessible(true);
+		//var_dump($property->getValue($form));
+		var_dump($form);
+
+		parent::preprocessForm($form, $data, $group);
 	}
 
 
