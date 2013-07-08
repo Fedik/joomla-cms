@@ -44,6 +44,8 @@ class UCMTypeHelper
 		$app = JFactory::getApplication();
 		$db = JFactory::getDbo();
 
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/tables');
+
 		// TODO: Import/modify types, their fields and their views
 		$typesXML = $ucmXML->xpath('/ucm[@component="' . $component . '"]/types/type');
 		foreach($typesXML as $typeXML) {
@@ -78,9 +80,47 @@ class UCMTypeHelper
 				// Something wrong
 				return false;
 			}
+			$type_id = $typeTable->type_id;
+
+			//get main fields
+			$fields = array();
+			foreach($typeXML->xpath('fields/field') as $field){
+				$fieldTable = JTable::getInstance('Field', 'JTable');
+
+				$fieldAttributes = $field->attributes();
+				$field_name = (string) $fieldAttributes->name;
+				$field_type = (string) $fieldAttributes->type;
+
+				if(!$field_name || !$field_type) continue;
+
+				// Check if already exist
+				$fieldTable->load(array(
+					'type_id' => $type_id,
+					'field_name' => $field_name,
+				));
+
+				$fieldTable->bind(array(
+					'field_name' => $field_name,
+					'field_type' => $field_type,
+					'type_id' => $type_id,
+				));
+
+				if(!$fieldTable->check() || !$fieldTable->store())
+				{
+					// Something wrong
+					return false;
+				}
+
+				$fields[$field_name] = $fieldTable->getProperties();
+			}
+
+			if(empty($fields)) continue;
+
+
+
 
 		}
-
+var_dump($fields, $fieldTable);
 		// TODO: Import/modify admin views
 
 		// TODO: Create or modify tables
