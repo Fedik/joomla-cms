@@ -66,9 +66,11 @@ class UCMTypeHelper
 			$typeTable->bind(array(
 				'type_title' => $type_title,
 				'type_alias' => $type_alias,
-				'metadata' => $type_metadata, // TODO: use params instead of a table column
-				'publish_options' => $type_publishoptions, // TODO: use params instead of a table column
-				'permissions' => $type_permissions, // TODO: use params instead of a table column
+				'params' => array( //TODO: bind do not supports the params
+					'metadata' => $type_metadata,
+					'publish_options' => $type_publishoptions,
+					'permissions' => $type_permissions,
+				)
 			));
 
 			if(!$typeTable->check() || !$typeTable->store())

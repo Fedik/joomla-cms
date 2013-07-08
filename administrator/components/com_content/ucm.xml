@@ -20,30 +20,15 @@
 		<type name="article" title="Article" metadata="true" publishoptions="true" permissions="true" table="#__ucm_content">
 			<!-- Main Fields related to this content type -->
 			<fields>
-				<field name="core_content_item_id"  type="text" class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
-					description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0"
-					readonly="true" />
-
-				<field name="core_title" type="text" label="JGLOBAL_TITLE"
-					description="JFIELD_TITLE_DESC" class="input-xlarge" size="30"
-					required="true" labelclass="control-label" />
-
-				<field name="core_alias" type="text" label="JFIELD_ALIAS_LABEL"
-					description="JFIELD_ALIAS_DESC" class="inputbox" size="45" labelclass="control-label" />
-
-				<field name="core_catid" type="categoryedit"
-					label="JCATEGORY" description="JFIELD_CATEGORY_DESC"
-					class="inputbox" required="true" />
-
-				<field name="tags"	type="tag" label="JTAG" description="JTAG_DESC"
-					class="inputbox span12 small" multiple="true" />
-
-				<field name="core_body" type="editor" class="inputbox"
-					label="COM_CONTENT_FIELD_ARTICLETEXT_LABEL" description="COM_CONTENT_FIELD_ARTICLETEXT_DESC"
-					filter="JComponentHelper::filterText" buttons="true" />
+				<field name="core_content_item_id"  type="text" />
+				<field name="core_title" type="text" />
+				<field name="core_alias" type="text" />
+				<field name="core_catid" type="categoryedit" />
+				<field name="tags" type="tag" />
+				<field name="core_body" type="editor" />
 
 				<!--
-					What to do with images and links ???
+					What to do with the old fields for the images and the links ???
 				-->
 
 			</fields>
@@ -547,13 +532,28 @@
 				<!-- Default views -->
 				<view name="form">
 					<!-- Related fields list -->
-					<!-- For Form, here we use same attributes -->
-					<field name="core_content_item_id" access="4" />
-					<field name="core_title" access="4" />
-					<field name="core_alias" access="4" />
-					<field name="core_catid" access="4" />
-					<field name="tags" access="4" />
-					<field name="core_body" access="4" />
+					<!-- For Form -->
+					<field name="core_content_item_id"  class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
+						description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0"
+						readonly="true" />
+
+					<field name="core_title"  label="JGLOBAL_TITLE"
+						description="JFIELD_TITLE_DESC" class="input-xlarge" size="30"
+						required="true" labelclass="control-label" />
+
+					<field name="core_alias" type="text" label="JFIELD_ALIAS_LABEL"
+						description="JFIELD_ALIAS_DESC" class="inputbox" size="45" labelclass="control-label" />
+
+					<field name="core_catid"
+						label="JCATEGORY" description="JFIELD_CATEGORY_DESC"
+						class="inputbox" required="true" />
+
+					<field name="tags"	label="JTAG" description="JTAG_DESC"
+						class="inputbox span12 small" multiple="true" />
+
+					<field name="core_body" class="inputbox"
+						label="COM_CONTENT_FIELD_ARTICLETEXT_LABEL" description="COM_CONTENT_FIELD_ARTICLETEXT_DESC"
+						filter="JComponentHelper::filterText" buttons="true" />
 
 					<!--
 					<field name="image" access="4"
@@ -637,14 +637,23 @@
 	<tables>
 		<!-- Table description -->
 		<!-- Table for the fields that do not exist in common table -->
-		<table  type="special" name="#__content" key="id">
-			<field type="int" lenght="10" name="id" default=""
-				extra="NOT NULL AUTO_INCREMENT"
-				comment="Primary key" />
+		<table  type="special" name="#__content" key="id"
+			description="Content Table" >
+			<fields>
+				<field type="int" lenght="10" name="id" default=""
+					extra="NOT NULL AUTO_INCREMENT"
+					comment="Primary key" />
 
-			<field type="mediumtext" name="fulltext" default=""
-				extra="NOT NULL"
-				comment="Store Full Text" />
+				<field type="mediumtext" name="fulltext" default=""
+					extra="NOT NULL"
+					comment="Store Full Text" />
+			</fields>
+			<indexes>
+				<!-- ??? -->
+			</indexes>
+			<foreignkeys>
+				<!-- ??? -->
+			</foreignkeys>
 		</table>
 	</tables>
 	<administrator>
@@ -652,42 +661,44 @@
 			Describe the table of content for display the items list
 			eg. display the table with columns id/title/created/author
 		-->
-		<view name="table" contenttype="article" label="COM_CONTENT_ARTICLES_TITLE">
-			<!-- Define the Fields used for build the table -->
-			<column label="JGRID_HEADING_ID" class="hidden-phone">
-				<field name="id" filter="true" sort="true" />
-			</column>
+		<type name="article">
+			<view name="table" label="COM_CONTENT_ARTICLES_TITLE">
+				<!-- Define the Fields used for build the table -->
+				<column label="JGRID_HEADING_ID" class="hidden-phone">
+					<field name="id" filter="true" sort="true" />
+				</column>
 
-			<column label="JSTATUS" class="hidden-phone">
-				<field name="state" filter="true" sort="true" />
-			</column>
+				<column label="JSTATUS" class="hidden-phone">
+					<field name="state" filter="true" sort="true" />
+				</column>
 
-			<column label="JGLOBAL_TITLE">
-				<field name="title" filter="true" sort="true" />
-				<field name="catid" filter="true" sort="true"
-					label="JCATEGORY" />
-			</column>
+				<column label="JGLOBAL_TITLE">
+					<field name="title" filter="true" sort="true" />
+					<field name="catid" filter="true" sort="true"
+						label="JCATEGORY" />
+				</column>
 
-			<column label="JFIELD_ACCESS_LABEL" class="nowrap hidden-phone">
-				<field name="access" filter="true" sort="true" />
-			</column>
+				<column label="JFIELD_ACCESS_LABEL" class="nowrap hidden-phone">
+					<field name="access" filter="true" sort="true" />
+				</column>
 
-			<column label="JAUTHOR" class="nowrap hidden-phone">
-				<field name="created_by" filter="true" sort="true" />
-			</column>
+				<column label="JAUTHOR" class="nowrap hidden-phone">
+					<field name="created_by" filter="true" sort="true" />
+				</column>
 
-			<column label="JGRID_HEADING_LANGUAGE" class="nowrap hidden-phone">
-				<field name="language" filter="true" sort="true" />
-			</column>
+				<column label="JGRID_HEADING_LANGUAGE" class="nowrap hidden-phone">
+					<field name="language" filter="true" sort="true" />
+				</column>
 
-			<column label="JDATE" class="nowrap hidden-phone">
-				<field name="created" filter="true" sort="true"
-					format="%Y-%m-%d" />
-			</column>
+				<column label="JDATE" class="nowrap hidden-phone">
+					<field name="created" filter="true" sort="true"
+						format="%Y-%m-%d" />
+				</column>
 
-			<column label="JGLOBAL_HITS" class="nowrap hidden-phone">
-				<field name="hits" filter="true" sort="true" />
-			</column>
-		</view>
+				<column label="JGLOBAL_HITS" class="nowrap hidden-phone">
+					<field name="hits" filter="true" sort="true" />
+				</column>
+			</view>
+		</type>
 	</administrator>
 </ucm>

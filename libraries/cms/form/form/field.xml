@@ -37,7 +37,7 @@
 					label="COM_TYPES_FIELD_FILTER_LABEL" description="COM_TYPES_FIELD_FILTER_DESC"
 				>
 					<option value="string">STRING</option>
-					<option value="integer">INTEGER</option>
+					<option value="int">INTEGER</option>
 					<option value="float">FLOAT</option>
 					<option value="html">HTML</option>
 				</field>
