@@ -17,7 +17,7 @@
 			permissions - whether use and display form for permissions;
 			table - table where store the main fields, can be omitted, default is #__ucm_content
 		-->
-		<type name="article" title="Article" metadata="true" publishoptions="true" permissions="true" table="#__ucm_content">
+		<type name="article" title="Article" metadata="true" publish_options="true" permissions="true" table="#__ucm_content">
 			<!-- Main Fields related to this content type -->
 			<fields>
 				<field name="core_content_item_id"  type="text" />

@@ -16,7 +16,7 @@ defined('JPATH_BASE') or die;
  * @subpackage  UCM
  *
  */
-class JUcmTypesImport implements JUcm
+class JUcmTypesImport //extends JObject
 {
 	/**
 	 * The Database object
@@ -41,6 +41,30 @@ class JUcmTypesImport implements JUcm
 	 *
 	 */
 	protected $ucmXML;
+
+	/**
+	 * Associative array contain imported types
+	 *
+	 * @var array
+	 *
+	 */
+	protected $types = array();
+
+	/**
+	 * Associative array contain imported tables
+	 *
+	 * @var array
+	 *
+	 */
+	protected $tables = array();
+
+	/**
+	 * Associative array contain imported fields
+	 *
+	 * @var array
+	 *
+	 */
+	protected $fields = array();
 
 
 	/**
@@ -83,45 +107,107 @@ class JUcmTypesImport implements JUcm
 
 
 		// Find types
-		$typesXML = $ucmXML->xpath('/ucm[@component="' . $component . '"]/types/type');
+		$typesXML = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/types/type');
 		if(empty($typesXML))
 		{
 			throw new RuntimeException('File ucm.xml did not contain info about any Content Type.');
 		}
 
 		// If there need any table, create it first
-		$tablesXML = $this->ucmXML->xpath('/ucm[@component="' . $component . '"]/tables/table');
+		$tablesXML = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/tables/table');
 		if(!empty($tablesXML))
 		{
 			$this->doTables($tablesXML);
 		}
 		// Import Types
 		$this->doTypes($typesXML);
+
+		// TODO: Import/modify fields and  views
+		// TODO: Import/modify admin views
 	}
 
 	/**
 	 * Create/Upgrade tables from by xml data
 	 *
-	 * @param SimpleXMLElement $tablesXML tables description
+	 * @param array contain SimpleXMLElement $tablesXML tables description
 	 *
 	 */
 	public function doTables($tablesXML)
 	{
+		// TODO: need one more class for create tables
 		return true;
 	}
 
 	/**
 	 * Create/Upgrade a Content Types
 	 *
-	 * @param  SimpleXMLElement $typesXML types description
+	 * @param array contain SimpleXMLElement $typesXML Content Types description
 	 *
 	 */
 	public function doTypes($typesXML)
 	{
+		foreach($typesXML as $typeXML) {
+			$typeTable = JTable::getInstance('Contenttype', 'JTable');
+			// Get info
+			$info = $this->getAttributes($typeXML);
+			$type_name = $info->get('name');
 
+			if(!$type_name) continue;
+
+			// Build aliase
+			$type_alias = $this->component . '.' . $type_name;
+			$newParams = new JRegistry(array(
+				'metadata' => $info->get('metadata') == 'true' || $info->get('metadata') == '1' ? 1 : 0,
+				'publish_options' => $info->get('publish_options') == 'true' || $info->get('publish_options') == '1' ? 1 : 0,
+				'permissions' => $info->get('permissions') == 'true' || $info->get('permissions') == '1' ? 1 : 0,
+			));
+
+			// Load if already exist
+			$typeTable->load(array('type_alias' => $type_alias));
+			// Check the old params
+			$params = new JRegistry($typeTable->params);
+			// Merge with new params
+			$params->merge($newParams);
+
+			$typeTable->bind(array(
+				'type_alias' => $type_alias,
+				'type_title' => $info->get('title', $type_name),
+				'params' => $params->toString(),
+			));
+
+			if(!$typeTable->check() || !$typeTable->store())
+			{
+				// Something wrong
+				// TODO (???)
+				return continue;
+			}
+
+			// Store for future steps
+			$this->types[$type_name] = $type_alias; //$typeTable;
+
+		}
+		return true;
+	}
+
+	/**
+	 * Parse XML attributes and return as JRegistry
+	 *
+	 * @param SimpleXMLElement where need to parse attributes
+	 *
+	 * @return JRegistry
+	 *
+	 */
+	protected function getAttributes(SimpleXMLElement $element)
+	{
+		$attributes = (array) $element->attributes();
+
+		return new JRegistry(isset($attributes['@attributes']) ? $attributes['@attributes'] : '');
 	}
 
 
 
 
 }
+
+
+

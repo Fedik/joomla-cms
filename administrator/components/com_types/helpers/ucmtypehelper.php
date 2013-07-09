@@ -37,7 +37,7 @@ class UCMTypeHelper
 			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 			return false;
 		}
-		var_dump($typesImport);
+
 		return true;
 
 		// Find ucm.xml in component folder
