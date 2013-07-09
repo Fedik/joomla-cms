@@ -25,6 +25,21 @@ class UCMTypeHelper
 	 */
 	public static function importContentType ($component)
 	{
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/tables');
+		include_once __DIR__ . '/typesimport.php';
+
+
+		try{
+			$typesImport = new JUcmTypesImport($component);
+			$typesImport->import();
+		}
+		catch (Exception $e){
+			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			return false;
+		}
+		var_dump($typesImport);
+		return true;
+
 		// Find ucm.xml in component folder
 		$ucmFile = JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component . '/ucm.xml');
 		if (!file_exists($ucmFile) || !$ucmXML = simplexml_load_file($ucmFile))
@@ -44,7 +59,7 @@ class UCMTypeHelper
 		$app = JFactory::getApplication();
 		$db = JFactory::getDbo();
 
-		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/tables');
+
 
 		// TODO: Import/modify types, their fields and their views
 		$typesXML = $ucmXML->xpath('/ucm[@component="' . $component . '"]/types/type');
