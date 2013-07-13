@@ -18,20 +18,7 @@
 			table - table where store the main fields, can be omitted, default is #__ucm_content
 		-->
 		<type name="article" title="Article" metadata="true" publish_options="true" permissions="true" table="#__ucm_content">
-			<!-- Main Fields related to this content type -->
-			<fields>
-				<field name="core_content_item_id"  type="text" />
-				<field name="core_title" type="text" />
-				<field name="core_alias" type="text" />
-				<field name="core_catid" type="categoryedit" />
-				<field name="tags" type="tag" />
-				<field name="core_body" type="editor" />
 
-				<!--
-					What to do with the old fields for the images and the links ???
-				-->
-
-			</fields>
 			<config>
 				<!-- Configuration fields if need any -->
 				<!--
@@ -533,27 +520,37 @@
 				<view name="form">
 					<!-- Related fields list -->
 					<!-- For Form -->
-					<field name="core_content_item_id"  class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
+					<!--
+						Here we define what a curent Content Type can have.
+						As form it is Content Type, this view is required.
+
+						Here we describe the main fields for a current Content Type
+					-->
+					<field name="core_content_item_id" type="text"  class="readonly" label="JGLOBAL_FIELD_ID_LABEL"
 						description ="JGLOBAL_FIELD_ID_DESC" size="10" default="0"
 						readonly="true" />
 
-					<field name="core_title"  label="JGLOBAL_TITLE"
+					<field name="core_title" type="text"  label="JGLOBAL_TITLE"
 						description="JFIELD_TITLE_DESC" class="input-xlarge" size="30"
 						required="true" labelclass="control-label" />
 
 					<field name="core_alias" type="text" label="JFIELD_ALIAS_LABEL"
 						description="JFIELD_ALIAS_DESC" class="inputbox" size="45" labelclass="control-label" />
 
-					<field name="core_catid"
+					<field name="core_catid" type="categoryedit"
 						label="JCATEGORY" description="JFIELD_CATEGORY_DESC"
 						class="inputbox" required="true" />
 
-					<field name="tags"	label="JTAG" description="JTAG_DESC"
+					<field name="tags" type="tag" label="JTAG" description="JTAG_DESC"
 						class="inputbox span12 small" multiple="true" />
 
-					<field name="core_body" class="inputbox"
+					<field name="core_body" type="editor" class="inputbox"
 						label="COM_CONTENT_FIELD_ARTICLETEXT_LABEL" description="COM_CONTENT_FIELD_ARTICLETEXT_DESC"
 						filter="JComponentHelper::filterText" buttons="true" />
+
+					<!--
+						What to do with the old fields for the images and the links ???
+					-->
 
 					<!--
 					<field name="image" access="4"
