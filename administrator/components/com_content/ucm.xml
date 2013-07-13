@@ -522,7 +522,7 @@
 					<!-- For Form -->
 					<!--
 						Here we define what a curent Content Type can have.
-						As form it is Content Type, this view is required.
+						As form it is Content Type, this view is required and it need to be first.
 
 						Here we describe the main fields for a current Content Type
 					-->

@@ -18,13 +18,6 @@ defined('JPATH_BASE') or die;
  */
 class JUcmTypesImport //extends JObject
 {
-	/**
-	 * The Database object
-	 *
-	 * @var    JDatabaseDriver
-	 *
-	 */
-	protected $db;
 
 	/**
 	 * The component name for the content types
@@ -49,23 +42,6 @@ class JUcmTypesImport //extends JObject
 	 *
 	 */
 	protected $types = array();
-
-	/**
-	 * Associative array contain imported tables
-	 *
-	 * @var array
-	 *
-	 */
-	protected $tables = array();
-
-	/**
-	 * Associative array contain imported fields
-	 *
-	 * @var array
-	 *
-	 */
-	protected $fields = array();
-
 
 	/**
 	 * Constructor.
@@ -104,8 +80,6 @@ class JUcmTypesImport //extends JObject
 	 */
 	public function import()
 	{
-
-
 		// Find types
 		$typesXML = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/types/type');
 		if(empty($typesXML))
@@ -120,22 +94,23 @@ class JUcmTypesImport //extends JObject
 			$this->doTables($tablesXML);
 		}
 		// Import Types
-		$this->doTypes($typesXML);
+		$types = $this->doTypes($typesXML);
 
 		// Continue if any Content type imported
-		if(empty($this->types)) {
+		if(empty($types)) {
 			return;
 		}
 
-		// TODO: Import/modify fields and  views
-		$this->doFields();
+		// Import/modify views and their fields
+		$this->doTypeViews($types);
+
 		// TODO: Import/modify admin views
 	}
 
 	/**
 	 * Create/Upgrade tables from by xml data
 	 *
-	 * @param array contain SimpleXMLElement $tablesXML tables description
+	 * @param array $tablesXML contain SimpleXMLElement $tablesXML tables description
 	 *
 	 */
 	public function doTables($tablesXML)
@@ -147,11 +122,14 @@ class JUcmTypesImport //extends JObject
 	/**
 	 * Import/Upgrade a Content Types
 	 *
-	 * @param array contain SimpleXMLElement $typesXML Content Types description
+	 * @param array $typesXML contain SimpleXMLElement $typesXML Content Types description
 	 *
+	 * @return array $types with imported types
 	 */
 	public function doTypes($typesXML)
 	{
+		$types = array();
+
 		foreach($typesXML as $typeXML) {
 			$typeTable = JTable::getInstance('Contenttype', 'JTable');
 			// Get info
@@ -162,23 +140,43 @@ class JUcmTypesImport //extends JObject
 
 			// Build aliase
 			$type_alias = $this->component . '.' . $type_name;
-			$newParams = new JRegistry(array(
-				'metadata' => $info->get('metadata') == 'true' || $info->get('metadata') == '1' ? 1 : 0,
-				'publish_options' => $info->get('publish_options') == 'true' || $info->get('publish_options') == '1' ? 1 : 0,
-				'permissions' => $info->get('permissions') == 'true' || $info->get('permissions') == '1' ? 1 : 0,
-			));
+
+			// Prepare Params
+			if($info->get('metadata') == 'true' || $info->get('metadata') == '1')
+			{
+				$info->set('metadata', 1);
+			}
+			else
+			{
+				$info->set('metadata', 0);
+			}
+			// Prepare Params
+			if($info->get('publish_options') == 'true' || $info->get('publish_options') == '1')
+			{
+				$info->set('publish_options', 1);
+			}
+			else
+			{
+				$info->set('publish_options', 0);
+			}
+			// Prepare Params
+			if($info->get('permissions') == 'true' || $info->get('permissions') == '1')
+			{
+				$info->set('permissions', 1);
+			}
+			else
+			{
+				$info->set('permissions', 0);
+			}
+			$params = $this->prepareParams($info, array('name', 'title', 'table'));
 
 			// Load if already exist
 			$typeTable->load(array('type_alias' => $type_alias));
-			// Check the old params
-			$params = new JRegistry($typeTable->params);
-			// Merge with new params
-			$params->merge($newParams);
 
 			$typeTable->bind(array(
 				'type_alias' => $type_alias,
 				'type_title' => $info->get('title', $type_name),
-				'params' => $params->toString(),
+				'params' => $params,
 			));
 
 			if(!$typeTable->check() || !$typeTable->store())
@@ -189,24 +187,171 @@ class JUcmTypesImport //extends JObject
 			}
 
 			// Store for future steps
-			$this->types[$type_name] = $type_alias; //$typeTable;
+			$types[$type_name] = $typeTable;
 
 		}
-		return true;
+		return $types;
 	}
 
 	/**
-	 * Import/Upgrade a main Fields of the Content Type
+	 * Import/Upgrade a views of the Content Type
+	 *
+	 * @param array $types Content types which Views need to import
 	 *
 	 */
-	public function doFields()
+	public function doTypeViews($types)
 	{
-		foreach($this->types as $type_name => $type_alias){
-			// Get the Fields for current content type
-			$xpath = '/ucm[@component="' . $this->component . '"]/types/type[@name="' . $type_name . '"]/fields/field';
-			$fields = $this->ucmXML->xpath($xpath);
-			var_dump($fields);
+		foreach($types as $type_name => $type){
+			// Get Views for a Conetnt Type
+			$views = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/types/type[@name="' . $type_name . '"]/views/view');
+			foreach ($views as $viewXML) {
+				$viewInfo = $this->getAttributes($viewXML);
+				if(!$layoutTable = $this->doView($viewInfo, $type->type_id)) continue;
+
+				// Continue with fields
+				if($fields = $viewXML->xpath('field'))
+				{
+					$this->doFields($fields, $layoutTable->getProperties());
+				}
+
+			}
 		}
+	}
+	/**
+	 * Import/Upgrade a View of the Content Type
+	 *
+	 * @param JRegistry $viewInfo that contain a view info
+	 * @param int $type_id of the View
+	 *
+	 *
+	 */
+	public function doView($viewInfo, $type_id = 0)
+	{
+		$name = $viewInfo->get('name');
+		if(!$name) return false;
+		$title = $viewInfo->get('title');
+		$title = $title ? $title : JString::ucfirst($name);
+
+		$layoutTable = JTable::getInstance('Layout', 'JTable');
+
+		// Load if already exist
+		$layoutTable->load(array(
+			'layout_name' => $name,
+			'type_id' => $type_id,
+		));
+
+		$layoutTable->bind(array(
+			'layout_name' => $name,
+			'layout_title' => $title,
+			'type_id' => $type_id,
+			'params' => $this->prepareParams($viewInfo, array('name', 'title')),
+		));
+
+		if(!$layoutTable->check() || !$layoutTable->store())
+		{
+			return false;
+		}
+
+		return $layoutTable;
+	}
+
+	/**
+	 * Import/Upgrade a Fields of the Content Type
+	 *
+	 * @param array $fields that contain a fields
+	 * @param array $layout that contain a info about fields layout
+	 *
+	 *
+	 */
+	public function doFields($fields, $layout)
+	{
+		foreach($fields as $i => $fieldXML){
+			$fieldInfo = $this->getAttributes($fieldXML);
+			if(!$fieldInfo->get('ordering'))
+			{
+				$fieldInfo->set('ordering', $i);
+			}
+
+			if(!$this->doField($fieldInfo, $layout))
+			{
+				var_dump($fieldInfo->get('name').' : false');
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * Import/Upgrade a Field of the Content Type
+	 *
+	 * @param JRegistry $fieldInfo that contain a field info
+	 * @param array $layout that contain a info about fields layout
+	 *
+	 *
+	 */
+	public function doField($fieldInfo, $layout)
+	{
+		if(!$field_name = $fieldInfo->get('name'))
+		{
+			return false;
+		}
+
+		$baseFieldTable = JTable::getInstance('Field', 'JTable');
+		$baseFieldTable->load(array(
+			'type_id' => $layout['type_id'],
+			'field_name' => $field_name,
+		));
+
+		if($layout['layout_name'] == 'form')
+		{
+			// Store the Base Field first
+			$locked = $fieldInfo->get('locked') == 'true' || $fieldInfo->get('locked') == '1' ? 1 : 0;
+			$baseFieldTable->bind(array(
+				'field_name' => $field_name,
+				'field_type' => $fieldInfo->get('type', 'text'),
+				'type_id' => $layout['type_id'],
+				'locked' => $locked,
+			));
+
+			if(!$baseFieldTable->check() || !$baseFieldTable->store())
+			{
+				// Something wrong
+				return false;
+			}
+		}
+		elseif(!$baseFieldTable->field_id)
+		{
+			// Base Field should exist for continue
+			// TODO: can be that this field from "Metadata" or "Publication options"
+			//       need check this too !!!
+			return false;
+		}
+
+		// Now store field info in to FieldsLayouts table
+		$fieldLayoutTable = JTable::getInstance('FieldsLayouts', 'JTable');
+		// Load if already exist
+		$fieldLayoutTable->load(array(
+			'field_id' => $baseFieldTable->field_id,
+			'type_id' => $layout['type_id'],
+			'layout_id' => $layout['layout_id'],
+		));
+
+		// Prepare params
+		// TODO: what about <option> for a some field types ???
+		$params = $this->prepareParams($fieldInfo,
+				array('name', 'type', 'ordering', 'access', 'locked', 'state', 'stage'));
+
+		$fieldLayoutTable->bind(array(
+			'field_id' => (int) $baseFieldTable->field_id,
+			'type_id' => (int) $layout['type_id'],
+			'layout_id' => (int) $layout['layout_id'],
+			'ordering' => (int) $fieldInfo->get('ordering'),
+			'access' => (int) $fieldInfo->get('access', 0),
+			'state' => (int) $fieldInfo->get('state', 1),
+			'stage' => (int) $fieldInfo->get('stage', 0),
+			'params' => $params,
+		));
+
+		return $fieldLayoutTable->check() && $fieldLayoutTable->store();
 	}
 
 
@@ -225,6 +370,26 @@ class JUcmTypesImport //extends JObject
 		return new JRegistry(isset($attributes['@attributes']) ? $attributes['@attributes'] : '');
 	}
 
+	/**
+	 * Prepare Params
+	 *
+	 * @param mixed $info JRegistry or array with data for conver to params string
+	 * @param array $unnecessary contain keys for clean up from $info
+	 *
+	 * @return string JSON string or empty string
+	 */
+	protected function prepareParams($info, $unnecessary = array())
+	{
+		$params = ($info instanceof JRegistry) ? $info->toArray() : (array) $info;
+		foreach($unnecessary as $k) {
+			if(isset($params[$k]))
+			{
+				unset($params[$k]);
+			}
+		}
+
+		return empty($params) ? '' : json_encode($params);
+	}
 
 
 

@@ -25,6 +25,6 @@ class JTableField extends JTable
 	 */
 	public function __construct($db)
 	{
-		parent::__construct('#__fields', 'field_id', $db);
+		parent::__construct('#__ucm_fields', 'field_id', $db);
 	}
 }
