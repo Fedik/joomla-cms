@@ -122,7 +122,13 @@ class JUcmTypesImport //extends JObject
 		// Import Types
 		$this->doTypes($typesXML);
 
+		// Continue if any Content type imported
+		if(empty($this->types)) {
+			return;
+		}
+
 		// TODO: Import/modify fields and  views
+		$this->doFields();
 		// TODO: Import/modify admin views
 	}
 
@@ -139,7 +145,7 @@ class JUcmTypesImport //extends JObject
 	}
 
 	/**
-	 * Create/Upgrade a Content Types
+	 * Import/Upgrade a Content Types
 	 *
 	 * @param array contain SimpleXMLElement $typesXML Content Types description
 	 *
@@ -179,7 +185,7 @@ class JUcmTypesImport //extends JObject
 			{
 				// Something wrong
 				// TODO (???)
-				return continue;
+				continue;
 			}
 
 			// Store for future steps
@@ -188,6 +194,21 @@ class JUcmTypesImport //extends JObject
 		}
 		return true;
 	}
+
+	/**
+	 * Import/Upgrade a main Fields of the Content Type
+	 *
+	 */
+	public function doFields()
+	{
+		foreach($this->types as $type_name => $type_alias){
+			// Get the Fields for current content type
+			$xpath = '/ucm[@component="' . $this->component . '"]/types/type[@name="' . $type_name . '"]/fields/field';
+			$fields = $this->ucmXML->xpath($xpath);
+			var_dump($fields);
+		}
+	}
+
 
 	/**
 	 * Parse XML attributes and return as JRegistry
