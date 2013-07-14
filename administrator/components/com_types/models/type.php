@@ -134,6 +134,12 @@ class TypesModelType extends JModelAdmin
 		$item_view = $this->getState('item_view', 'form');
 		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
 
+		// Prepare fields params
+		foreach($fields as $field) {
+			$params = new JRegistry($field->params);
+			$field->params = $params->toArray();
+		}
+
 		$item->set('item_view', $item_view);
 		$item->set('fields', $fields);
 
@@ -205,25 +211,25 @@ class TypesModelType extends JModelAdmin
 		if($fields && $field_main_file
 			&& $fieldMainXMLRaw = file_get_contents($field_main_file))
 		{
-
+			$display = $data->get('item_view', 'form') == 'form' ? 'input' : 'value';
 			foreach($fields as $field) {
 				// Prepare XML data, overwrite {FIELD_NAME}
-				$newFieldMain = str_replace('{FIELD_NAME}', $field->name,  $fieldMainXMLRaw);
+				$newFieldMain = str_replace('{FIELD_NAME}', $field->field_name,  $fieldMainXMLRaw);
 
 				// Load form for the main field configuration
-				$form->load($newFieldMain, true, '//fieldset[@name="' . $field->view_type . '"]/fields');
+				$form->load($newFieldMain, true, '//fieldset[@name="' . $display . '"]/fields');
 
 				// Now what about the addittional configurations...
 				// TODO: this can be cached by TYPE
-				$field_more_file = JPath::find(JForm::addFormPath(), $field->type . '.xml');
+				$field_more_file = JPath::find(JForm::addFormPath(), $field->field_type . '.xml');
 				if(!$field_more_file || !$fieldMoreXMLRaw = file_get_contents($field_more_file))
 				{
 					continue;
 				}
 
 				// Ok! Same procedure...
-				$newFieldMore = str_replace('{FIELD_NAME}', $field->name,  $fieldMoreXMLRaw);
-				$form->load($newFieldMore, true, '//fieldset[@name="' . $field->view_type . '"]/fields');
+				$newFieldMore = str_replace('{FIELD_NAME}', $field->field_name,  $fieldMoreXMLRaw);
+				$form->load($newFieldMore, true, '//fieldset[@name="' . $display . '"]/fields');
 
 			}
 		}

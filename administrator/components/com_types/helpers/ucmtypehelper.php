@@ -51,20 +51,44 @@ class UCMTypeHelper
 	 *
 	 * @return  array Array with fields
 	 */
-	public static function getFields($type_alias, $view = 'form', $published_only = true)
+	public static function getFields($type_alias, $layout = 'form', $published_only = true)
 	{
-		// TODO: load fields from database;
-		//		main fields stored in table like #__ucm_fields;
-		//		fields relation to View stored in separated table like #__ucm_layouts;
-		//		or something
+		static $cache;
+		$key = md5(serialize(array($type_alias, $layout, $published_only)));
 
-		// use defaults for test
-		$fieldsDef = self::getFieldsDefault($type_alias);
-		$fields = array();
-		foreach($fieldsDef as $def){
-			$fields[$def->name] = (object) $def->getProperties();
-			$fields[$def->name]->params = $def->params->toArray();
+		if(isset($cache[$key]))
+		{
+			return $cache[$key];
 		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		$query->select('fl.*, f.field_name, f.field_type, l.layout_name');
+		$query->from('#__ucm_fields_layouts as fl');
+		$query->join('LEFT', '#__ucm_fields as f ON f.field_id=fl.field_id');
+		$query->join('LEFT', '#__ucm_layouts as l ON l.layout_id=fl.layout_id');
+		$query->join('LEFT', '#__content_types as c ON c.type_id=fl.type_id');
+		$query->where('c.type_alias = '. $db->q($type_alias));
+		$query->where('l.layout_name = '. $db->q($layout));
+
+		if($published_only)
+		{
+			$query->where('fl.state = 1');
+		}
+		$query->order('fl.ordering');
+		//echo $query->dump();
+
+		$db->setQuery($query);
+		$fields = $db->loadObjectList('field_name');
+
+		// Prepare params
+		// TODO need or???
+// 		foreach($fields as $field){
+// 			$field->params = new JRegistry($field->params);
+// 		}
+
+		// Cache
+		$cache[$key] = $fields;
 
 		return $fields;
 	}

@@ -3,44 +3,39 @@
 	<fieldset name="input">
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
-				<field name="field_id" type="hidden" />
-				<field name="ordering" type="hidden" />
-
+				<field name="field_id" type="text" readonly="true"
+					class="readonly" size="10" default="0"
+					label="JGLOBAL_FIELD_ID_LABEL"	description="JGLOBAL_FIELD_ID_DESC"
+				/>
+				<field name="field_name" type="text" readonly="true"
+					class="readonly" size="20" default="text"
+					label="Field Name"	description="Field Name Desc"
+				/>
 				<!--
 					TODO: need the Select list for:
 							- select one of the available types
-							- slect Validation
-							- select Filter
 				-->
-
-				<field name="type" type="hidden" />
-
-				<field name="label"	type="text"
-					default=""	size="10"
-					label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
+				<field name="field_type" type="text" readonly="true"
+					class="readonly" size="20" default="text"
+					label="Field Type"	description="Field Type Desc"
 				/>
 
-				<field name="state" type="checkbox"
-					filter="intval" default="1"
-					label="JSTATUS" description="JFIELD_PUBLISHED_DESC" />
 
-				<field name="validation" type="list"
-					label="COM_TYPES_FIELD_VALIDATION_LABEL"	description="COM_TYPES_FIELD_VALIDATION_DESC"
-				>
-					<option value="0">JNONE</option>
-					<option value="required">JREQUIRED</option>
-					<option value="email">COM_TYPES_FIELD_EMAIL</option>
-					<option value="url">URL</option>
+				<field name="ordering" type="text" readonly="true"
+					class="readonly" size="10" default="0"
+					label="Field Ordering"	description="JFIELD_ORDERING_DESC"
+				/>
+
+				<field name="state" type="radio"
+					filter="intval" default="1" class="btn-group"
+					label="JSTATUS" description="JFIELD_PUBLISHED_DESC">
+					<option value="0">JHIDE</option>
+					<option value="1">JSHOW</option>
 				</field>
 
-				<field name="filter" type="list" default="string"
-					label="COM_TYPES_FIELD_FILTER_LABEL" description="COM_TYPES_FIELD_FILTER_DESC"
-				>
-					<option value="string">STRING</option>
-					<option value="int">INTEGER</option>
-					<option value="float">FLOAT</option>
-					<option value="html">HTML</option>
-				</field>
+				<field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL"
+					description="JFIELD_ACCESS_DESC" class="small" size="1" />
+
 			</fields>
 		</fields>
 	</fieldset>
@@ -48,13 +43,38 @@
 	<fieldset name="value">
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
-				<field name="field_id" type="hidden" />
-				<field name="ordering" type="hidden" />
-
-				<field name="label"	type="text"
-					default=""	size="10"
-					label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
+				<field name="field_id" type="text" readonly="true"
+					class="readonly" size="10" default="0"
+					label="JGLOBAL_FIELD_ID_LABEL"	description="JGLOBAL_FIELD_ID_DESC"
 				/>
+				<field name="field_name" type="text" readonly="true"
+					class="readonly" size="20" default="text"
+					label="Field Name"	description="Field Name Desc"
+				/>
+				<!--
+					TODO: need the Select list for:
+							- select one of the available types
+				-->
+				<field name="field_type" type="text" readonly="true"
+					class="readonly" size="20" default="text"
+					label="Field Type"	description="Field Type Desc"
+				/>
+
+				<field name="ordering" type="text" readonly="true"
+					class="readonly" size="10" default="0"
+					label="Field Ordering"	description="JFIELD_ORDERING_DESC"
+				/>
+
+				<field name="state" type="radio"
+					filter="intval" default="1" class="btn-group"
+					label="JSTATUS" description="JFIELD_PUBLISHED_DESC">
+					<option value="0">JHIDE</option>
+					<option value="1">JSHOW</option>
+				</field>
+
+				<field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL"
+					description="JFIELD_ACCESS_DESC" class="small" size="1" />
+
 
 				<!--
 					TODO: what else we need here ???

@@ -15,9 +15,9 @@ $inactive = array();
 
 foreach($displayData->item->get('fields') as $field_data) {
 	// Get field group for main configuration
-	$main = $displayData->form->getGroup('fields.' . $field_data->name);
+	$main = $displayData->form->getGroup('fields.' . $field_data->field_name);
 	// .... and for Params
-	$params = $displayData->form->getGroup('fields.' . $field_data->name . '.params');
+	$params = $displayData->form->getGroup('fields.' . $field_data->field_name . '.params');
 
 	$field = array(
 		'main' => $main,
