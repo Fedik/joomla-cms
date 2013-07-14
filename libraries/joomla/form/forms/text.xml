@@ -11,15 +11,15 @@
 								- select Filter
 					-->
 					<field name="label"	type="text"
-						default=""	size="10"
+						default=""	size="10" labelclass="control-label"
 						label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
 					/>
 
-					<field name="default" type="text"
+					<field name="default" type="text" labelclass="control-label"
 						label="Default" description="Default Value"
 					/>
 
-					<field name="validation" type="list"
+					<field name="validation" type="list" labelclass="control-label"
 						label="COM_TYPES_FIELD_VALIDATION_LABEL"
 						description="COM_TYPES_FIELD_VALIDATION_DESC"
 					>
@@ -30,6 +30,7 @@
 					</field>
 
 					<field name="filter" type="list" default="string"
+						labelclass="control-label"
 						label="COM_TYPES_FIELD_FILTER_LABEL"
 						description="COM_TYPES_FIELD_FILTER_DESC"
 					>
@@ -42,19 +43,23 @@
 					<field name="size"	type="text"
 						default="20"	size="3" filter="int"
 						label="Size" description="Field Size"
+						labelclass="control-label"
 					/>
 
 					<field name="maxlength"	type="text"
 						size="6" filter="int"
 						label="Max Length" description="Max Length"
+						labelclass="control-label"
 					/>
 
 					<field name="class"	type="text"
 						label="Class" description="Field class"
+						labelclass="control-label"
 					/>
 
 					<field name="onchange"	type="text"
 						label="Onchange" description="Onchange attribute"
+						labelclass="control-label"
 					/>
 				</fields>
 			</fields>

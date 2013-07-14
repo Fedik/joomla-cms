@@ -36,8 +36,36 @@ foreach($displayData->item->get('fields') as $field_data) {
 
 }
 ?>
-<div class="row-fluid">
-	<div class="">
+<!-- Make a bit nicer -->
+<style>
+#fields-group .field{
+	margin-bottom: 12px;
+}
+#fields-group .field .main{
+	border: 1px solid #13294A;
+	padding: 8px;
+}
+#fields-group .field .params{
+	display: none;
+	border-left: 1px solid #0088CC;
+	border-right: 1px solid #0088CC;
+	border-bottom: 1px solid #0088CC;
+	border-radius: 0 0 8px 8px;
+	padding: 8px;
+	margin: 0 8px;
+}
+
+</style>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	jQuery('#fields-group a.show-params').bind('click', function(){
+		jQuery(this).parents('.field').children('.params').slideToggle();
+		return false;
+	});
+});
+</script>
+<div id="fields-group" class="row-fluid">
+	<div class="active">
 		<h4><?php echo JText::_('COM_TYPES_FIELDS_ACTIVE_LABEL'); ?></h4>
 		<div class="control-group">
 			<!-- Display active fields -->
@@ -45,7 +73,7 @@ foreach($displayData->item->get('fields') as $field_data) {
 			<?php echo implode("\n", $active); ?>
 		</div>
 	</div>
-	<div class="">
+	<div class="inactive">
 		<h4><?php echo JText::_('COM_TYPES_FIELDS_INACTIVE_LABEL'); ?></h4>
 		<div class="control-group">
 			<!-- Display inactive fields -->

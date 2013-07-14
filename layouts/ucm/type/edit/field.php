@@ -12,9 +12,9 @@ defined('_JEXEC') or die;
 //$displayData - is array that contain the fields for Main and Params
 
 ?>
-<div class="field">
+<div class="field control-group">
 	<!-- Render inputs for a main configuration  -->
-	<div class="main control-group form-inline">
+	<div class="main  form-inline">
 	<?php foreach($displayData['main'] as $field): ?>
 		<?php echo $field->label; ?>
 		<?php echo $field->input; ?>
@@ -23,21 +23,25 @@ defined('_JEXEC') or die;
 		<!--
 			For show/hide .addittional using JavaScript
 		-->
-		<a href="#" class="show-addittional">More ...</a>
+		<a href="#" class="show-params">More ...</a>
 	<?php endif;?>
 	</div>
-	<div class="addittional control-group form-inline">
+	<?php if($displayData['params']): ?>
+	<div class="params form-horizontal">
 		<!--
 			Render inputs for the addittional configuration if exist,
 			Show/Hide this fields using SlideDown/SlideUp after click
 			on "More ..." button
 		 -->
-	<?php if($displayData['params']): ?>
 		<?php foreach($displayData['params'] as $field): ?>
+		<div class="control-group">
 			<?php echo $field->label; ?>
+			<div class="controls">
 			<?php echo $field->input; ?>
+			</div>
+		</div>
 		<?php endforeach; ?>
-	<?php endif;?>
 	</div>
+	<?php endif;?>
 
 </div>

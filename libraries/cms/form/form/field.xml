@@ -4,7 +4,7 @@
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
 				<field name="field_id" type="text" readonly="true"
-					class="readonly" size="10" default="0"
+					class="readonly span1"  size="10" default="0"
 					label="JGLOBAL_FIELD_ID_LABEL"	description="JGLOBAL_FIELD_ID_DESC"
 				/>
 				<field name="field_name" type="text" readonly="true"
@@ -22,7 +22,7 @@
 
 
 				<field name="ordering" type="text" readonly="true"
-					class="readonly" size="10" default="0"
+					class="readonly span1" size="10" default="0"
 					label="Field Ordering"	description="JFIELD_ORDERING_DESC"
 				/>
 
@@ -34,7 +34,7 @@
 				</field>
 
 				<field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL"
-					description="JFIELD_ACCESS_DESC" class="small" size="1" />
+					description="JFIELD_ACCESS_DESC" class="small span1" size="1" />
 
 			</fields>
 		</fields>
@@ -44,7 +44,7 @@
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
 				<field name="field_id" type="text" readonly="true"
-					class="readonly" size="10" default="0"
+					class="readonly span1" size="10" default="0"
 					label="JGLOBAL_FIELD_ID_LABEL"	description="JGLOBAL_FIELD_ID_DESC"
 				/>
 				<field name="field_name" type="text" readonly="true"
@@ -60,8 +60,9 @@
 					label="Field Type"	description="Field Type Desc"
 				/>
 
+
 				<field name="ordering" type="text" readonly="true"
-					class="readonly" size="10" default="0"
+					class="readonly span1" size="10" default="0"
 					label="Field Ordering"	description="JFIELD_ORDERING_DESC"
 				/>
 
@@ -73,7 +74,7 @@
 				</field>
 
 				<field name="access" type="accesslevel" label="JFIELD_ACCESS_LABEL"
-					description="JFIELD_ACCESS_DESC" class="small" size="1" />
+					description="JFIELD_ACCESS_DESC" class="small span1" size="1" />
 
 
 				<!--
