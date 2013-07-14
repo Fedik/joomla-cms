@@ -345,7 +345,7 @@ class JUcmTypesImport //extends JObject
 			'type_id' => (int) $layout['type_id'],
 			'layout_id' => (int) $layout['layout_id'],
 			'ordering' => (int) $fieldInfo->get('ordering'),
-			'access' => (int) $fieldInfo->get('access', 0),
+			'access' => (int) $fieldInfo->get('access', 1),
 			'state' => (int) $fieldInfo->get('state', 1),
 			'stage' => (int) $fieldInfo->get('stage', 0),
 			'params' => $params,

@@ -61,7 +61,10 @@ class UCMTypeHelper
 			return $cache[$key];
 		}
 
+		$user = JFactory::getUser();
+
 		$db = JFactory::getDbo();
+
 		$query = $db->getQuery(true);
 		$query->select('fl.*, f.field_name, f.field_type, l.layout_name');
 		$query->from('#__ucm_fields_layouts as fl');
@@ -70,6 +73,10 @@ class UCMTypeHelper
 		$query->join('LEFT', '#__content_types as c ON c.type_id=fl.type_id');
 		$query->where('c.type_alias = '. $db->q($type_alias));
 		$query->where('l.layout_name = '. $db->q($layout));
+
+		// Check access
+		$groups = implode(',', $user->getAuthorisedViewLevels());
+		$query->where('fl.access IN (' . $groups . ')');
 
 		if($published_only)
 		{
