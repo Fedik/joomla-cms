@@ -82,6 +82,13 @@ class UCMTypeHelper
 		{
 			$query->where('fl.state = 1');
 		}
+		else
+		{
+			// Load inactive if any
+			// TODO: load inactive fields that exits in #__ucm_fields but not in #__ucm_layouts
+			//		and possible metadata and publish_options fields for layout != form
+
+		}
 		$query->order('fl.ordering');
 		//echo $query->dump();
 
