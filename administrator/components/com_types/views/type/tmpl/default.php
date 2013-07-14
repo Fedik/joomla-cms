@@ -9,9 +9,8 @@
 
 defined('_JEXEC') or die;
 
-
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_types&layout=edit&id=' . (int) $this->item->type_id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate form-horizontal">
+<form action="<?php echo JRoute::_('index.php?option=com_types&layout=edit&type_id=' . (int) $this->item->type_id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate form-horizontal">
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<!-- Base Type Info -->
@@ -33,6 +32,18 @@ defined('_JEXEC') or die;
 					<?php echo $this->form->getInput('type_alias'); ?>
 				</div>
 			</div>
+
+			<!-- Layouts tabs -->
+			<ul class="nav nav-tabs">
+			<?php foreach($this->item->layouts as $layout):?>
+				<li<?php if($layout->layout_name == $this->item->layout_name) echo ' class="active"'?>>
+				<?php
+				$link = JRoute::_('index.php?option=com_types&view=type&layout=edit&type_id=' . $this->item->type_id . '&layout_name=' . $layout->layout_name);
+				echo JHtml::link($link, $layout->layout_title);
+				?>
+				</li>
+			<?php endforeach;?>
+			</ul>
 
 			<!-- Fields Configuration -->
 			<?php echo JLayoutHelper::render('ucm.type.edit.fields', $this); ?>

@@ -133,6 +133,7 @@ class TypesModelType extends JModelAdmin
 		//get fields info
 		$layout_name = $this->getState('layout_name', 'form');
 		$fields = UCMTypeHelper::getFields($item->type_alias, $layout_name, false);
+		$layouts = UCMTypeHelper::getLayouts($item->type_alias);
 
 		// Prepare fields params
 		foreach($fields as $field) {
@@ -142,6 +143,7 @@ class TypesModelType extends JModelAdmin
 
 		$item->set('layout_name', $layout_name);
 		$item->set('fields', $fields);
+		$item->set('layouts', $layouts);
 
 		return $item;
 	}
