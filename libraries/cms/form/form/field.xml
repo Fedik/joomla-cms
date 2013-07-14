@@ -27,7 +27,7 @@
 				/>
 
 				<field name="state" type="radio"
-					filter="intval" default="1" class="btn-group"
+					filter="intval" default="1" class="state btn-group"
 					label="JSTATUS" description="JFIELD_PUBLISHED_DESC">
 					<option value="0">JHIDE</option>
 					<option value="1">JSHOW</option>
@@ -67,7 +67,7 @@
 				/>
 
 				<field name="state" type="radio"
-					filter="intval" default="1" class="btn-group"
+					filter="intval" default="1" class="state btn-group"
 					label="JSTATUS" description="JFIELD_PUBLISHED_DESC">
 					<option value="0">JHIDE</option>
 					<option value="1">JSHOW</option>

@@ -58,6 +58,7 @@ foreach($displayData->item->get('fields') as $field_data) {
 </style>
 <script type="text/javascript">
 jQuery(document).ready(function(){
+	// show/hide params
 	jQuery('#fields-group a.show-params').bind('click', function(){
 		jQuery(this).parents('.field').children('.params').slideToggle();
 		return false;
