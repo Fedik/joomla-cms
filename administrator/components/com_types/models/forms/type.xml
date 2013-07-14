@@ -20,25 +20,6 @@
 	/>
 
 
-	<field name="item_view" type="hidden" />
-<!--
-	<field
-		name="view_type"
-		type="text"
-		class="readonly"
-		label="COM_TYPES_FIELD_VIEW_TYPE_LABEL"
-		description ="COM_TYPES_FIELD_VIEW_TYPE_DESC"
-		default="input"
-		readonly="true"
-	/>
-
-	<field name="fields" type="fields"
-		label="COM_TYPES_FIELD_FIELDS_LABEL" description ="COM_TYPES_FIELD_FIELDS_DESC"
-	/>
-
-	<fields name="fields">
-
-	</fields>
--->
+	<field name="layout_name" type="hidden" />
 
 </form>

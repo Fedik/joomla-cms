@@ -114,8 +114,8 @@ class TypesModelType extends JModelAdmin
 
 		// Get Item View (Item Layout) name and save in to state
 		// TODO: bad place for it ???
-		$item_view = $app->input->get('item_view', 'form');
-		$this->setState('item_view', $item_view);
+		$layout_name = $app->input->get('layout_name', 'form');
+		$this->setState('layout_name', $layout_name);
 	}
 
 	/**
@@ -131,8 +131,8 @@ class TypesModelType extends JModelAdmin
 		$item = parent::getItem($pk);
 
 		//get fields info
-		$item_view = $this->getState('item_view', 'form');
-		$fields = UCMTypeHelper::getFields($item->type_alias, $item_view, false);
+		$layout_name = $this->getState('layout_name', 'form');
+		$fields = UCMTypeHelper::getFields($item->type_alias, $layout_name, false);
 
 		// Prepare fields params
 		foreach($fields as $field) {
@@ -140,7 +140,7 @@ class TypesModelType extends JModelAdmin
 			$field->params = $params->toArray();
 		}
 
-		$item->set('item_view', $item_view);
+		$item->set('layout_name', $layout_name);
 		$item->set('fields', $fields);
 
 		return $item;
@@ -211,7 +211,7 @@ class TypesModelType extends JModelAdmin
 		if($fields && $field_main_file
 			&& $fieldMainXMLRaw = file_get_contents($field_main_file))
 		{
-			$display = $data->get('item_view', 'form') == 'form' ? 'input' : 'value';
+			$display = $data->get('layout_name', 'form') == 'form' ? 'input' : 'value';
 			foreach($fields as $field) {
 				// Prepare XML data, overwrite {FIELD_NAME}
 				$newFieldMain = str_replace('{FIELD_NAME}', $field->field_name,  $fieldMainXMLRaw);
