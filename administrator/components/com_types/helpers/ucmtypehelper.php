@@ -116,6 +116,14 @@ class UCMTypeHelper
 	 */
 	public static function getLayouts($type_alias)
 	{
+		static $cache;
+		$key = $type_alias;
+
+		if(isset($cache[$key]))
+		{
+			return $cache[$key];
+		}
+
 		$db = JFactory::getDbo();
 
 		$query = $db->getQuery(true);
@@ -129,6 +137,9 @@ class UCMTypeHelper
 
 		$db->setQuery($query);
 		$layouts = $db->loadObjectList('layout_name');
+
+		// Cache
+		$cache[$key] = $layouts;
 
 		return $layouts;
 	}
