@@ -87,6 +87,7 @@ class WeblinksTableWeblink extends JTable
 	{
 		$date	= JFactory::getDate();
 		$user	= JFactory::getUser();
+
 		if ($this->id)
 		{
 			// Existing item
@@ -128,9 +129,14 @@ class WeblinksTableWeblink extends JTable
 			return false;
 		}
 
+		// Convert IDN urls to punycode
+		$this->url = JStringPunycode::urlToPunycode($this->url);
+
 		$this->tagsHelper->preStoreProcess($this);
 		$result = parent::store($updateNulls);
-		return $result && $this->tagsHelper->postStoreProcess($this);
+
+		$this->newTags = isset($this->newTags) ? $this->newTags : array();
+		return $result && $this->tagsHelper->postStoreProcess($this, $this->newTags);
 	}
 
 	/**
