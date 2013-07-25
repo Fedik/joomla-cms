@@ -159,6 +159,14 @@ class TypesModelType extends JModelAdmin
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
+		// If we have a data (mainly on save action)
+		// save type_alias for future action,
+		// @see: $this->preprocessForm()
+		if($data)
+		{
+			$this->setState('type_alias', $data['type_alias']);
+			$this->setState('layout_name', $data['layout_name']);
+		}
 		// Get the form.
 		$form = $this->loadForm('com_types.type', 'type', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form))
@@ -204,18 +212,31 @@ class TypesModelType extends JModelAdmin
 	 */
 	protected function preprocessForm(JForm $form, $data, $group = 'content')
 	{
+		// Get fields
+		if(is_object($data))// form open
+		{
+			$fields = $data->get('fields');
+		}
+		elseif(is_array($data) && !empty($data['fields'])) // when data from State
+		{
+			$fields = $data['fields'];
+		}
+		else  // mainly when first Save attempt
+		{
+			$fields = UCMTypeHelper::getFields($this->getState('type_alias'), $this->getState('layout_name'), null, true);
+		}
+
 		// Get the form file for a fields main configuration
 		JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
 		JForm::addFormPath(JPATH_COMPONENT . '/models/fields/forms');
 		$field_main_file = JPath::find(JForm::addFormPath(), 'field.xml');
 
-		$fields = $data ? $data->get('fields') : null;
-
-		if($fields && $field_main_file
+		if(!empty($fields) && $field_main_file
 			&& $fieldMainXMLRaw = file_get_contents($field_main_file))
 		{
-			$display = $data->get('layout_name', 'form') == 'form' ? 'input' : 'value';
+			$display = $this->getState('layout_name', 'form') == 'form' ? 'input' : 'value';
 			foreach($fields as $field) {
+				$field = is_array($field) ? (object) $field : $field;
 				// Prepare XML data, overwrite {FIELD_NAME}
 				$newFieldMain = str_replace('{FIELD_NAME}', $field->field_name,  $fieldMainXMLRaw);
 
@@ -238,6 +259,21 @@ class TypesModelType extends JModelAdmin
 		}
 
 		parent::preprocessForm($form, $data, $group);
+	}
+
+	/**
+	 * Method to save the form data.
+	 *
+	 * @param   array  $data  The form data.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 */
+	public function save($data)
+	{
+		//var_dump($data, $_POST, $this);
+		//exit;
+		return false;
 	}
 
 }

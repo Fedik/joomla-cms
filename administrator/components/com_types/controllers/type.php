@@ -39,15 +39,41 @@ class TypesControllerType extends JControllerForm
 	 *
 	 * @return  boolean  True if successful, false otherwise.
 	 *
-	 */
+	 * /
 	public function save($key = null, $urlVar = null)
 	{
 		// Check for request forgeries.
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$app = JFactory::getApplication();
-		var_dump($_POST); exit;
+		//$app = JFactory::getApplication();
+		//var_dump($_POST); exit;
 	}
+	*/
 
+	/**
+	 * Gets the URL arguments to append to an item redirect.
+	 *
+	 * @param   integer  $recordId  The primary key id for the item.
+	 * @param   string   $urlVar    The name of the URL variable for the id.
+	 *
+	 * @return  string  The arguments to append to the redirect URL.
+	 *
+	 */
+	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
+	{
+		$append = parent::getRedirectToItemAppend($recordId, $urlVar);
+
+		$data = $this->input->post->get('jform', array(), 'array');
+		if (!empty($data['layout_name']))
+		{
+			$append .= '&layout_name=' . $data['layout_name'];
+		}
+		else
+		{
+			$append .= '&layout_name=' . $this->input->get('layout_name', 'form');
+		}
+
+		return $append;
+	}
 
 }

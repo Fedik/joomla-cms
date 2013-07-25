@@ -304,7 +304,7 @@ class JUcmTypesImport //extends JObject
 		if($layout['layout_name'] == 'form')
 		{
 			// Store the Base Field first
-			$locked = $fieldInfo->get('locked') == 'true' || $fieldInfo->get('locked') == '1' ? 1 : 0;
+			$locked = $fieldInfo->get('locked') == 'false' || $fieldInfo->get('locked') == '0' ? 0 : 1;
 			$baseFieldTable->bind(array(
 				'field_name' => $field_name,
 				'field_type' => $fieldInfo->get('type', 'text'),
@@ -331,7 +331,7 @@ class JUcmTypesImport //extends JObject
 		// Load if already exist
 		$fieldLayoutTable->load(array(
 			'field_id' => $baseFieldTable->field_id,
-			'type_id' => $layout['type_id'],
+//			'type_id' => $layout['type_id'],
 			'layout_id' => $layout['layout_id'],
 		));
 
@@ -342,7 +342,7 @@ class JUcmTypesImport //extends JObject
 
 		$fieldLayoutTable->bind(array(
 			'field_id' => (int) $baseFieldTable->field_id,
-			'type_id' => (int) $layout['type_id'],
+//			'type_id' => (int) $layout['type_id'],
 			'layout_id' => (int) $layout['layout_id'],
 			'ordering' => (int) $fieldInfo->get('ordering'),
 			'access' => (int) $fieldInfo->get('access', 1),

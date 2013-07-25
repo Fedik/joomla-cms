@@ -75,7 +75,7 @@
 						label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
 					/>
 					<!--
-						TODO: make a field for allow to select format type
+						TODO: make a field for allow to select format type, and format options
 					-->
 					<field name="format" type="format"
 						default=""	size="20" labelclass="control-label"

@@ -49,6 +49,9 @@ class TypesViewType extends JViewLegacy
 
 		JToolbarHelper::apply('type.apply');
 		JToolbarHelper::save('type.save');
+
+		JToolbarHelper::cancel('type.cancel');
+
 	}
 
 

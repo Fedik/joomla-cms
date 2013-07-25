@@ -38,7 +38,7 @@ defined('_JEXEC') or die;
 			<?php foreach($this->item->layouts as $layout):?>
 				<li<?php if($layout->layout_name == $this->item->layout_name) echo ' class="active"'?>>
 				<?php
-				$link = JRoute::_('index.php?option=com_types&view=type&layout=edit&type_id=' . $this->item->type_id . '&layout_name=' . $layout->layout_name);
+				$link = JRoute::_('index.php?option=com_types&task=type.edit&type_id=' . $this->item->type_id . '&layout_name=' . $layout->layout_name);
 				echo JHtml::link($link, $layout->layout_title);
 				?>
 				</li>
@@ -53,7 +53,7 @@ defined('_JEXEC') or die;
 	</div>
 
 	<!-- Hidden -->
-	<?php echo $this->form->getInput('item_view'); ?>
+	<?php echo $this->form->getInput('layout_name'); ?>
 	<input type="hidden" name="task" value="" />
 	<?php echo JHtml::_('form.token'); ?>
 </form>
