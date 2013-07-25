@@ -71,8 +71,15 @@
 			<fields name="{FIELD_NAME}">
 				<fields name="params">
 					<field name="label"	type="text"
-						default=""	size="20"
-						label="JGLOBAL_FIELD_LABEL_LABEL" description ="JGLOBAL_FIELD_LABEL_DESC"
+						default=""	size="20" labelclass="control-label"
+						label="COM_TYPES_FIELD_LABEL_LABEL" description ="COM_TYPES_FIELD_LABEL_DESC"
+					/>
+					<!--
+						TODO: make a field for allow to select format type
+					-->
+					<field name="format" type="format"
+						default=""	size="20" labelclass="control-label"
+						label="Format" description ="Format the value"
 					/>
 				</fields>
 			</fields>
