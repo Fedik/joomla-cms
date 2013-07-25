@@ -3,8 +3,11 @@
 	<fieldset name="input">
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
+				<field name="id" type="hidden" />
+				<field name="layout_id" type="hidden" />
+
 				<field name="field_id" type="text" readonly="true"
-					class="readonly span1"  size="10" default="0"
+					class="readonly span1"  size="6" default="0"
 					label="JGLOBAL_FIELD_ID_LABEL"	description="JGLOBAL_FIELD_ID_DESC"
 				/>
 				<field name="field_name" type="text" readonly="true"
@@ -43,8 +46,11 @@
 	<fieldset name="value">
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
+				<field name="id" type="hidden" />
+				<field name="layout_id" type="hidden" />
+
 				<field name="field_id" type="text" readonly="true"
-					class="readonly span1" size="10" default="0"
+					class="readonly span1" size="6" default="0"
 					label="JGLOBAL_FIELD_ID_LABEL"	description="JGLOBAL_FIELD_ID_DESC"
 				/>
 				<field name="field_name" type="text" readonly="true"
