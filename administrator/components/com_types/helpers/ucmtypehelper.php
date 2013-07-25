@@ -47,14 +47,16 @@ class UCMTypeHelper
 	 *
 	 * @param   string  $type_alias  Type alias.
 	 * @param   string  $layout  Layout name.
-	 * @param   bool  $published_only  Return only active or not.
+	 * @param   bool  $published  Return only active or not.
+	 * @param	bool  $all load fields that assigned to the current Content Type
+	 * 						but do not exist in current layout
 	 *
 	 * @return  array Array with fields
 	 */
-	public static function getFields($type_alias, $layout = 'form', $published_only = true)
+	public static function getFields($type_alias, $layout = 'form', $published = true, $all = false)
 	{
 		static $cache;
-		$key = md5(serialize(array($type_alias, $layout, $published_only)));
+		$key = md5(serialize(array($type_alias, $layout, $published, $all)));
 
 		if(isset($cache[$key]))
 		{
@@ -67,10 +69,15 @@ class UCMTypeHelper
 
 		$query = $db->getQuery(true);
 		$query->select('fl.*, f.field_name, f.field_type, l.layout_name');
-		$query->from('#__ucm_fields_layouts as fl');
-		$query->join('LEFT', '#__ucm_fields as f ON f.field_id=fl.field_id');
+// 		$query->from('#__ucm_fields_layouts as fl');
+// 		$query->join('LEFT', '#__ucm_fields as f ON f.field_id=fl.field_id');
+// 		$query->join('LEFT', '#__ucm_layouts as l ON l.layout_id=fl.layout_id');
+// 		$query->join('LEFT', '#__content_types as c ON c.type_id=fl.type_id');
+// 		$query->where('c.type_alias = '. $db->q($type_alias));
+		$query->from('#__ucm_fields as f');
+		$query->join('LEFT', '#__content_types as c ON c.type_id=f.type_id');
+		$query->join('LEFT', '#__ucm_fields_layouts as fl ON fl.field_id=f.field_id');
 		$query->join('LEFT', '#__ucm_layouts as l ON l.layout_id=fl.layout_id');
-		$query->join('LEFT', '#__content_types as c ON c.type_id=fl.type_id');
 		$query->where('c.type_alias = '. $db->q($type_alias));
 		$query->where('l.layout_name = '. $db->q($layout));
 
@@ -78,22 +85,45 @@ class UCMTypeHelper
 		$groups = implode(',', $user->getAuthorisedViewLevels());
 		$query->where('fl.access IN (' . $groups . ')');
 
-		if($published_only)
+		if($published === true)
 		{
 			$query->where('fl.state = 1');
 		}
-		else
+		elseif($published === false)
 		{
-			// Load inactive if any
-			// TODO: load inactive fields that exits in #__ucm_fields but not in #__ucm_layouts
-			//		and possible metadata and publish_options fields for layout != form
-
+			$query->where('fl.state = 0');
 		}
 		$query->order('fl.ordering');
 		//echo $query->dump();
 
 		$db->setQuery($query);
 		$fields = $db->loadObjectList('field_name');
+
+		//TODO: to tricky ???
+		if($all)
+		{
+
+			// get layout id
+			foreach($fields as $field){
+				$layout_id = $field->layout_id;
+				break;
+			}
+			$fields_other = self::getFields($type_alias, 'form', null);
+			// check if the field from the form layout, so not related to requested layout
+			foreach($fields_other as $field_name => $field){
+				// the field from form layout
+				// set it unpublished, and reset key
+				if (empty($fields[$field_name]))
+				{
+					$field->state = 0;
+					$field->id = null;
+					$field->params = '';
+					$field->layout_id = $layout_id;
+					$field->layout_name = $layout;
+					$fields[$field_name] = $field;
+				}
+			}
+		}
 
 		// Prepare params
 		// TODO need or???
