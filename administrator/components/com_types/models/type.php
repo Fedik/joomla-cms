@@ -206,6 +206,7 @@ class TypesModelType extends JModelAdmin
 	{
 		// Get the form file for a fields main configuration
 		JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
+		JForm::addFormPath(JPATH_COMPONENT . '/models/fields/forms');
 		$field_main_file = JPath::find(JForm::addFormPath(), 'field.xml');
 
 		$fields = $data ? $data->get('fields') : null;
