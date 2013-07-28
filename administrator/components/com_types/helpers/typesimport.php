@@ -141,33 +141,6 @@ class JUcmTypesImport //extends JObject
 			// Build aliase
 			$type_alias = $this->component . '.' . $type_name;
 
-			// Prepare Params
-			if($info->get('metadata') == 'true' || $info->get('metadata') == '1')
-			{
-				$info->set('metadata', 1);
-			}
-			else
-			{
-				$info->set('metadata', 0);
-			}
-			// Prepare Params
-			if($info->get('publish_options') == 'true' || $info->get('publish_options') == '1')
-			{
-				$info->set('publish_options', 1);
-			}
-			else
-			{
-				$info->set('publish_options', 0);
-			}
-			// Prepare Params
-			if($info->get('permissions') == 'true' || $info->get('permissions') == '1')
-			{
-				$info->set('permissions', 1);
-			}
-			else
-			{
-				$info->set('permissions', 0);
-			}
 			$params = $this->prepareParams($info, array('name', 'title', 'table'));
 
 			// Load if already exist
@@ -274,7 +247,7 @@ class JUcmTypesImport //extends JObject
 
 			if(!$this->doField($fieldInfo, $layout))
 			{
-				var_dump($fieldInfo->get('name').' : false');
+				var_dump('Cannot import: ' . $fieldInfo->get('name'));
 				continue;
 			}
 		}
@@ -304,12 +277,11 @@ class JUcmTypesImport //extends JObject
 		if($layout['layout_name'] == 'form')
 		{
 			// Store the Base Field first
-			$locked = $fieldInfo->get('locked') == 'false' || $fieldInfo->get('locked') == '0' ? 0 : 1;
 			$baseFieldTable->bind(array(
 				'field_name' => $field_name,
 				'field_type' => $fieldInfo->get('type', 'text'),
 				'type_id' => $layout['type_id'],
-				'locked' => $locked,
+				'locked' => $fieldInfo->get('locked', 1),
 			));
 
 			if(!$baseFieldTable->check() || !$baseFieldTable->store())
@@ -366,8 +338,26 @@ class JUcmTypesImport //extends JObject
 	protected function getAttributes(SimpleXMLElement $element)
 	{
 		$attributes = (array) $element->attributes();
+		$data = array();
 
-		return new JRegistry(isset($attributes['@attributes']) ? $attributes['@attributes'] : '');
+		if(!empty($attributes['@attributes']))
+		{
+			foreach($attributes['@attributes'] as $k => $v){
+				// Normalise booleans
+				if(strtolower($v) == 'true')
+				{
+					$v = 1;
+				}
+				elseif(strtolower($v) == 'false')
+				{
+					$v = 0;
+				}
+
+				$data[$k] = $v;
+			}
+		}
+
+		return new JRegistry($data);
 	}
 
 	/**

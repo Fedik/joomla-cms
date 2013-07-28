@@ -17,7 +17,7 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_types'))
 JLoader::register('UCMTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
 
 //test import here hehe
-//UCMTypeHelper::importContentType('com_content');//exit;
+//UCMTypeHelper::importContentType('com_content');exit;
 
 
 $controller = JControllerLegacy::getInstance('Types');
