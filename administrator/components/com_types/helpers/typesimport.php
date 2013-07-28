@@ -331,7 +331,6 @@ class JUcmTypesImport //extends JObject
 		// Load if already exist
 		$fieldLayoutTable->load(array(
 			'field_id' => $baseFieldTable->field_id,
-//			'type_id' => $layout['type_id'],
 			'layout_id' => $layout['layout_id'],
 		));
 
@@ -340,12 +339,13 @@ class JUcmTypesImport //extends JObject
 		$params = $this->prepareParams($fieldInfo,
 				array('name', 'type', 'ordering', 'access', 'locked', 'state', 'stage'));
 
+		$default_access = $layout['layout_name'] == 'form' ? 3 : 1;
+
 		$fieldLayoutTable->bind(array(
 			'field_id' => (int) $baseFieldTable->field_id,
-//			'type_id' => (int) $layout['type_id'],
 			'layout_id' => (int) $layout['layout_id'],
 			'ordering' => (int) $fieldInfo->get('ordering'),
-			'access' => (int) $fieldInfo->get('access', 1),
+			'access' => (int) $fieldInfo->get('access', $default_access),
 			'state' => (int) $fieldInfo->get('state', 1),
 			'stage' => (int) $fieldInfo->get('stage', 0),
 			'params' => $params,
@@ -374,14 +374,14 @@ class JUcmTypesImport //extends JObject
 	 * Prepare Params
 	 *
 	 * @param mixed $info JRegistry or array with data for conver to params string
-	 * @param array $unnecessary contain keys for clean up from $info
+	 * @param array $exclude contain keys for clean up from $info
 	 *
 	 * @return string JSON string or empty string
 	 */
-	protected function prepareParams($info, $unnecessary = array())
+	protected function prepareParams($info, $exclude = array())
 	{
 		$params = ($info instanceof JRegistry) ? $info->toArray() : (array) $info;
-		foreach($unnecessary as $k) {
+		foreach($exclude as $k) {
 			if(isset($params[$k]))
 			{
 				unset($params[$k]);

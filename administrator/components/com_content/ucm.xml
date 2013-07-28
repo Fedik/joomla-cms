@@ -588,7 +588,7 @@
 					<field name="core_catid" access="1"	/>
 
 					<field name="core_body" access="1"
-						display="introtext" />
+						format="introtext" />
 
 					<field name="tags" access="1" />
 				</view>
@@ -609,7 +609,7 @@
 						lightbox="1024x800" lightboxscalle="fit" />
  					-->
 					<field name="core_body" access="1"
-						display="fulltext" />
+						format="fulltext" />
 
 					<field name="tags" access="1" />
 				</view>
@@ -623,10 +623,10 @@
 					<!--
 					<field name="image" access="1"
 						preview="300x150" previewscalle="crop" previewfilter="grayscale"
-						display="with link" />
+						format="with link" />
 					-->
 					<field name="core_body" access="1"
-						display="introtext" />
+						format="introtext" />
 				</view>
 
 			</views>
