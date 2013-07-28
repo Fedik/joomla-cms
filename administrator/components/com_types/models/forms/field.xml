@@ -4,7 +4,7 @@
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
 				<field name="id" type="hidden" />
-				<field name="layout_id" type="hidden" />
+				<!--field name="layout_id" type="hidden" /-->
 
 				<field name="field_id" type="text" readonly="true"
 					class="readonly span1"  size="6" default="0"
@@ -47,7 +47,7 @@
 		<fields name="fields">
 			<fields name="{FIELD_NAME}">
 				<field name="id" type="hidden" />
-				<field name="layout_id" type="hidden" />
+				<!--field name="layout_id" type="hidden" /-->
 
 				<field name="field_id" type="text" readonly="true"
 					class="readonly span1" size="6" default="0"

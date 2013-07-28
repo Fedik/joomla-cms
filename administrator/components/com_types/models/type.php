@@ -200,6 +200,7 @@ class TypesModelType extends JModelAdmin
 
 	/**
 	 * Method to allow derived classes to preprocess the form.
+	 * Small trick for append the Fields form
 	 *
 	 * @param   JForm   $form   A JForm object.
 	 * @param   mixed   $data   The data expected for the form.
@@ -271,9 +272,106 @@ class TypesModelType extends JModelAdmin
 	 */
 	public function save($data)
 	{
-		//var_dump($data, $_POST, $this);
-		//exit;
-		return false;
+		// TODO: need to check the alias and so on
+		if(!parent::save($data))
+		{
+			return false;
+		}
+
+		// Save Fields Layout options
+		return $this->saveFieldsLayout($data);
+	}
+
+	/**
+	 * Method to save the Fields Layout.
+	 *
+	 * @param   array  $data  The form data, that contain $data[fields].
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 */
+	public function saveFieldsLayout($data)
+	{
+		// If empty then nothing to do here
+		if (empty($data['fields'])) {
+			return true;
+		}
+
+		$dispatcher = JEventDispatcher::getInstance();
+
+		// Get tables
+		$tableType = $this->getTable();
+		$tableLayout = $this->getTable('Layout', 'JTable');
+		$tableFieldLayout = $this->getTable('FieldsLayouts', 'JTable');
+
+		// Get type_id
+		$key = $tableType->getKeyName();
+		$type_id = (!empty($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+
+		// Include the content plugins for the on save events.
+		// TODO: "fields" or "content" or something else ???
+		JPluginHelper::importPlugin('fields');
+
+		try
+		{
+			// Load Layout
+			$result = $tableLayout->load(array(
+					'layout_name' => $data['layout_name'],
+					'type_id' => $type_id,
+			));
+			if(!$result)
+			{
+				$this->setError('Layout should exist!');
+				return false;
+			}
+
+			$layout_id = $tableLayout->layout_id;
+
+			// So prepare and store the Fields
+			foreach ($data['fields'] as $field) {
+				// Load if new
+				$tableFieldLayout->load(array('id' => $field['id']));
+
+				// Set layout id
+				$field['layout_id'] = $layout_id;
+				// Prepare params
+				if(isset($field['params']) && is_array($field['params']))
+				{
+					$params = new JRegistry($field['params']);
+					$field['params'] = $params->toString();
+				}
+				$tableFieldLayout->bind($field);
+
+				// Check the data.
+				if (!$tableFieldLayout->check())
+				{
+					$this->setError($tableFieldLayout->getError());
+					return false;
+				}
+
+				//TODO: Trigger the onFieldLayoutBeforeSave event.
+
+				// Store the data.
+				if (!$tableFieldLayout->store())
+				{
+					$this->setError($tableFieldLayout->getError());
+					return false;
+				}
+
+				//TODO: Trigger the onFieldLayoutAfterSave event.
+
+				// Reset the Table instead of call get new Instanse each time
+				$tableFieldLayout->reset();
+				$tableFieldLayout->{$tableFieldLayout->getKeyName()} = null;
+			}
+
+		}
+		catch (Exception $e)
+		{
+			$this->setError($e->getMessage());
+			return false;
+		}
+		return true;
 	}
 
 }
