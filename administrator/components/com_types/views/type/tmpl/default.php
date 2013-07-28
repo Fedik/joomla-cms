@@ -33,6 +33,16 @@ defined('_JEXEC') or die;
 				</div>
 			</div>
 
+			<!-- Params -->
+			<?php foreach($this->form->getGroup('params') as $field_param):?>
+				<div class="control-group">
+					<?php echo $field_param->label; ?>
+					<div class="controls">
+						<?php echo $field_param->input; ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+
 			<!-- Layouts tabs -->
 			<ul class="nav nav-tabs">
 			<?php foreach($this->item->layouts as $layout):?>

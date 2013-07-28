@@ -19,7 +19,30 @@
 		label="JFIELD_ALIAS_LABEL" description="JFIELD_ALIAS_DESC"
 	/>
 
-
 	<field name="layout_name" type="hidden" />
+
+	<fields name="params">
+		<field name="metadata" type="radio"
+			filter="intval" default="1" class="state btn-group"
+			labelclass="control-label"
+			label="Metadata" description="Use metadata form">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field name="publish_options" type="radio"
+			filter="intval" default="1" class="state btn-group"
+			labelclass="control-label"
+			label="Publish Options" description="Use Publish Options form">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field name="permissions" type="radio"
+			filter="intval" default="1" class="state btn-group"
+			labelclass="control-label"
+			label="Permissions" description="Use Permissions form">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+	</fields>
 
 </form>

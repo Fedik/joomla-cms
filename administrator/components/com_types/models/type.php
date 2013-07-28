@@ -272,6 +272,13 @@ class TypesModelType extends JModelAdmin
 	 */
 	public function save($data)
 	{
+		// Prepare params
+		if(isset($data['params']) && is_array($data['params']))
+		{
+			$params = new JRegistry($data['params']);
+			$data['params'] = $params->toString();
+		}
+
 		// TODO: need to check the alias and so on
 		if(!parent::save($data))
 		{
