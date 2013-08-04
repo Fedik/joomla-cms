@@ -28,7 +28,17 @@ class PageController extends JControllerLegacy
 	 */
 	public function display($cachable = true, $urlparams = false)
 	{
-		var_dump($this->input);
+		$layout_name = $this->input->get('layout_name');
+
+		// form view required other model, formModel
+		if($layout_name == 'form')
+		{
+			//TODO: redirect to task=edit
+// 			$model = $this->getModel('ItemForm');
+// 			$view = $this->getView('Item', 'html', 'PageView');
+// 			$view->setModel($model, true);
+		}
+
 		return parent::display($cachable, $urlparams);
 	}
 }
