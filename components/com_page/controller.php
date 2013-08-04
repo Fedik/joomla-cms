@@ -1,6 +1,6 @@
 <?php
 /**
- * @package     Joomla.Administrator
+ * @package     Joomla.Site
  * @subpackage  com_page
  *
  * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
@@ -8,3 +8,27 @@
  */
 
 defined('_JEXEC') or die;
+
+/**
+ * Page Component Controller
+ *
+ * @package     Joomla.Site
+ * @subpackage  com_page
+ */
+class PageController extends JControllerLegacy
+{
+	/**
+	 * Method to display a view.
+	 *
+	 * @param   boolean  If true, the view output will be cached
+	 * @param   array    An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+	 *
+	 * @return  JController  This object to support chaining.
+	 *
+	 */
+	public function display($cachable = true, $urlparams = false)
+	{
+		return parent::display($cachable, $urlparams);
+	}
+}
+

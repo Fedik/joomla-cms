@@ -1,6 +1,6 @@
 <?php
 /**
- * @package     Joomla.Administrator
+ * @package     Joomla.Site
  * @subpackage  com_page
  *
  * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
@@ -8,4 +8,8 @@
  */
 
 defined('_JEXEC') or die;
+
+$controller = JControllerLegacy::getInstance('Page');
+$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller->redirect();
 
