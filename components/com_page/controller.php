@@ -28,6 +28,7 @@ class PageController extends JControllerLegacy
 	 */
 	public function display($cachable = true, $urlparams = false)
 	{
+		var_dump($this->input);
 		return parent::display($cachable, $urlparams);
 	}
 }
