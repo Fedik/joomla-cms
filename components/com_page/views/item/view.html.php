@@ -15,6 +15,14 @@
  */
 class PageViewItem extends JViewLegacy
 {
+	/**
+	 * Display the item.
+	 *
+	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+	 *
+	 * @return  mixed  A string if successful, otherwise a Error object.
+	 *
+	 */
 	public function display($tpl = null)
 	{
 		$app = JFactory::getApplication();

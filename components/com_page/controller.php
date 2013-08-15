@@ -28,12 +28,26 @@ class PageController extends JControllerLegacy
 	 */
 	public function display($cachable = true, $urlparams = false)
 	{
+		$type_alias = $this->input->get('type');
+		$view = $this->input->get('view');
 		$layout_name = $this->input->get('layout_name');
+
+		if($view == 'item' && !$type_alias)
+		{
+			// Cannot continue
+			return false;
+		}
+
+		if(!$layout_name)
+		{
+			$this->input->set('layout_name', 'default');
+		}
+
 
 		// form view required other model, formModel
 		if($layout_name == 'form')
 		{
-			//TODO: redirect to task=edit
+			//TODO: redirect to task=item.edit
 // 			$model = $this->getModel('ItemForm');
 // 			$view = $this->getView('Item', 'html', 'PageView');
 // 			$view->setModel($model, true);
