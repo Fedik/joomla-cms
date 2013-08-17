@@ -465,8 +465,8 @@ Joomla.waitOff = function (event, fn) {
  * 		Joomla.fireEvent('junload', 'unloaded-element'); //fires for all junload subscribers
  * 		Joomla.fireEvent('junload.extension_name', 'unloaded-element'); //fires only for specified exstension
  *
- * 		Joomla.fireEvent('jload', 'changed-element'); //fires for all jload subscribers
- * 		Joomla.fireEvent('jload.extension_name', 'changed-element'); //fires only for specified exstension
+ * 		Joomla.fireEvent('jready', 'changed-element'); //fires for all jready subscribers
+ * 		Joomla.fireEvent('jready.extension_name', 'changed-element'); //fires only for specified exstension
  *
  * @param event - string, event name
  * @param element - element DOM object or ID of the element
@@ -479,6 +479,7 @@ Joomla.fireEvent = function(event, element){
 
 /**
  * Initiall trigger
+ * TODO: what about "load" ???
  */
 jQuery(function(){
 	jQuery(document).trigger('jready');
