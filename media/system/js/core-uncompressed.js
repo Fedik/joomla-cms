@@ -434,12 +434,13 @@ function checkAll_button(n, task) {
  */
 
 /**
- * add events for init
+ * Add events for script initialization.
  * use like:
- * 		Joomla.waitOn('jready.extension_name', callback); // for init
- * 		Joomla.waitOn('junload.extension_name', callback); // for unload only
+ * 		Joomla.waitOn('ready jload.extension_name', callback); // wait on "domready", and on "jload"
+ * 		Joomla.waitOn('load jload.extension_name', callback); // wait on "load", and on "jload"
+ * 		Joomla.waitOn('junload.extension_name', callback); // wait on "unload"
  *
- * @param event - string, event name
+ * @param event - string, event name, or events separated by space
  * @param fn - callback function
  *
  */
@@ -460,13 +461,14 @@ Joomla.waitOff = function (event, fn) {
 };
 
 /**
- * fire event before/after domchanged
+ * Fire event before/after DOM changed.
  * use like:
  * 		Joomla.fireEvent('junload', 'unloaded-element'); //fires for all junload subscribers
  * 		Joomla.fireEvent('junload.extension_name', 'unloaded-element'); //fires only for specified exstension
  *
- * 		Joomla.fireEvent('jready', 'changed-element'); //fires for all jready subscribers
- * 		Joomla.fireEvent('jready.extension_name', 'changed-element'); //fires only for specified exstension
+ * Notify the scripts about changes:
+ * 		Joomla.fireEvent('jload', 'changed-element'); //fires for all jload subscribers
+ * 		Joomla.fireEvent('jload.extension_name', 'changed-element'); //fires only for specified exstension
  *
  * @param event - string, event name
  * @param element - element DOM object or ID of the element
@@ -480,11 +482,10 @@ Joomla.fireEvent = function(event, element){
 };
 
 /**
- * Initiall trigger
- * TODO: what about "load" ???
+ * Trick, used because jQuery do not fire "load" on document
  */
-jQuery(function(){
-	jQuery(document).trigger('jready');
+jQuery(window).on('load', function(){
+	jQuery(document).trigger('load');
 });
 
 
