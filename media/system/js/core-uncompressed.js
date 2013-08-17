@@ -436,15 +436,15 @@ function checkAll_button(n, task) {
 /**
  * add events for init
  * use like:
- * 		Joomla.addEvent('jload.extension_name', callback); // for init
- * 		Joomla.addEvent('junload.extension_name', callback); // for unload only
+ * 		Joomla.waitOn('jready.extension_name', callback); // for init
+ * 		Joomla.waitOn('junload.extension_name', callback); // for unload only
  *
  * @param event - string, event name
  * @param fn - callback function
  *
  */
 
-Joomla.on = function (event, fn) {
+Joomla.waitOn = function (event, fn) {
 	jQuery(document).on(event, fn);
 };
 
@@ -455,7 +455,7 @@ Joomla.on = function (event, fn) {
  * @param fn - callback function that need to remove
  *
  */
-Joomla.off = function (event, fn) {
+Joomla.waitOff = function (event, fn) {
 	jQuery(document).off(event, fn);
 };
 
@@ -473,7 +473,7 @@ Joomla.off = function (event, fn) {
  *
  */
 
-Joomla.trigger = function(event, element){
+Joomla.fireEvent = function(event, element){
 	jQuery(element || document).trigger(event);
 };
 
@@ -481,7 +481,7 @@ Joomla.trigger = function(event, element){
  * Initiall trigger
  */
 jQuery(function(){
-	jQuery(document).trigger('jload');
+	jQuery(document).trigger('jready');
 });
 
 
