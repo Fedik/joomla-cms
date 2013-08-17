@@ -474,7 +474,9 @@ Joomla.waitOff = function (event, fn) {
  */
 
 Joomla.fireEvent = function(event, element){
-	jQuery(element || document).trigger(event);
+	// Allow to pass additional arguments
+	var args = Array.slice(arguments);
+	jQuery(element || document).trigger(event, args.slice(2));
 };
 
 /**
