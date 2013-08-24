@@ -116,7 +116,6 @@ class PageModelItem extends JModelItem
 
 		$item = new UcmItem($data, $fields, $this->getState('content.layout_name'), $ucmContent->type);
 
-
 		return $item;
 	}
 
