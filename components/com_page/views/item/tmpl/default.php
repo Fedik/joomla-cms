@@ -9,13 +9,12 @@
 
 defined('_JEXEC') or die;
 
-
 $layout = 'ucm.types.' . $this->item->getLayoutPath();
-//var_dump($layout);
 ?>
 <?php  if ($this->params->get('show_page_heading')) : ?>
 <h1>
 	<?php echo $this->escape($this->params->get('page_heading')); ?>
 </h1>
 <?php endif;  ?>
+<?php //TODO: need fallback to default.php if given layout not exist !!! ?>
 <?php echo JLayoutHelper::render($layout, $this->item); ?>

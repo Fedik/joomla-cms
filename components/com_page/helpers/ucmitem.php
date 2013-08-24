@@ -61,7 +61,45 @@ class UcmItem
 	}
 
 	/**
-	 * get layout path for current item
+	 * Method to get certain data.
+	 *
+	 * @param   string  $name  The property name for which to the the value.
+	 *
+	 * @return  mixed  The property value or null.
+	 *
+	 */
+	public function __get($name)
+	{
+
+
+		//return Raw value
+		if(substr($name, -3) === 'Raw')
+		{
+			$name = str_replace('Raw', '', $name);
+			return isset($this->data[$name]) ? $this->data[$name] : '';
+		}
+
+		//return formated value
+		if(!empty($this->fields_inst[$name]) && isset($this->data[$name]))
+		{
+			//TODO: make format work
+			//return $this->fields_inst[$name]->format($this->data[$name]);
+			return $this->data[$name];
+		}
+		return null;
+	}
+
+	/**
+	 * Get layout name
+	 * @return string
+	 */
+	public function getLayoutName()
+	{
+		return $this->layout_name;
+	}
+
+	/**
+	 * Get layout path for current item
 	 * @return string
 	 */
 	public function getLayoutPath()
