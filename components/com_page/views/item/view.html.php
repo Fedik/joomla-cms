@@ -27,11 +27,13 @@ class PageViewItem extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 
-		$this->form  = $this->get('Form');
-		$this->item  = $this->get('Item');
 		$this->state = $this->get('State');
+		$this->item  = $this->get('Item');
+		$this->form  = $this->get('Form');
 
-		var_dump($this);
+
+
+		var_dump($this->item);
 
 		parent::display($tpl);
 	}

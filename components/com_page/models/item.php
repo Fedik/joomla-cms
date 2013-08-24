@@ -91,6 +91,44 @@ class PageModelItem extends JModelItem
 		$tableCommon = $this->getTable($tableInfo->common->type, $tableInfo->common->prefix, $tableInfo->common->config);
 		$tableSpecial = $this->getTable($tableInfo->special->type, $tableInfo->special->prefix, $tableInfo->special->config);
 
-		var_dump($tableCommon);
+		//load data
+		$tableCommon->load($pk);
+		$tableSpecial->load($pk);
+
+		$data = array_merge($tableCommon->getProperties(), $tableSpecial->getProperties());
+
+		//fields
+		$fields = UCMTypeHelper::getFields($this->getState('content.type_alias'), $this->getState('content.layout_name'));
+
+		//prepare fields and check whether there any related
+		foreach($fields as $field) {
+			$field->params = new JRegistry($field->params);
+			$related = $field->params->get('related');
+
+			//TODO: make it works
+			if(!empty($data[$field->field_name]) && !empty($related))
+			{
+				$data[$field->field_name] = $this->getRelated($data[$field->field_name], $related);
+			}
+			//TODO: prepare fields instances
+			//$this->prepareFields($fields);
+		}
+
+		$item = new UcmItem($data, $fields, $ucmContent->type);
+
+
+		return $item;
+	}
+
+	/**
+	 * Load related data
+	 *
+	 * @param int $pk - id of the parent item
+	 * @param JRegistry $params - info about realted content
+	 * @return multitype:
+	 */
+	public function getRelated($pk, $params)
+	{
+		return array();
 	}
 }

@@ -20,6 +20,10 @@
 
 defined('_JEXEC') or die;
 
+// TODO: move to common place
+JLoader::register('UCMTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
+JLoader::register('UcmItem', __DIR__ . '/helpers/ucmitem.php');
+
 $controller = JControllerLegacy::getInstance('Page');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();
