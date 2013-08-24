@@ -114,14 +114,14 @@ class PageModelItem extends JModelItem
 			//$this->prepareFields($fields);
 		}
 
-		$item = new UcmItem($data, $fields, $ucmContent->type);
+		$item = new UcmItem($data, $fields, $this->getState('content.layout_name'), $ucmContent->type);
 
 
 		return $item;
 	}
 
 	/**
-	 * Load related data
+	 * Load related data, eg. articles for category or for tag ... category or tag item info
 	 *
 	 * @param int $pk - id of the parent item
 	 * @param JRegistry $params - info about realted content

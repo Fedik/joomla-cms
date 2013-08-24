@@ -28,6 +28,7 @@ class PageController extends JControllerLegacy
 	 */
 	public function display($cachable = true, $urlparams = false)
 	{
+		// TODO: get this data from menu params
 		$type_alias = $this->input->get('type');
 		$view = $this->input->get('view');
 		$layout_name = $this->input->get('layout_name');

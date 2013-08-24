@@ -22,6 +22,11 @@ class UcmItem
 	protected $data;
 
 	/**
+	 * Layout name for current item instance
+	 */
+	protected $layout_name;
+
+	/**
 	 * Active fields instances
 	 */
 	protected $fields_inst;
@@ -44,15 +49,25 @@ class UcmItem
 	 * @param   JUcmType  $type   The type object
 	 *
 	 */
-	public function __construct($data, $fields, JUcmType $type)
+	public function __construct($data, $fields, $layout_name, JUcmType $type)
 	{
 		// Keep given info
 		$this->type = $type;
 		$this->data = $data;
+		$this->layout_name = $layout_name;
 		$this->fields_inst = $fields;
 		$this->fields = array_keys($fields);
 
 	}
 
+	/**
+	 * get layout path for current item
+	 * @return string
+	 */
+	public function getLayoutPath()
+	{
+		//TODO: why so deeep ???
+		return $this->type->type->type_alias . '.' . $this->layout_name;
+	}
 
 }
