@@ -115,6 +115,7 @@ class UcmField //extends JFormField
 		if($name == 'format')
 		{
 			$this->formatValue();
+			return $this->format;
 		}
 
 		if(property_exists($this, $name))
@@ -134,6 +135,7 @@ class UcmField //extends JFormField
 	public function setValue($value)
 	{
 		$this->value = $value;
+		// TODO: format it only when it need, not here !!!
 		$this->formatValue();
 		return $this;
 	}
