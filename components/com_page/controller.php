@@ -28,7 +28,7 @@ class PageController extends JControllerLegacy
 	 */
 	public function display($cachable = true, $urlparams = false)
 	{
-		// TODO: get this data from menu params
+		// TODO: get this data from menu params, not from input
 		$type_alias = $this->input->get('type');
 		$view = $this->input->get('view');
 		$layout_name = $this->input->get('layout_name');
@@ -48,7 +48,7 @@ class PageController extends JControllerLegacy
 		// form view required other model, formModel
 		if($layout_name == 'form')
 		{
-			//TODO: redirect to task=item.edit
+			//TODO: redirect to task=item.edit, or continue without redirect ?????
 // 			$model = $this->getModel('ItemForm');
 // 			$view = $this->getView('Item', 'html', 'PageView');
 // 			$view->setModel($model, true);

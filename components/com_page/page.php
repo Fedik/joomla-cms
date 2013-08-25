@@ -21,7 +21,8 @@
 defined('_JEXEC') or die;
 
 // TODO: move to common place
-JLoader::register('UCMTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
+JLoader::register('UcmField', __DIR__ . '/helpers/ucmfield.php');
+JLoader::register('UcmTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
 JLoader::register('UcmItem', __DIR__ . '/helpers/ucmitem.php');
 
 $controller = JControllerLegacy::getInstance('Page');

@@ -92,17 +92,20 @@ class PageModelItem extends JModelItem
 		$tableSpecial = $this->getTable($tableInfo->special->type, $tableInfo->special->prefix, $tableInfo->special->config);
 
 		//load data
+		// TODO: why JUcmContent have no load() eg: JUcmContent->load() ???
 		$tableCommon->load($pk);
 		$tableSpecial->load($pk);
 
 		$data = array_merge($tableCommon->getProperties(), $tableSpecial->getProperties());
 
 		//fields
-		$fields = UCMTypeHelper::getFields($this->getState('content.type_alias'), $this->getState('content.layout_name'));
+		$fields_info = UcmTypeHelper::getFields($this->getState('content.type_alias'), $this->getState('content.layout_name'));
 
 		//prepare fields and check whether there any related
-		foreach($fields as $field) {
-			$field->params = new JRegistry($field->params);
+		$fields = array();
+		foreach($fields_info as $field_info) {
+			// TODO: realy should be here, or better move to UcmTypeHelper::getFields ???
+			$field = new UcmField($field_info);
 			$related = $field->params->get('related');
 
 			//TODO: make it works
@@ -112,6 +115,8 @@ class PageModelItem extends JModelItem
 			}
 			//TODO: prepare fields instances
 			//$this->prepareFields($fields);
+
+			$fields[$field_info->field_name] = $field;
 		}
 
 		$item = new UcmItem($data, $fields, $this->getState('content.layout_name'), $ucmContent->type);

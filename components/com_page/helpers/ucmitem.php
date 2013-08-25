@@ -62,6 +62,9 @@ class UcmItem
 
 	/**
 	 * Method to get certain data.
+	 * Like: $UcmItem->field_name->format - return formated value for this field
+	 * 		$UcmItem->field_name->value - return value without formating
+	 * 		$UcmItem->field_name->label - return label
 	 *
 	 * @param   string  $name  The property name for which to the the value.
 	 *
@@ -70,51 +73,23 @@ class UcmItem
 	 */
 	public function __get($name)
 	{
-		//return Raw value
-		// TODO: need something smarter (:
-		if(substr($name, -3) === 'Raw')
+		// Return UcmField instance for fields that enabled
+		if(!empty($this->fields_inst[$name]))
 		{
-			$name = str_replace('Raw', '', $name);
-			return $this->getValueRaw($name);
+			if(isset($this->data[$name]) && empty($this->fields_inst[$name]->value))
+			{
+				$this->fields_inst[$name]->setValue($this->data[$name]);
+			}
+			return $this->fields_inst[$name];
 		}
-
-		//return formated value
-		return $this->getValue($name);
-	}
-
-	/**
-	 * Return label
-	 *
-	 * @return  mixed  The property value or null.
-	 */
-	public function getLabel($name)
-	{
-		//TODO: make it work
-		return null;
-	}
-
-	/**
-	 * Return Raw value, without formating
-	 * @param string $name - field name
-	 * @return mixed
-	 */
-	public function getValueRaw($name)
-	{
-		return isset($this->data[$name]) ? $this->data[$name] : null;
-	}
-
-	/**
-	 * Return Formated value
-	 * @param string $name - field name
-	 * @return mixed
-	 */
-	public function getValue($name)
-	{
-		//TODO: make format work
-		if(!empty($this->fields_inst[$name]) && isset($this->data[$name]))
+		// Return stdClass for fields that no enabled
+		if(isset($this->data[$name]))
 		{
-			//return $this->fields_inst[$name]->format($this->data[$name]);
-			return $this->data[$name];
+			return (object) array(
+				'value' => $this->data[$name],
+				'format' => '',
+				'label' => '',
+			);
 		}
 		return null;
 	}
