@@ -29,9 +29,22 @@ class PageController extends JControllerLegacy
 	public function display($cachable = true, $urlparams = false)
 	{
 		// TODO: get this data from menu params, not from input
+		// Common
 		$type_alias = $this->input->get('type');
 		$view = $this->input->get('view');
 		$layout_name = $this->input->get('layout_name');
+		// For Items
+		if($view == 'items')
+		{
+			// Filter
+			$filter = $this->input->get('filter', array(), 'ARRAY');
+			$this->input->set('filter', $filter); // Define in case if empty
+			// Ordering
+			$ordering = $this->input->get('ordering', array(), 'ARRAY');
+			$this->input->set('ordering', $ordering); // Define in case if empty
+
+			//TODO: hmmm ... what about list layout ???
+		}
 
 		if($view == 'item' && !$type_alias)
 		{
@@ -49,6 +62,7 @@ class PageController extends JControllerLegacy
 		if($layout_name == 'form')
 		{
 			//TODO: redirect to task=item.edit, or continue without redirect ?????
+			//		and what about the form in the items list ???
 // 			$model = $this->getModel('ItemForm');
 // 			$view = $this->getView('Item', 'html', 'PageView');
 // 			$view->setModel($model, true);
