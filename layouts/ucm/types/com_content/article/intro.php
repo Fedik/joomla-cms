@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
 <?php foreach($displayData->fields as $field_name): ?>
 	<div class="<?php echo $field_name;?>">
 		<?php //TODO: display <label> if not empty ?>
-		<?php echo $displayData->{$field_name}; ?>
+		<?php echo $displayData->$field_name->format; ?>
 	</div>
 <?php endforeach; ?>
 </div>

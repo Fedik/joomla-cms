@@ -113,8 +113,6 @@ class PageModelItem extends JModelItem
 			{
 				$data[$field->field_name] = $this->getRelated($data[$field->field_name], $related);
 			}
-			//TODO: prepare fields instances
-			//$this->prepareFields($fields);
 
 			$fields[$field_info->field_name] = $field;
 		}

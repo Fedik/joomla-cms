@@ -29,7 +29,7 @@ class PageViewItem extends JViewLegacy
 
 		$this->state = $this->get('State');
 		$this->item  = $this->get('Item');
-		$this->form  = $this->get('Form');
+		$this->form  = $this->state->get('content.layout_name') == 'form' ? $this->get('Form') : null;
 
 		//TODO: make it work
 		$this->params = new JRegistry();
