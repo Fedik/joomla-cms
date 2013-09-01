@@ -20,6 +20,7 @@ class PageModelItems extends JModelList
 	 * Table aliases
 	 * @var array
 	 */
+	// TODO: would be good when each JTable Instance will have alias automaticaly
 	protected $table_alias = array(
 		'common' => 'c',
 		'special' => 's',
@@ -190,6 +191,7 @@ class PageModelItems extends JModelList
 		$tableInfo = json_decode($ucmContent->type->type->table);
 
 		//Content tables
+		// TODO: would be good when each JTable Instance will have alias automaticaly
 		$common_alias = $this->table_alias['common'];
 		$tableCommon = $this->getTable($tableInfo->common->type, $tableInfo->common->prefix, $tableInfo->common->config);
 		$fields_common = $tableCommon->getFields();
@@ -221,7 +223,7 @@ class PageModelItems extends JModelList
 			$query->select($special_alias . '.*');
 		}
 
-		//TODO: in theory we also can check here wether exist any "relation field" and JOIN it here ???
+		//TODO: in theory here we herealso can check  wether exist any "relation field" and JOIN it here ???
 
 		// Build filter
 		// language

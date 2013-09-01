@@ -19,9 +19,10 @@ class PageViewItems extends JViewLegacy
 	{
 		$this->state = $this->get('State');
 		$this->items  = $this->get('Items');
-		$this->form  = $this->get('Forms'); //TODO ???
-var_dump($this->items);
+		//$this->forms  = $this->get('Forms'); //TODO ???
 
+		//TODO: make it work
+		$this->params = new JRegistry();
 
 		parent::display($tpl);
 	}
