@@ -82,13 +82,14 @@ class PageModelItem extends JModelItem
 	{
 		$pk = (!empty($pk)) ? $pk : (int) $this->getState('content.id');
 
-		// TODO: cached getInstanse() would be better
+		// TODO: cached getInstanse() would be better !!!
 		$ucmContent = new JUcmContent(null, $this->getState('content.type_alias'));
 		//table info
 		$tableInfo = json_decode($ucmContent->type->type->table);
 
 		//Content tables
 		$tableCommon = $this->getTable($tableInfo->common->type, $tableInfo->common->prefix, $tableInfo->common->config);
+		//TODO: check whether TableSpecial exist !!!
 		$tableSpecial = $this->getTable($tableInfo->special->type, $tableInfo->special->prefix, $tableInfo->special->config);
 
 		//load data

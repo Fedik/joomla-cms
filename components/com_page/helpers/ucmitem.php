@@ -53,7 +53,7 @@ class UcmItem
 	{
 		// Keep given info
 		$this->type = $type;
-		$this->data = $data;
+		$this->data = (array) $data;
 		$this->layout_name = $layout_name;
 		$this->fields_inst = $fields;
 		$this->fields = array_keys($fields);

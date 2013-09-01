@@ -18,9 +18,11 @@ class PageViewItems extends JViewLegacy
 	public function display($tpl = null)
 	{
 		$this->state = $this->get('State');
-		$this->item  = $this->get('Items');
+		$this->items  = $this->get('Items');
 		$this->form  = $this->get('Forms'); //TODO ???
-var_dump($this->state);
+var_dump($this->items);
+
+
 		parent::display($tpl);
 	}
 }
