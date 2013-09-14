@@ -44,6 +44,14 @@ class JUcmTypesImport //extends JObject
 	protected $types = array();
 
 	/**
+	 * Type name that need to import from ucm.xml
+	 *
+	 * @var string
+	 *
+	 */
+	protected $type;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param   string  $component  Component name where import to.
@@ -51,14 +59,14 @@ class JUcmTypesImport //extends JObject
 	 * @throws RuntimeException
 	 *
 	 */
-	public function __construct($component)
+	public function __construct($component, $type = null)
 	{
 		// Find ucm.xml in component folder
 		$ucmFile = JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $component . '/ucm.xml');
 		if (!file_exists($ucmFile) || !$ucmXML = simplexml_load_file($ucmFile))
 		{
 			// Something went wrong
-			throw new RuntimeException('File ucm.xml not found in component folder.');
+			throw new RuntimeException('File ucm.xml not found in component folder. For component: ' . $component);
 		}
 
 		// It is right component?
@@ -70,6 +78,7 @@ class JUcmTypesImport //extends JObject
 
 		$this->component = $component;
 		$this->ucmXML = $ucmXML;
+		$this->type = $type;
 
 	}
 
@@ -80,21 +89,11 @@ class JUcmTypesImport //extends JObject
 	 */
 	public function import()
 	{
-		// Find types
-		$typesXML = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/types/type');
-		if(empty($typesXML))
-		{
-			throw new RuntimeException('File ucm.xml did not contain info about any Content Type.');
-		}
-
 		// If there need any table, create it first
-		$tablesXML = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/tables/table');
-		if(!empty($tablesXML))
-		{
-			$this->doTables($tablesXML);
-		}
+		$this->doTables($tablesXML);
+
 		// Import Types
-		$types = $this->doTypes($typesXML);
+		$types = $this->doTypes();
 
 		// Continue if any Content type imported
 		if(empty($types)) {
@@ -110,11 +109,15 @@ class JUcmTypesImport //extends JObject
 	/**
 	 * Create/Upgrade tables from by xml data
 	 *
-	 * @param array $tablesXML contain SimpleXMLElement $tablesXML tables description
-	 *
 	 */
-	public function doTables($tablesXML)
+	public function doTables()
 	{
+		// If there need any table, create it first
+		$tablesXML = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/tables/table');
+		if(!empty($tablesXML))
+		{
+			//import
+		}
 		// TODO: need one more class for create tables
 		return true;
 	}
@@ -122,12 +125,17 @@ class JUcmTypesImport //extends JObject
 	/**
 	 * Import/Upgrade a Content Types
 	 *
-	 * @param array $typesXML contain SimpleXMLElement $typesXML Content Types description
-	 *
 	 * @return array $types with imported types
 	 */
-	public function doTypes($typesXML)
+	public function doTypes()
 	{
+		// Find types
+		$typesXML = $this->ucmXML->xpath('/ucm[@component="' . $this->component . '"]/types/type');
+		if(empty($typesXML))
+		{
+			throw new RuntimeException('File ucm.xml did not contain info about any Content Type.');
+		}
+
 		$types = array();
 
 		foreach($typesXML as $typeXML) {
@@ -136,7 +144,8 @@ class JUcmTypesImport //extends JObject
 			$info = $this->getAttributes($typeXML);
 			$type_name = $info->get('name');
 
-			if(!$type_name) continue;
+			//check whether type name exist, and allow to import only one type from xml
+			if(!$type_name || ($this->type && $this->type != $type_name)) continue;
 
 			// Build aliase
 			$type_alias = $this->component . '.' . $type_name;
@@ -238,6 +247,8 @@ class JUcmTypesImport //extends JObject
 	 */
 	public function doFields($fields, $layout)
 	{
+		$app = JFactory::getApplication();
+
 		foreach($fields as $i => $fieldXML){
 			$fieldInfo = $this->getAttributes($fieldXML);
 			if(!$fieldInfo->get('ordering'))
@@ -247,7 +258,7 @@ class JUcmTypesImport //extends JObject
 
 			if(!$this->doField($fieldInfo, $layout))
 			{
-				var_dump('Cannot import: ' . $fieldInfo->get('name'));
+				$app->enqueueMessage('Cannot import: ' . $fieldInfo->get('name'), 'notice');
 				continue;
 			}
 		}

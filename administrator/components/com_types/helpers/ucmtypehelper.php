@@ -23,14 +23,14 @@ class UcmTypeHelper
 	 *
 	 * @return bool true on success
 	 */
-	public static function importContentType ($component)
+	public static function importContentType ($component, $type = null)
 	{
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/tables');
 		include_once __DIR__ . '/typesimport.php';
 
 
 		try{
-			$typesImport = new JUcmTypesImport($component);
+			$typesImport = new JUcmTypesImport($component, $type);
 			$typesImport->import();
 		}
 		catch (Exception $e){

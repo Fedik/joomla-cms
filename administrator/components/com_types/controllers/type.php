@@ -32,6 +32,54 @@ class TypesControllerType extends JControllerForm
 	}
 
 	/**
+	 * Restore Type layouts and params from ucm.xml
+	 *
+	 */
+	public function restore()
+	{
+		// Check for request forgeries.
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/tables');
+		include_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/typesimport.php';
+
+		// Init variables
+		$typeTable = JTable::getInstance('Contenttype', 'JTable');
+		$urlVar = $typeTable->getKeyName();
+		$data  = $this->input->post->get('jform', array(), 'array');
+		$type_parts = explode('.', $data['type_alias']);
+
+		try{
+			// Init importer
+			$typesImport = new JUcmTypesImport($type_parts[0], $type_parts[1]);
+			// Import Types
+			$types = $typesImport->doTypes();
+			$typesImport->doTypeViews($types);
+		}
+		catch (Exception $e){
+			$this->setRedirect(
+				JRoute::_(
+					'index.php?option=' . $this->option . '&view=' . $this->view_item
+					. $this->getRedirectToItemAppend($data['type_id'], $urlVar), false
+				),
+				$e->getMessage(), 'error'
+			);
+			return false;
+		}
+
+		// Redirect back.
+		$this->setRedirect(
+			JRoute::_(
+				'index.php?option=' . $this->option . '&view=' . $this->view_item
+				. $this->getRedirectToItemAppend($data['type_id'], $urlVar), false
+			),
+			'Restore Success!'
+		);
+
+		return true;
+	}
+
+	/**
 	 * Method to save a record.
 	 *
 	 * @param   string  $key     The name of the primary key of the URL variable.
