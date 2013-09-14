@@ -14,7 +14,9 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_types'))
 	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
-JLoader::register('UCMTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
+// TODO: move to common place
+JLoader::register('UcmField', __DIR__ . '/helpers/ucmfield.php');
+JLoader::register('UcmTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
 
 //test import here hehe
 //UCMTypeHelper::importContentType('com_content');exit;

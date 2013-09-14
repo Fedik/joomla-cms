@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
  *
  * @package     Joomla.Administrator
  */
-class UCMTypeHelper
+class UcmTypeHelper
 {
 	/**
 	 * Import New Content type from content ucm.xml

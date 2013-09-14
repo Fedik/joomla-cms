@@ -132,8 +132,8 @@ class TypesModelType extends JModelAdmin
 
 		//get fields info
 		$layout_name = $this->getState('layout_name', 'form');
-		$fields = UCMTypeHelper::getFields($item->type_alias, $layout_name, null, true);
-		$layouts = UCMTypeHelper::getLayouts($item->type_alias);
+		$fields = UcmTypeHelper::getFields($item->type_alias, $layout_name, null, true);
+		$layouts = UcmTypeHelper::getLayouts($item->type_alias);
 
 		// Prepare fields params
 		foreach($fields as $field) {
@@ -224,7 +224,7 @@ class TypesModelType extends JModelAdmin
 		}
 		else  // mainly when first Save attempt
 		{
-			$fields = UCMTypeHelper::getFields($this->getState('type_alias'), $this->getState('layout_name'), null, true);
+			$fields = UcmTypeHelper::getFields($this->getState('type_alias'), $this->getState('layout_name'), null, true);
 		}
 
 		// Get the form file for a fields main configuration
