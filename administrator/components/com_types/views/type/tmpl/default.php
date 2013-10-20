@@ -15,19 +15,25 @@ defined('_JEXEC') or die;
 		<div class="span10 form-horizontal">
 			<!-- Base Type Info -->
 			<div class="control-group">
-				<?php echo $this->form->getLabel('type_id'); ?>
+				<div class="control-label">
+					<?php echo $this->form->getLabel('type_id'); ?>
+				</div>
 				<div class="controls">
 					<?php echo $this->form->getInput('type_id'); ?>
 				</div>
 			</div>
 			<div class="control-group">
-				<?php echo $this->form->getLabel('type_title'); ?>
+				<div class="control-label">
+					<?php echo $this->form->getLabel('type_title'); ?>
+				</div>
 				<div class="controls">
 					<?php echo $this->form->getInput('type_title'); ?>
 				</div>
 			</div>
 			<div class="control-group">
-				<?php echo $this->form->getLabel('type_alias'); ?>
+				<div class="control-label">
+					<?php echo $this->form->getLabel('type_alias'); ?>
+				</div>
 				<div class="controls">
 					<?php echo $this->form->getInput('type_alias'); ?>
 				</div>
@@ -36,7 +42,9 @@ defined('_JEXEC') or die;
 			<!-- Params -->
 			<?php foreach($this->form->getGroup('params') as $field_param):?>
 				<div class="control-group">
-					<?php echo $field_param->label; ?>
+					<div class="control-label">
+						<?php echo $field_param->label; ?>
+					</div>
 					<div class="controls">
 						<?php echo $field_param->input; ?>
 					</div>
