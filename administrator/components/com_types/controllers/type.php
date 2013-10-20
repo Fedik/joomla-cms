@@ -80,6 +80,26 @@ class TypesControllerType extends JControllerForm
 	}
 
 	/**
+	 * Display the form for add new field for curent content type
+	 * TODO: make it work
+	 */
+	public function addField()
+	{
+		echo "TODO: Add new field form";
+		return true;
+	}
+
+	/**
+	 * Display the form for add new layout for curent content type
+	 * TODO: make it work
+	 */
+	public function addLayout()
+	{
+		echo "TODO: Add new layout form";
+		return true;
+	}
+
+	/**
 	 * Method to save a record.
 	 *
 	 * @param   string  $key     The name of the primary key of the URL variable.

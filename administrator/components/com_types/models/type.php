@@ -128,7 +128,10 @@ class TypesModelType extends JModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		$item = parent::getItem($pk);
+		if(!$item = parent::getItem($pk))
+		{
+			return false;
+		}
 
 		//get fields info
 		$layout_name = $this->getState('layout_name', 'form');

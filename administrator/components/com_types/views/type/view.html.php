@@ -50,7 +50,10 @@ class TypesViewType extends JViewLegacy
 		JToolbarHelper::apply('type.apply');
 		JToolbarHelper::save('type.save');
 
-		JToolbarHelper::custom('type.restore', '', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
+		JToolbarHelper::custom('type.addField', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
+		JToolbarHelper::custom('type.addLayout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);
+
+		JToolbarHelper::custom('type.restore', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
 
 		JToolbarHelper::cancel('type.cancel');
 
