@@ -15,13 +15,40 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_types'))
 }
 
 // TODO: move to common place
-JLoader::register('UcmField', __DIR__ . '/helpers/ucmfield.php');
-JLoader::register('UcmTypeHelper', __DIR__ . '/helpers/ucmtypehelper.php');
+JLoader::register('UcmField', __DIR__ . '/helper/ucmfield.php');
+JLoader::register('UcmTypeHelper', __DIR__ . '/helper/ucmtypehelper.php');
+
+// Register a classes
+JLoader::registerPrefix('Types', JPATH_COMPONENT);
+
 
 //test import here hehe
 //UCMTypeHelper::importContentType('com_content');exit;
 
 
-$controller = JControllerLegacy::getInstance('Types');
-$controller->execute(JFactory::getApplication()->input->get('task'));
-$controller->redirect();
+// Application
+$app = JFactory::getApplication();
+
+// Require specific controller if requested
+if ($task = $app->input->get('task'))
+{
+	$tasks = explode('.', $task);
+
+	$view =  empty($tasks[0]) ? 'types' : $tasks[0];
+	$app->input->set('view', $view);
+
+	$controller = empty($tasks[1]) ? 'display' : $tasks[1];
+	$app->input->set('controller', $controller);
+
+
+} else {
+	$controller = $app->input->get('controller', 'display');
+}
+
+// Create the controller
+$classname  = 'TypesController'.ucwords($controller);
+$controller = new $classname();
+
+// Perform the Request task
+$controller->execute();
+
