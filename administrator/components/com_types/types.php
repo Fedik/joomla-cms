@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 if (!JFactory::getUser()->authorise('core.manage', 'com_types'))
 {
-	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+	return JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
 // TODO: move to common place
@@ -30,6 +30,7 @@ JLoader::registerPrefix('Types', JPATH_COMPONENT);
 $app = JFactory::getApplication();
 
 // Require specific controller if requested
+$tasks = array();
 if ($task = $app->input->get('task'))
 {
 	$tasks = explode('.', $task);
@@ -42,12 +43,13 @@ if ($task = $app->input->get('task'))
 
 
 } else {
-	$controller = $app->input->get('controller', 'display');
+	$controller = 'display';
 }
 
 // Create the controller
 $classname  = 'TypesController'.ucwords($controller);
 $controller = new $classname();
+$controller->tasks = $tasks;
 
 // Perform the Request task
 $controller->execute();

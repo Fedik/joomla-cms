@@ -27,9 +27,9 @@ class TypesViewTypeHtml extends JViewHtml
 
 		try
 		{
+			$this->state = $this->model->getState();
 			$this->form  = $this->model->getForm();
 			$this->item  = $this->model->getItem();
-			$this->state = $this->model->getState();
 		}
 		catch (Exception $e)
 		{
@@ -52,8 +52,8 @@ class TypesViewTypeHtml extends JViewHtml
 	{
 		JToolbarHelper::title(JText::_('COM_TYPES'));
 
-		JToolbarHelper::apply('type.apply');
-		JToolbarHelper::save('type.save');
+		JToolbarHelper::apply('type.save.apply');
+		JToolbarHelper::save('type.save.save');
 
 		JToolbarHelper::custom('type.addField', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
 		JToolbarHelper::custom('type.addLayout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);

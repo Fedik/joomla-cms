@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_types
  *
  */
-class TypesModelType extends JModelBase
+class TypesModelType extends JModelDatabase
 {
 	/**
 	 * Context string for the model type.
@@ -27,13 +27,30 @@ class TypesModelType extends JModelBase
 	protected $context = 'com_types.type';
 
 	/**
+	 * loaded items
+	 * @var array
+	 */
+	protected $items = array();
+
+	/**
+	 * loaded forms
+	 * @var array
+	 */
+	protected $forms = array();
+
+	/**
 	 * Instantiate the model.
 	 *
 	 * @param   JRegistry  $state  The model state.
 	 */
-	public function __construct(JRegistry $state = null)
+	public function __construct(JRegistry $state = null, JDatabaseDriver $db = null)
 	{
-		parent::__construct($state);
+		$db = isset($db) ? $db : JFactory::getDbo();
+
+		// add table path
+		JTable::addIncludePath(JPATH_COMPONENT . '/table');
+
+		parent::__construct($state, $db);
 	}
 
 	/**
@@ -48,6 +65,7 @@ class TypesModelType extends JModelBase
 	 */
 	public function getTable($type = 'Contenttype', $prefix = 'JTable', $config = array())
 	{
+
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -70,7 +88,7 @@ class TypesModelType extends JModelBase
 		// TODO: bad place for it ???
 		$layout_name = $app->input->get('layout_name', 'form');
 		$state->set('layout_name', $layout_name);
-var_dump($layout_name);
+
 		return $state;
 	}
 
@@ -85,6 +103,9 @@ var_dump($layout_name);
 	public function getItem($pk = null)
 	{
 		$pk = (!empty($pk)) ? $pk : (int) $this->state->get($this->context . '.id');
+		// check whether alredy loaded
+		if(isset($this->items[$pk])) return $this->items[$pk];
+
 		// get table
 		$table = $this->getTable();
 
@@ -96,8 +117,7 @@ var_dump($layout_name);
 			// Check for a table object error.
 			if ($return === false && $table->getError())
 			{
-				$this->setError($table->getError());
-				return false;
+				throw new RuntimeException($table->getError());
 			}
 		}
 		// Convert to the JObject before adding other data.
@@ -112,7 +132,7 @@ var_dump($layout_name);
 		}
 
 		//get fields info
-		$layout_name = $this->state->set('layout_name', 'form');
+		$layout_name = $this->state->get('layout_name', 'form');
 		$fields = UcmTypeHelper::getFields($item->type_alias, $layout_name, null, true);
 		$layouts = UcmTypeHelper::getLayouts($item->type_alias);
 
@@ -125,6 +145,9 @@ var_dump($layout_name);
 		$item->set('layout_name', $layout_name);
 		$item->set('fields', $fields);
 		$item->set('layouts', $layouts);
+
+		// keep cached
+		$cached[$pk] = $item;
 
 		return $item;
 	}
@@ -145,8 +168,8 @@ var_dump($layout_name);
 		// @see: $this->preprocessForm()
 		if($data)
 		{
-			$this->setState('type_alias', $data['type_alias']);
-			$this->setState('layout_name', $data['layout_name']);
+			$this->state->set('type_alias', $data['type_alias']);
+			$this->state->set('layout_name', $data['layout_name']);
 		}
 		// Get the form.
 		$form = $this->loadForm('com_types.type', 'type', array('control' => 'jform', 'load_data' => $loadData));
@@ -173,16 +196,14 @@ var_dump($layout_name);
 	 */
 	protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
 	{
-		// Handle the optional arguments.
-		$options['control'] = JArrayHelper::getValue($options, 'control', false);
 
 		// Create a signature hash.
 		$hash = md5($source . serialize($options));
 
 		// Check if we can use a previously loaded form.
-		if (isset($this->_forms[$hash]) && !$clear)
+		if (isset($this->forms[$hash]) && !$clear)
 		{
-			return $this->_forms[$hash];
+			return $this->forms[$hash];
 		}
 
 		// Register the paths @todo change to splqueue when JForm support it
@@ -219,7 +240,7 @@ var_dump($layout_name);
 		}
 
 		// Store the form for later.
-		$this->_forms[$hash] = $form;
+		$this->forms[$hash] = $form;
 
 		return $form;
 	}
@@ -233,7 +254,7 @@ var_dump($layout_name);
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_types.edit.type.data', array());
+		$data = JFactory::getApplication()->getUserState($this->context . '.edit.data', array());
 
 		if (empty($data))
 		{
@@ -256,8 +277,6 @@ var_dump($layout_name);
 	 *
 	 * @return  void
 	 *
-	 * @see     JModelForm::preprocessForm()
-	 *
 	 */
 	protected function preprocessForm(JForm $form, $data, $group = 'content')
 	{
@@ -272,17 +291,18 @@ var_dump($layout_name);
 		}
 		else  // mainly when first Save attempt
 		{
-			$fields = UcmTypeHelper::getFields($this->getState('type_alias'), $this->getState('layout_name'), null, true);
+			$fields = UcmTypeHelper::getFields($this->state->get('type_alias'), $this->state->get('layout_name'), null, true);
 		}
 
 		// Get the form file for a fields main configuration
-		JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
+		//JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
+		JForm::addFormPath(JPATH_COMPONENT . '/model/field/form');
 		$field_main_file = JPath::find(JForm::addFormPath(), 'field.xml');
 
 		if(!empty($fields) && $field_main_file
 			&& $fieldMainXMLRaw = file_get_contents($field_main_file))
 		{
-			$display = $this->getState('layout_name', 'form') == 'form' ? 'input' : 'value';
+			$display = $this->state->get('layout_name', 'form') == 'form' ? 'input' : 'value';
 			foreach($fields as $field) {
 				$field = is_array($field) ? (object) $field : $field;
 				// Prepare XML data, overwrite {FIELD_NAME}
@@ -311,6 +331,54 @@ var_dump($layout_name);
 	}
 
 	/**
+	 * Method to validate the form data.
+	 *
+	 * @param   JForm   $form   The form to validate against.
+	 * @param   array   $data   The data to validate.
+	 * @param   string  $group  The name of the field group to validate.
+	 *
+	 * @return  mixed  Array of filtered data if valid, false otherwise.
+	 *
+	 * @see     JFormRule
+	 * @see     JFilterInput
+	 */
+	public function validate($form, $data, $group = null)
+	{
+		// Filter and validate the form data.
+		$data = $form->filter($data);
+		$return = $form->validate($data, $group);
+		$app = JFactory::getApplication();
+
+		// Check for an error.
+		if ($return instanceof Exception)
+		{
+			$app->enqueueMessage($return->getMessage(), 'error');
+			return false;
+		}
+
+		// Check the validation results.
+		if ($return === false)
+		{
+			// Get the validation messages from the form.
+			foreach ($form->getErrors() as $message)
+			{
+				// Check for an error.
+				if ($message instanceof Exception)
+				{
+					$app->enqueueMessage($message->getMessage(), 'error');
+					return false;
+				} else {
+					$app->enqueueMessage($message, 'error');
+				}
+			}
+
+			return false;
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Method to save the form data.
 	 *
 	 * @param   array  $data  The form data.
@@ -326,11 +394,38 @@ var_dump($layout_name);
 			$params = new JRegistry($data['params']);
 			$data['params'] = $params->toString();
 		}
+		//TODO: Trigger the events.
+		$dispatcher = JEventDispatcher::getInstance();
 
 		// TODO: need to check the alias and so on
-		if(!parent::save($data))
+
+		// Get tables
+		$table = $this->getTable();
+
+		// Load the previous Data
+		if (!$table->load($data['type_id']))
 		{
-			return false;
+			throw new RuntimeException($table->getError());
+		}
+
+		unset($data['type_id']);
+
+		// Bind the data.
+		if (!$table->bind($data))
+		{
+			throw new RuntimeException($table->getError());
+		}
+
+		// Check the data.
+		if (!$table->check())
+		{
+			throw new RuntimeException($table->getError());
+		}
+
+		// Store the data.
+		if (!$table->store())
+		{
+			throw new RuntimeException($table->getError());
 		}
 
 		// Save Fields Layout options
@@ -348,7 +443,8 @@ var_dump($layout_name);
 	public function saveFieldsLayout($data)
 	{
 		// If empty then nothing to do here
-		if (empty($data['fields'])) {
+		if (empty($data['fields']))
+		{
 			return true;
 		}
 
@@ -361,71 +457,61 @@ var_dump($layout_name);
 
 		// Get type_id
 		$key = $tableType->getKeyName();
-		$type_id = (!empty($data[$key])) ? $data[$key] : (int) $this->getState($this->getName() . '.id');
+		$type_id = (!empty($data[$key])) ? $data[$key] : (int) $this->state->get($this->context . '.id');
 
 		// Include the content plugins for the on save events.
 		// TODO: "fields" or "content" or something else ???
 		JPluginHelper::importPlugin('fields');
 
-		try
+		// Load Layout
+		$result = $tableLayout->load(array(
+			'layout_name' => $data['layout_name'],
+			'type_id' => $type_id,
+		));
+		if(!$result)
 		{
-			// Load Layout
-			$result = $tableLayout->load(array(
-					'layout_name' => $data['layout_name'],
-					'type_id' => $type_id,
-			));
-			if(!$result)
+			throw new RuntimeException('Layout should exist!');
+		}
+
+		$layout_id = $tableLayout->layout_id;
+
+		// So prepare and store the Fields
+		foreach ($data['fields'] as $field) {
+			// Load if new
+			$tableFieldLayout->load(array('id' => $field['id']));
+
+			// Set layout id
+			$field['layout_id'] = $layout_id;
+			// Prepare params
+			if(isset($field['params']) && is_array($field['params']))
 			{
-				$this->setError('Layout should exist!');
-				return false;
+				$params = new JRegistry($field['params']);
+				$field['params'] = $params->toString();
+			}
+			$tableFieldLayout->bind($field);
+
+			// Check the data.
+			if (!$tableFieldLayout->check())
+			{
+				throw new RuntimeException($tableFieldLayout->getError());
 			}
 
-			$layout_id = $tableLayout->layout_id;
+			//TODO: Trigger the onFieldLayoutBeforeSave event.
 
-			// So prepare and store the Fields
-			foreach ($data['fields'] as $field) {
-				// Load if new
-				$tableFieldLayout->load(array('id' => $field['id']));
-
-				// Set layout id
-				$field['layout_id'] = $layout_id;
-				// Prepare params
-				if(isset($field['params']) && is_array($field['params']))
-				{
-					$params = new JRegistry($field['params']);
-					$field['params'] = $params->toString();
-				}
-				$tableFieldLayout->bind($field);
-
-				// Check the data.
-				if (!$tableFieldLayout->check())
-				{
-					$this->setError($tableFieldLayout->getError());
-					return false;
-				}
-
-				//TODO: Trigger the onFieldLayoutBeforeSave event.
-
-				// Store the data.
-				if (!$tableFieldLayout->store())
-				{
-					$this->setError($tableFieldLayout->getError());
-					return false;
-				}
-
-				//TODO: Trigger the onFieldLayoutAfterSave event.
-
-				// Reset the Table instead of call get new Instanse each time
-				$tableFieldLayout->reset();
-				$tableFieldLayout->{$tableFieldLayout->getKeyName()} = null;
+			// Store the data.
+			if (!$tableFieldLayout->store())
+			{
+				throw new RuntimeException($tableFieldLayout->getError());
 			}
 
+			//TODO: Trigger the onFieldLayoutAfterSave event.
+
+			// Reset the Table instead of call get new Instanse each time
+			$tableFieldLayout->reset();
+			$tableFieldLayout->{$tableFieldLayout->getKeyName()} = null;
 		}
-		catch (Exception $e)
-		{
-			$this->setError($e->getMessage());
-			return false;
-		}
+
+
 		return true;
 	}
 

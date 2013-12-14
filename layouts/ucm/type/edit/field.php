@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die;
 
-//$displayData - is array that contain the fields for Main and Params
+//$displayData - is array that contain the fields for Main and Params form
 
 ?>
 <div class="field control-group">
