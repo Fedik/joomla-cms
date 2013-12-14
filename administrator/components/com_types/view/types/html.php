@@ -47,7 +47,8 @@ class TypesViewTypesHtml extends JViewHtml
 	 */
 	protected function addToolbar()
 	{
-
+		JToolbarHelper::title(JText::_('COM_TYPES'));
+		JToolbarHelper::addNew('type.addType');
 	}
 
 	/**
