@@ -11,20 +11,20 @@
 defined('_JEXEC') or die;
 
 /**
- * Types Component Type Model
+ * Types Component Layout Model
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
  *
  */
-class TypesModelType extends JModelDatabase
+class TypesModelLayout extends JModelDatabase
 {
 	/**
 	 * Context string for the model type.
 	 *
 	 * @var    string
 	 */
-	protected $context = 'com_types.type';
+	protected $context = 'com_types.layout';
 
 	/**
 	 * loaded items
@@ -63,9 +63,8 @@ class TypesModelType extends JModelDatabase
 	 * @return  JTable  A JTable object
 	 *
 	 */
-	public function getTable($type = 'Contenttype', $prefix = 'JTable', $config = array())
+	public function getTable($type = 'Layout', $prefix = 'JTable', $config = array())
 	{
-
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -83,11 +82,6 @@ class TypesModelType extends JModelDatabase
 		// Get the pk of the record from the request.
 		$pk = $app->input->getInt($table->getKeyName());
 		$state->set($this->context . '.id', $pk);
-
-		// Get Item View (Item Layout) name and save in to state
-		// TODO: bad place for it ???
-		$layout_name = $app->input->get('layout_name', 'form');
-		$state->set('layout_name', $layout_name);
 
 		return $state;
 	}
@@ -131,21 +125,6 @@ class TypesModelType extends JModelDatabase
 			$item->params = $registry->toArray();
 		}
 
-		//get fields info
-		$layout_name = $this->state->get('layout_name', 'form');
-		$fields = UcmTypeHelper::getFields($item->type_alias, $layout_name, null, true);
-		$layouts = UcmTypeHelper::getLayouts($item->type_alias);
-
-		// Prepare fields params
-		foreach($fields as $field) {
-			$params = new JRegistry($field->params);
-			$field->params = $params->toArray();
-		}
-
-		$item->set('layout_name', $layout_name);
-		$item->set('fields', $fields);
-		$item->set('layouts', $layouts);
-
 		// keep cached
 		$this->items[$pk] = $item;
 
@@ -163,16 +142,8 @@ class TypesModelType extends JModelDatabase
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// If we have a data (mainly on save action)
-		// save type_alias for future action,
-		// @see: $this->preprocessForm()
-		if($data)
-		{
-			$this->state->set('type_alias', $data['type_alias']);
-			$this->state->set('layout_name', $data['layout_name']);
-		}
 		// Get the form.
-		$form = $this->loadForm($this->context, 'type', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm($this->context, 'layout', array('control' => 'jform', 'load_data' => $loadData));
 		return $form;
 	}
 
@@ -217,7 +188,6 @@ class TypesModelType extends JModelDatabase
 		{
 			$data = array();
 		}
-
 		// Allow for additional modification of the form, and events to be triggered.
 		// We pass the data because plugins may require it.
 		$this->preprocessForm($form, $data);
@@ -266,52 +236,6 @@ class TypesModelType extends JModelDatabase
 	 */
 	protected function preprocessForm(JForm $form, $data, $group = 'content')
 	{
-		// Get fields
-		if(is_object($data))// form open
-		{
-			$fields = $data->get('fields');
-		}
-		elseif(is_array($data) && !empty($data['fields'])) // when data from State
-		{
-			$fields = $data['fields'];
-		}
-		else  // mainly when first Save attempt
-		{
-			$fields = UcmTypeHelper::getFields($this->state->get('type_alias'), $this->state->get('layout_name'), null, true);
-		}
-
-		// Get the form file for a fields main configuration
-		//JForm::addFormPath(JPATH_LIBRARIES . '/cms/form/form');
-		JForm::addFormPath(JPATH_COMPONENT . '/model/field/form');
-		$field_main_file = JPath::find(JForm::addFormPath(), 'field.xml');
-
-		if(!empty($fields) && $field_main_file
-			&& $fieldMainXMLRaw = file_get_contents($field_main_file))
-		{
-			$display = $this->state->get('layout_name', 'form') == 'form' ? 'input' : 'value';
-			foreach($fields as $field) {
-				$field = is_array($field) ? (object) $field : $field;
-				// Prepare XML data, overwrite {FIELD_NAME}
-				$newFieldMain = str_replace('{FIELD_NAME}', $field->field_name,  $fieldMainXMLRaw);
-
-				// Load form for the main field configuration
-				$form->load($newFieldMain, true, '//fieldset[@name="' . $display . '"]/fields');
-
-				// Now what about the addittional configurations...
-				// TODO: this can be cached by TYPE
-				$field_more_file = JPath::find(JForm::addFormPath(), $field->field_type . '.xml');
-				if(!$field_more_file || !$fieldMoreXMLRaw = file_get_contents($field_more_file))
-				{
-					continue;
-				}
-
-				// Ok! Same procedure...
-				$newFieldMore = str_replace('{FIELD_NAME}', $field->field_name,  $fieldMoreXMLRaw);
-				$form->load($newFieldMore, true, '//fieldset[@name="' . $display . '"]/fields');
-
-			}
-		}
-
 		//TODO: preprocessForm
 		//parent::preprocessForm($form, $data, $group);
 	}
@@ -414,90 +338,6 @@ class TypesModelType extends JModelDatabase
 		{
 			throw new RuntimeException($table->getError());
 		}
-
-		// Save Fields Layout options
-		return $this->saveFieldsLayout($data);
-	}
-
-	/**
-	 * Method to save the Fields Layout.
-	 *
-	 * @param   array  $data  The form data, that contain $data[fields].
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 */
-	public function saveFieldsLayout($data)
-	{
-		// If empty then nothing to do here
-		if (empty($data['fields']))
-		{
-			return true;
-		}
-
-		$dispatcher = JEventDispatcher::getInstance();
-
-		// Get tables
-		$tableType = $this->getTable();
-		$tableLayout = $this->getTable('Layout', 'JTable');
-		$tableFieldLayout = $this->getTable('FieldsLayouts', 'JTable');
-
-		// Get type_id
-		$key = $tableType->getKeyName();
-		$type_id = (!empty($data[$key])) ? $data[$key] : (int) $this->state->get($this->context . '.id');
-
-		// Include the content plugins for the on save events.
-		// TODO: "fields" or "content" or something else ???
-		JPluginHelper::importPlugin('fields');
-
-		// Load Layout
-		$result = $tableLayout->load(array(
-			'layout_name' => $data['layout_name'],
-			'type_id' => $type_id,
-		));
-		if(!$result)
-		{
-			throw new RuntimeException('Layout should exist!');
-		}
-
-		$layout_id = $tableLayout->layout_id;
-
-		// So prepare and store the Fields
-		foreach ($data['fields'] as $field) {
-			// Load if new
-			$tableFieldLayout->load(array('id' => $field['id']));
-
-			// Set layout id
-			$field['layout_id'] = $layout_id;
-			// Prepare params
-			if(isset($field['params']) && is_array($field['params']))
-			{
-				$params = new JRegistry($field['params']);
-				$field['params'] = $params->toString();
-			}
-			$tableFieldLayout->bind($field);
-
-			// Check the data.
-			if (!$tableFieldLayout->check())
-			{
-				throw new RuntimeException($tableFieldLayout->getError());
-			}
-
-			//TODO: Trigger the onFieldLayoutBeforeSave event.
-
-			// Store the data.
-			if (!$tableFieldLayout->store())
-			{
-				throw new RuntimeException($tableFieldLayout->getError());
-			}
-
-			//TODO: Trigger the onFieldLayoutAfterSave event.
-
-			// Reset the Table instead of call get new Instanse each time
-			$tableFieldLayout->reset();
-			$tableFieldLayout->{$tableFieldLayout->getKeyName()} = null;
-		}
-
 
 		return true;
 	}

@@ -36,7 +36,7 @@ class TypesControllerBaseDisplay extends JControllerBase
 		// Get the document object.
 	    $document     = JFactory::getDocument();
 
-	    $viewName     = empty($this->options[2]) ? 'types' : strtolower($this->options[2]);
+	    $viewName     = empty($this->options[2]) ? '' : strtolower($this->options[2]);
 	    $viewFormat   = $document->getType();
 	    $layoutName   = $this->input->getWord('layout', 'default');
 

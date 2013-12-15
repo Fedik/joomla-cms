@@ -10,12 +10,12 @@
 defined('_JEXEC') or die;
 
 /**
- * Type view class for the Types package.
+ * Layout view class for the Types package.
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
  */
-class TypesViewTypeHtml extends JViewHtml
+class TypesViewLayoutHtml extends JViewHtml
 {
 
 	/**
@@ -50,17 +50,12 @@ class TypesViewTypeHtml extends JViewHtml
 	 */
 	protected function addToolbar()
 	{
-		JToolbarHelper::title(JText::_('COM_TYPES'));
+		JToolbarHelper::title(JText::_('COM_TYPES_LAYOUT'));
 
-		JToolbarHelper::apply('types.save.type.apply');
-		JToolbarHelper::save('types.save.type');
+		JToolbarHelper::apply('types.save.layout.apply');
+		JToolbarHelper::save('types.save.layout');
 
-		JToolbarHelper::custom('types.new.field', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
-		JToolbarHelper::custom('types.new.layout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);
-
-		JToolbarHelper::custom('types.restore.type', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
-
-		JToolbarHelper::cancel('types.cancel.type');
+		JToolbarHelper::cancel('types.cancel.layout');
 
 	}
 

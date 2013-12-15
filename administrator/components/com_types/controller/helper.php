@@ -88,7 +88,7 @@ class TypesControllerHelper
 
 		if (!class_exists($controllerName))
 		{
-			//throw new LogicException('Controller "' . $controllerName . '" not exists.', 500);
+			throw new LogicException('Controller "' . $controllerName . '" not exists.', 500);
 		}
 
 		$controller = new $controllerName;
