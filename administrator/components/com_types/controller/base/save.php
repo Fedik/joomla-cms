@@ -10,13 +10,13 @@
 defined('_JEXEC') or die;
 
 /**
- * The Type Save Controller
+ * The Type Save Base Controller
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
  */
 
-class TypesControllerSave extends JControllerBase
+class TypesControllerBaseSave extends JControllerBase
 {
 	/**
 	 * Prefix for the view and model classes
@@ -24,6 +24,27 @@ class TypesControllerSave extends JControllerBase
 	 * @var    string
 	 */
 	public $prefix = 'Types';
+
+	/**
+	 * The context for storing internal data, e.g. record.
+	 *
+	 * @var    string
+	 */
+	public $context = 'com_types.type';
+
+	/**
+	 * Redirect url
+	 *
+	 * @var string
+	 */
+	public $redirect = 'index.php';
+
+	/**
+	 * Redirect url if error hapened
+	 *
+	 * @var string
+	 */
+	public $redirect_error = 'index.php';
 
 	/**
 	 * Execute the controller.
@@ -40,12 +61,18 @@ class TypesControllerSave extends JControllerBase
 			$this->app->redirect('index.php');
 		}
 
-		$data   = $this->input->get('jform', array(), 'array');
-		$layout_name = empty($data['layout_name']) ? 'form' : $data['layout_name'];
-		$type_id = $this->input->getInt('type_id');
-		$model  = new TypesModelType;
-		$form   = $model->getForm($data, false);
+		// Get a model name
+		$viewName = empty($this->options[2]) ? '' : $this->options[2];
+		$modelClass = $this->prefix . 'Model' . ucfirst($viewName);
 
+		if (!class_exists($modelClass))
+		{
+			return false;
+		}
+
+		$model  = new $modelClass;
+		$data   = $this->input->get('jform', array(), 'array');
+		$form   = $model->getForm($data, false);
 
 		// Validate the posted data.
 		$dataValidated = $model->validate($form, $data);
@@ -54,10 +81,10 @@ class TypesControllerSave extends JControllerBase
 		if ($dataValidated === false)
 		{
 			// Save the data in the session.
-			$this->app->setUserState('com_types.type.edit.data', $data);
+			$this->app->setUserState($this->context, $data);
 
 			// Redirect back to the edit screen.
-			$this->app->redirect(JRoute::_('index.php?option=com_types&task=type.edit&type_id=' . $type_id . '&layout_name=' . $layout_name, false));
+			$this->app->redirect(JRoute::_($this->redirect_error, false));
 		}
 
 		// Attempt to save the data.
@@ -68,24 +95,18 @@ class TypesControllerSave extends JControllerBase
 		catch (RuntimeException $e)
 		{
 			// Save the data in the session.
-			$this->app->setUserState('com_types.type.edit.data', $data);
+			$this->app->setUserState($this->context, $data);
 
 			// Save failed, go back to the screen and display a notice.
 			$this->app->enqueueMessage(JText::sprintf('JERROR_SAVE_FAILED', $e->getMessage()), 'error');
-			$this->app->redirect(JRoute::_('index.php?option=com_types&task=type.edit&type_id=' . $type_id . '&layout_name=' . $layout_name, false));
+			$this->app->redirect(JRoute::_($this->redirect_error, false));
 		}
 
 		// clear state
-		$this->app->setUserState('com_types.type.edit.data', null);
+		$this->app->setUserState($this->context, null);
 		// redirect
-		$this->app->enqueueMessage(JText::_('COM_TYPES_TYPE_SAVE_SUCCESS'));
-		if(!empty($this->tasks[2]) && $this->tasks[2] == 'apply')
-		{
-			$this->app->redirect(JRoute::_('index.php?option=com_types&task=type.edit&type_id=' . $type_id . '&layout_name=' . $layout_name, false));
-		}
-		else {
-			$this->app->redirect('index.php?option=com_types');
-		}
+		$this->app->enqueueMessage(JText::_('COM_TYPES_SAVE_SUCCESS'));
+		$this->app->redirect(JRoute::_($this->redirect, false));
 	}
 
 }

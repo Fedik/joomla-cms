@@ -10,19 +10,18 @@
 defined('_JEXEC') or die;
 
 /**
- * The Type Display Controller
+ * The Type Display Types List Controller
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
  */
 
-class TypesControllerEdit extends TypesControllerDisplay
+class TypesControllerTypesDisplay extends TypesControllerBaseDisplay
 {
 	/**
 	 * Prefix for the view and model classes
 	 *
 	 * @var    string
 	 */
-	public $prefix = 'Type';
-
+	public $prefix = 'Types';
 }

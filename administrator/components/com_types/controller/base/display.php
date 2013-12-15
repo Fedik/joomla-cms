@@ -10,13 +10,13 @@
 defined('_JEXEC') or die;
 
 /**
- * The Type Display Controller
+ * The Type Base Display Controller
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
  */
 
-class TypesControllerDisplay extends JControllerBase
+class TypesControllerBaseDisplay extends JControllerBase
 {
 	/**
 	 * Prefix for the view and model classes
@@ -36,7 +36,7 @@ class TypesControllerDisplay extends JControllerBase
 		// Get the document object.
 	    $document     = JFactory::getDocument();
 
-	    $viewName     = $this->input->getWord('view', 'types');
+	    $viewName     = empty($this->options[2]) ? 'types' : strtolower($this->options[2]);
 	    $viewFormat   = $document->getType();
 	    $layoutName   = $this->input->getWord('layout', 'default');
 
@@ -44,8 +44,8 @@ class TypesControllerDisplay extends JControllerBase
 	    $paths = new SplPriorityQueue;
 	    $paths->insert(JPATH_COMPONENT . '/view/' . $viewName . '/tmpl', 'normal');
 
-	    $viewClass  = 'TypesView' . ucfirst($viewName) . ucfirst($viewFormat);
-	    $modelClass = 'TypesModel' . ucfirst($viewName);
+	    $viewClass  = $this->prefix . 'View' . ucfirst($viewName) . ucfirst($viewFormat);
+	    $modelClass = $this->prefix . 'Model' . ucfirst($viewName);
 
 	    if (!class_exists($viewClass) || !class_exists($modelClass))
 	    {

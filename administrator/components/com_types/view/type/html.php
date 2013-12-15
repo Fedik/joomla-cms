@@ -52,15 +52,15 @@ class TypesViewTypeHtml extends JViewHtml
 	{
 		JToolbarHelper::title(JText::_('COM_TYPES'));
 
-		JToolbarHelper::apply('type.save.apply');
-		JToolbarHelper::save('type.save.save');
+		JToolbarHelper::apply('types.save.type.apply');
+		JToolbarHelper::save('types.save.type');
 
-		JToolbarHelper::custom('type.addField', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
-		JToolbarHelper::custom('type.addLayout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);
+		JToolbarHelper::custom('types.add.field', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
+		JToolbarHelper::custom('types.add.layout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);
 
-		JToolbarHelper::custom('type.restore', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
+		JToolbarHelper::custom('types.restore.type', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
 
-		JToolbarHelper::cancel('type.cancel');
+		JToolbarHelper::cancel('types.cancel.type');
 
 	}
 

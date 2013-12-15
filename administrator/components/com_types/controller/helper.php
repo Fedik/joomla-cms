@@ -54,38 +54,41 @@ class TypesControllerHelper
 
 		if (empty($tasks[0]))
 		{
-			$location = 'Types';
+			$location = 'types';
+			$tasks[0] = $location;
 		}
 		else
 		{
-			$location = ucfirst(strtolower($tasks[0]));
+			$location = strtolower($tasks[0]);
 		}
 
 		if (empty($tasks[1]))
 		{
-			$activity = 'List';
+			$activity = 'display';
+			$tasks[1] = $activity;
 		}
 		else
 		{
-			$activity = ucfirst(strtolower($tasks[1]));
+			$activity = strtolower($tasks[1]);
 		}
 
 		$view = '';
 
 		if (empty($tasks[2]))
 		{
-			$view = 'Type';
+			$view = $location;
+			$tasks[2] = $view;
 		}
 		else
 		{
-			$view = ucfirst(strtolower($tasks[2]));
+			$view = strtolower($tasks[2]);
 		}
 
-		$controllerName = $location . 'Controller' . $view . $activity;
+		$controllerName = ucfirst($location) . 'Controller' . ucfirst($view) . ucfirst($activity);
 
 		if (!class_exists($controllerName))
 		{
-			throw new LogicException('Controller <em>' . $controllerName . '</em> not found', 500);
+			//throw new LogicException('Controller "' . $controllerName . '" not exists.', 500);
 		}
 
 		$controller = new $controllerName;

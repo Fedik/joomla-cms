@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_types
  */
 
-class TypesControllerRestore extends JControllerBase
+class TypesControllerTypeRestore extends JControllerBase
 {
 	/**
 	 * Prefix for the view and model classes
@@ -71,7 +71,7 @@ class TypesControllerRestore extends JControllerBase
 			$this->app->enqueueMessage('Restore Success!');
 		}
 		// Redirect back.
-		$this->app->redirect(JRoute::_('index.php?option=com_types&task=type.edit&type_id=' . $data['type_id'] . '&layout_name=' . $layout_name, false));
+		$this->app->redirect(JRoute::_('index.php?option=com_types&task=types.edit.type&type_id=' . $data['type_id'] . '&layout_name=' . $layout_name, false));
 
 	}
 

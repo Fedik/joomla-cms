@@ -56,7 +56,7 @@ defined('_JEXEC') or die;
 			<?php foreach($this->item->layouts as $layout):?>
 				<li<?php if($layout->layout_name == $this->item->layout_name) echo ' class="active"'?>>
 				<?php
-				$link = JRoute::_('index.php?option=com_types&task=type.edit&type_id=' . $this->item->type_id . '&layout_name=' . $layout->layout_name);
+				$link = JRoute::_('index.php?option=com_types&task=types.edit.type&type_id=' . $this->item->type_id . '&layout_name=' . $layout->layout_name);
 				echo JHtml::link($link, $layout->layout_title);
 				?>
 				</li>

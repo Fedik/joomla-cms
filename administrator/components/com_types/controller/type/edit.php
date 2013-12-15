@@ -10,13 +10,13 @@
 defined('_JEXEC') or die;
 
 /**
- * The Type Cancel Controller
+ * The Type Display Controller
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
  */
 
-class TypesControllerCancel extends JControllerBase
+class TypesControllerTypeEdit extends TypesControllerBaseDisplay
 {
 	/**
 	 * Prefix for the view and model classes
@@ -33,16 +33,8 @@ class TypesControllerCancel extends JControllerBase
 	 */
 	public function execute()
 	{
-		// Check for request forgeries.
-		if (!JSession::checkToken())
-		{
-			$this->app->enqueueMessage(JText::_('JINVALID_TOKEN'));
-			$this->app->redirect('index.php');
-		}
-		// clear state
-		$this->app->setUserState('com_types.type.edit.data', null);
-		// redirect
-		$this->app->redirect('index.php?option=com_types');
+		$this->input->set('layout', 'edit');
+		return parent::execute();
 	}
 
 }
