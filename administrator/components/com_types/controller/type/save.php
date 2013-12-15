@@ -18,12 +18,6 @@ defined('_JEXEC') or die;
 
 class TypesControllerTypeSave extends TypesControllerBaseSave
 {
-	/**
-	 * Prefix for the view and model classes
-	 *
-	 * @var    string
-	 */
-	public $prefix = 'Types';
 
 	/**
 	 * Execute the controller.

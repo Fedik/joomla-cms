@@ -18,10 +18,5 @@ defined('_JEXEC') or die;
 
 class TypesControllerTypesDisplay extends TypesControllerBaseDisplay
 {
-	/**
-	 * Prefix for the view and model classes
-	 *
-	 * @var    string
-	 */
-	public $prefix = 'Types';
+
 }

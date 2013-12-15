@@ -19,13 +19,6 @@ defined('_JEXEC') or die;
 class TypesControllerTypeEdit extends TypesControllerBaseDisplay
 {
 	/**
-	 * Prefix for the view and model classes
-	 *
-	 * @var    string
-	 */
-	public $prefix = 'Types';
-
-	/**
 	 * Execute the controller.
 	 *
 	 * @return  mixed  A rendered view or true
