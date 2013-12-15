@@ -15,7 +15,7 @@ defined('_JEXEC') or die;
  * @package     Joomla.Administrator
  * @subpackage  com_types
  */
-class TypesHelperTypes extends JHelperContent
+class TypesHelperTypes
 {
 
 }

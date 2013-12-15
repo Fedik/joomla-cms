@@ -30,26 +30,29 @@ JLoader::registerPrefix('Types', JPATH_COMPONENT);
 $app = JFactory::getApplication();
 
 // Require specific controller if requested
-$tasks = array();
-if ($task = $app->input->get('task'))
-{
-	$tasks = explode('.', $task);
+// $tasks = array();
+// if ($task = $app->input->get('task'))
+// {
+// 	$tasks = explode('.', $task);
 
-	$view =  empty($tasks[0]) ? 'types' : $tasks[0];
-	$app->input->set('view', $view);
+// 	$view =  empty($tasks[0]) ? 'types' : $tasks[0];
+// 	$app->input->set('view', $view);
 
-	$controller = empty($tasks[1]) ? 'display' : $tasks[1];
-	$app->input->set('controller', $controller);
+// 	$controller = empty($tasks[1]) ? 'display' : $tasks[1];
+// 	$app->input->set('controller', $controller);
 
 
-} else {
-	$controller = 'display';
-}
+// } else {
+// 	$controller = 'display';
+// }
 
 // Create the controller
-$classname  = 'TypesController'.ucwords($controller);
-$controller = new $classname();
-$controller->tasks = $tasks;
+$controllerHelper = new TypesControllerHelper;
+$controller = $controllerHelper->parseController($app);
+//$classname  = 'TypesController'.ucwords($controller);
+//$controller = new $classname();
+//$controller->tasks = $tasks;
+var_dump($controller);
 
 // Perform the Request task
 $controller->execute();
