@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+
+	<field name="layout_id"	type="text"
+		default="0"	size="6" readonly="true"
+		class="readonly"
+		label="JGLOBAL_FIELD_ID_LABEL" description ="JGLOBAL_FIELD_ID_DESC"
+	/>
+
+	<field name="type_id"	type="text"
+		default="0"	size="6" readonly="true"
+		class="readonly"
+		label="Type id" description="Type id"
+	/>
+
+	<field name="layout_title" type="text"
+		size="40" required="true"
+		class="inputbox"
+		label="JGLOBAL_TITLE" description="JFIELD_TITLE_DESC"
+	/>
+
+	<field name="layout_name" type="text"
+		size="40"
+		label="JFIELD_ALIAS_LABEL" description="Unique Layout name"
+	/>
+
+	<fields name="params">
+		<!-- can be useful or not? -->
+	</fields>
+
+</form>
