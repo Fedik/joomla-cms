@@ -21,6 +21,7 @@
 			<folder>table</folder>
 			<folder>view</folder>
 			<folder>helper</folder>
+			<folder>sql</folder>
 			<filename>types.php</filename>
 			<filename>index.html</filename>
 		</files>
@@ -29,6 +30,22 @@
 			<language tag="en-GB">language/en-GB/en-GB.com_types.ini</language>
 			<language tag="en-GB">language/en-GB/en-GB.com_types.sys.ini</language>
 		</languages>
+
+		<install folder="admin">
+	        <sql>
+	            <file driver="mysql" charset="utf8">sql/types.install.sql</file>
+	        </sql>
+	    </install>
+	    <uninstall folder="admin">
+	        <sql>
+	            <file driver="mysql" charset="utf8">sql/types.uninstall.sql</file>
+	        </sql>
+	    </uninstall>
+	    <update>
+			<schemas>
+				<schemapath type="mysql">sql/updates/mysql</schemapath>
+			</schemas>
+		</update>
 
 	</administration>
 
