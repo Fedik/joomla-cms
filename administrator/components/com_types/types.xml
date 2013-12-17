@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="2.5.0" method="upgrade">
-	<name>COM_TYPES</name>
+	<name>com_types</name>
 	<author>Joomla! Project</author>
 	<creationDate>June 2013</creationDate>
 	<copyright>(C) 2005 - 2013 Open Source Matters. All rights reserved.	</copyright>
 	<license>GNU General Public License version 2 or later; see	LICENSE.txt</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
-	<version>1.0.0</version>
+	<version>1.0</version>
 	<description>COM_TYPES_DESCRIPTION</description>
-
 
 	<administration>
 		<menu link="option=com_types">com_types</menu>
@@ -30,23 +29,22 @@
 			<language tag="en-GB">language/en-GB/en-GB.com_types.ini</language>
 			<language tag="en-GB">language/en-GB/en-GB.com_types.sys.ini</language>
 		</languages>
-
-		<install folder="admin">
-	        <sql>
-	            <file driver="mysql" charset="utf8">sql/types.install.sql</file>
-	        </sql>
-	    </install>
-	    <uninstall folder="admin">
-	        <sql>
-	            <file driver="mysql" charset="utf8">sql/types.uninstall.sql</file>
-	        </sql>
-	    </uninstall>
-	    <update>
-			<schemas>
-				<schemapath type="mysql">sql/updates/mysql</schemapath>
-			</schemas>
-		</update>
-
 	</administration>
+
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+		</schemas>
+	</update>
 
 </extension>
