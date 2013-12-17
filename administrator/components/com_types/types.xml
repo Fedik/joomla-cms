@@ -15,14 +15,13 @@
 		<menu link="option=com_types">com_types</menu>
 
 		<files folder="admin">
-			<folder>controllers</folder>
-			<folder>languages</folder>
-			<folder>models</folder>
-			<folder>tables</folder>
-			<folder>views</folder>
-			<folder>helpers</folder>
-			<filename>ucmmigrate.php</filename>
-			<filename>controller.php</filename>
+			<folder>controller</folder>
+			<folder>language</folder>
+			<folder>model</folder>
+			<folder>table</folder>
+			<folder>view</folder>
+			<folder>helper</folder>
+			<filename>types.php</filename>
 			<filename>index.html</filename>
 		</files>
 

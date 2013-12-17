@@ -27,6 +27,7 @@ class TypesViewTypesHtml extends JViewHtml
 		{
 			$this->state = $this->model->getState();
 			$this->items = $this->model->getItems();
+			//TODO: pagination
 			//$this->pagination = $this->model->getPagination();
 		}
 		catch (Exception $e)
@@ -48,7 +49,7 @@ class TypesViewTypesHtml extends JViewHtml
 	protected function addToolbar()
 	{
 		JToolbarHelper::title(JText::_('COM_TYPES'));
-		JToolbarHelper::addNew('type.addType');
+		JToolbarHelper::addNew('types.new.type', 'JTOOLBAR_NEW', true);
 	}
 
 	/**
