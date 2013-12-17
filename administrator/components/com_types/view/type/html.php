@@ -50,6 +50,8 @@ class TypesViewTypeHtml extends JViewHtml
 	 */
 	protected function addToolbar()
 	{
+
+
 		JToolbarHelper::title(JText::_('COM_TYPES'));
 
 		JToolbarHelper::apply('types.save.type.apply');
@@ -58,7 +60,9 @@ class TypesViewTypeHtml extends JViewHtml
 		JToolbarHelper::custom('types.new.field', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
 		JToolbarHelper::custom('types.new.layout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);
 
-		JToolbarHelper::custom('types.restore.type', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
+		//JToolbarHelper::custom('types.restore.type', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
+		$bar = JToolbar::getInstance('toolbar');
+		$bar->appendButton('Confirm', 'COM_TYPES_TOOLBAR_RESTORE_MESSAGE', 'refresh', 'COM_TYPES_TOOLBAR_RESTORE', 'types.restore.type', false);
 
 		JToolbarHelper::cancel('types.cancel.type');
 
