@@ -83,6 +83,9 @@ class TypesModelLayout extends JModelDatabase
 		$pk = $app->input->getInt($table->getKeyName());
 		$state->set($this->context . '.id', $pk);
 
+		$type_id = $app->input->getInt('type_id');
+		$state->set('type_id', $type_id);
+
 		return $state;
 	}
 
@@ -102,6 +105,8 @@ class TypesModelLayout extends JModelDatabase
 
 		// get table
 		$table = $this->getTable();
+		// assign existed type_id
+		$table->type_id = $this->state->get('type_id');
 
 		if ($pk)
 		{

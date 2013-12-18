@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_types&layout=edit&type_id=' . (int) $this->item->type_id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate form-horizontal">
+<form action="<?php echo JRoute::_('index.php?option=com_types&task=types.edit.layout&type_id=' . (int) $this->item->type_id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate form-horizontal">
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<!-- Base Layout Info -->
