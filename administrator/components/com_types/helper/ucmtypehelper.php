@@ -102,12 +102,14 @@ class UcmTypeHelper
 		//TODO: to tricky ???
 		if($all)
 		{
-
 			// get layout id
-			foreach($fields as $field){
-				$layout_id = $field->layout_id;
-				break;
+			$table = JTable::getInstance('Layout', 'JTable');
+			if(!$table->load(array('layout_name' => $layout)))
+			{
+				return false;
 			}
+			$layout_id = $table->layout_id;
+
 			$fields_other = self::getFields($type_alias, 'form', null);
 			// check if the field from the form layout, so not related to requested layout
 			foreach($fields_other as $field_name => $field){

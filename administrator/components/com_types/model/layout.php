@@ -298,7 +298,7 @@ class TypesModelLayout extends JModelDatabase
 	 *
 	 * @param   array  $data  The form data.
 	 *
-	 * @return  boolean  True on success.
+	 * @return  array  Saved data on success.
 	 *
 	 */
 	public function save($data)
@@ -311,8 +311,6 @@ class TypesModelLayout extends JModelDatabase
 		}
 		//TODO: Trigger the events.
 		$dispatcher = JEventDispatcher::getInstance();
-
-		// TODO: need to check the alias and so on
 
 		// Get tables
 		$table = $this->getTable();
@@ -343,8 +341,8 @@ class TypesModelLayout extends JModelDatabase
 		{
 			throw new RuntimeException($table->getError());
 		}
-
-		return true;
+		// return saved data
+		return $table->getProperties();
 	}
 
 }

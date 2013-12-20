@@ -80,6 +80,7 @@ class TypesControllerBaseSave extends JControllerBase
 		// Check for validation errors.
 		if ($dataValidated === false)
 		{
+			// messages added by model::validate
 			// Save the data in the session.
 			$this->app->setUserState($this->context, $data);
 
