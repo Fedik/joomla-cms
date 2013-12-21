@@ -10,19 +10,19 @@
 defined('JPATH_BASE') or die;
 
 /**
- * Form Field class for the UCM Types component.
+ * Form Field Layout class for the UCM Types component.
  *
  * @package     Joomla.Administrator
  * @subpackage  com_types
  */
-class JFormFieldFields extends JFormField
+class JFormFieldLayout extends JFormField
 {
 	/**
 	 * The field type.
 	 *
 	 * @var		string
 	 */
-	protected $type = 'Fields';
+	protected $type = 'Layout';
 
 	/**
 	 * Method to get the field input.
@@ -32,8 +32,18 @@ class JFormFieldFields extends JFormField
 	 */
 	protected function getInput()
 	{
+		// toy
+		$html = '<select name="' . $this->name . '[name]">
+	<option value="">Heading</option>
+	<option value="">Link</option>
+	<option value="">Link Modal</option>
+	<option value="">Date</option>
+	<option value="">Image</option>
+	<option value="">Image Modal</option>
+</select>';
+		//toy : lauput params
+		$html .= '<input type="text" name="' . $this->name . '[params]" />';
 
-
-		return 'aaa';
+		return $html;
 	}
 }

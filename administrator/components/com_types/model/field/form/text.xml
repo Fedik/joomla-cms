@@ -8,7 +8,7 @@
 					<!--
 						TODO: need the Select list for:
 								- slect Validation
-								- select Filter
+								- select Layout
 					-->
 					<field name="label"	type="text"
 						default=""	size="10"
@@ -77,9 +77,9 @@
 					<!--
 						TODO: make a field for allow to select format type, and format options
 					-->
-					<field name="format" type="format"
+					<field name="layout" type="layout"
 						default=""	size="20"
-						label="Format" description ="Format the value"
+						label="Layout" description ="Layout for format/display the value"
 					/>
 				</fields>
 			</fields>
