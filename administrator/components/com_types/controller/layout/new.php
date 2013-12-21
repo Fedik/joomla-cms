@@ -26,6 +26,12 @@ class TypesControllerLayoutNew extends JControllerBase
 	 */
 	public function execute()
 	{
+		// Check for request forgeries.
+		if (!JSession::checkToken())
+		{
+			$this->app->enqueueMessage(JText::_('JINVALID_TOKEN'));
+			$this->app->redirect('index.php');
+		}
 		// Redirect to the edit form.
 		$type_id = $this->input->getInt('type_id');
 		$redirect = 'index.php?option=com_types&task=types.edit.layout&type_id=' . $type_id;

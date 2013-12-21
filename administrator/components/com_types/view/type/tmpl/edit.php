@@ -71,7 +71,10 @@ defined('_JEXEC') or die;
 	</div>
 
 	<!-- Hidden -->
-	<?php echo $this->form->getInput('layout_name'); ?>
+	<?php
+		echo $this->form->getInput('layout_name');
+		echo $this->form->getInput('type_id_parent');
+		echo JHtml::_('form.token');
+	?>
 	<input type="hidden" name="task" value="" />
-	<?php echo JHtml::_('form.token'); ?>
 </form>

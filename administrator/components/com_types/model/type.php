@@ -84,10 +84,17 @@ class TypesModelType extends JModelDatabase
 		$pk = $app->input->getInt($table->getKeyName());
 		$state->set($this->context . '.id', $pk);
 
+		// keep a parent if any
+		$type_id_parent = $app->input->getInt('type_id_parent');
+		$state->set('type_id_parent', $type_id_parent);
+
 		// Get Item View (Item Layout) name and save in to state
+		// Use Form layout when we ceate a new type based on $type_id_parent
 		// TODO: bad place for it ???
-		$layout_name = $app->input->get('layout_name', 'form');
+		$layout_name = $type_id_parent ? 'form' : $app->input->get('layout_name', 'form');
 		$state->set('layout_name', $layout_name);
+
+
 
 		return $state;
 	}
@@ -145,6 +152,7 @@ class TypesModelType extends JModelDatabase
 		$item->set('layout_name', $layout_name);
 		$item->set('fields', $fields);
 		$item->set('layouts', $layouts);
+		$item->set('type_id_parent', $this->state->get('type_id_parent'));
 
 		// keep cached
 		$this->items[$pk] = $item;
@@ -389,6 +397,35 @@ class TypesModelType extends JModelDatabase
 		$table = $this->getTable();
 		$key = $table->getKeyName();
 
+		// handle new content type, created by user,
+		// create new based on parent
+		if(empty($data[$key]) && !empty($data['type_id_parent']))
+		{
+			$itemParent		= $this->getItem($data['type_id_parent']);
+			$dataParent 	= $itemParent->getProperties();
+			$alias_suffix 	= JFilterOutput::stringURLSafe($data['type_title']);
+			$alias_suffix	= str_replace('-', '', strtolower($alias_suffix));
+
+			if(!$alias_suffix)
+			{
+				throw new RuntimeException(JText::_('COM_TYPES_PROVIDE_VALID_TITLE'));
+			}
+
+			$data['type_alias'] = $dataParent['type_alias'] . '.' . $alias_suffix;
+			$data = array_merge($dataParent, $data);
+
+			// unset layout_name,
+			// so we will know that need to create a new layout 'form' when do save the fields
+			$data['layout_name'] = null;
+
+			//reset field id`s
+			//TODO: need copy the base fields
+			foreach ($data['fields'] as $n => $field) {
+				$field->id = null;
+				$data['fields'][$n] = (array) $field;
+			}
+		}
+
 		// Load the previous Data
 		if (!$table->load($data[$key]))
 		{
@@ -414,6 +451,7 @@ class TypesModelType extends JModelDatabase
 		{
 			throw new RuntimeException($table->getError());
 		}
+		$data['type_id'] = $table->type_id;
 
 		// Save Fields Layout options
 		return $this->saveFieldsLayout($data);
@@ -451,10 +489,21 @@ class TypesModelType extends JModelDatabase
 		JPluginHelper::importPlugin('fields');
 
 		// Load Layout
-		$result = $tableLayout->load(array(
-			'layout_name' => $data['layout_name'],
-			'type_id' => $type_id,
-		));
+		if($data['layout_name'])
+		{
+			$result = $tableLayout->load(array('layout_name' => $data['layout_name'], 'type_id' => $type_id));
+		}
+		else
+		{
+			// handle new content type created by user, we need make a new layout 'form'
+			// TODO: use TypesModelLayout; ???
+			$result = $tableLayout->save(array(
+				'layout_name' => 'form',
+				'layout_title' => 'Form',
+				'type_id' => $type_id,
+			));
+			//TODO: need copy the base fields
+		}
 		if(!$result)
 		{
 			throw new RuntimeException('Layout should exist!');
@@ -497,7 +546,6 @@ class TypesModelType extends JModelDatabase
 			$tableFieldLayout->reset();
 			$tableFieldLayout->{$tableFieldLayout->getKeyName()} = null;
 		}
-
 
 		return true;
 	}

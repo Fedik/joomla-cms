@@ -50,20 +50,27 @@ class TypesViewTypeHtml extends JViewHtml
 	 */
 	protected function addToolbar()
 	{
-
+		$app = JFactory::getApplication();
 
 		JToolbarHelper::title(JText::_('COM_TYPES'));
 
-		JToolbarHelper::apply('types.save.type.apply');
-		JToolbarHelper::save('types.save.type');
+		// do not display on "add new" action
+		if($app->input->get('task') == 'types.new.type')
+		{
+			JToolbarHelper::apply('types.save.type.new');
+		}
+		else
+		{
+			JToolbarHelper::apply('types.save.type.apply');
+			JToolbarHelper::save('types.save.type');
 
-		JToolbarHelper::custom('types.new.field', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
-		JToolbarHelper::custom('types.new.layout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);
+			JToolbarHelper::custom('types.new.field', 'plus-circle', '', 'COM_TYPES_TOOLBAR_ADDFIELD', false);
+			JToolbarHelper::custom('types.new.layout', 'plus-circle', '', 'COM_TYPES_TOOLBAR_LAYOUT', false);
 
-		//JToolbarHelper::custom('types.restore.type', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
-		$bar = JToolbar::getInstance('toolbar');
-		$bar->appendButton('Confirm', 'COM_TYPES_TOOLBAR_RESTORE_MESSAGE', 'refresh', 'COM_TYPES_TOOLBAR_RESTORE', 'types.restore.type', false);
-
+			//JToolbarHelper::custom('types.restore.type', 'refresh', '', 'COM_TYPES_TOOLBAR_RESTORE', false);
+			$bar = JToolbar::getInstance('toolbar');
+			$bar->appendButton('Confirm', 'COM_TYPES_TOOLBAR_RESTORE_MESSAGE', 'refresh', 'COM_TYPES_TOOLBAR_RESTORE', 'types.restore.type', false);
+		}
 		JToolbarHelper::cancel('types.cancel.type');
 
 	}

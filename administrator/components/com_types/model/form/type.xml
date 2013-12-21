@@ -21,6 +21,8 @@
 
 	<field name="layout_name" type="hidden" />
 
+	<field name="type_id_parent" type="hidden" />
+
 	<fields name="params">
 		<field name="metadata" type="radio"
 			filter="intval" default="1" class="state btn-group"
