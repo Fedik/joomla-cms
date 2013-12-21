@@ -106,7 +106,7 @@ class UcmTypeHelper
 			$table = JTable::getInstance('Layout', 'JTable');
 			if(!$table->load(array('layout_name' => $layout)))
 			{
-				return false;
+				return array();
 			}
 			$layout_id = $table->layout_id;
 

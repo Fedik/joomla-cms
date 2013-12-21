@@ -421,7 +421,9 @@ class TypesModelType extends JModelDatabase
 			//reset field id`s
 			//TODO: need copy the base fields
 			foreach ($data['fields'] as $n => $field) {
-				$field->id = null;
+				$field->id		 = null;
+				$field->field_id = null;
+
 				$data['fields'][$n] = (array) $field;
 			}
 		}
@@ -476,8 +478,9 @@ class TypesModelType extends JModelDatabase
 		$dispatcher = JEventDispatcher::getInstance();
 
 		// Get tables
-		$tableType = $this->getTable();
+		$tableType   = $this->getTable();
 		$tableLayout = $this->getTable('Layout', 'JTable');
+		$tableField  = $this->getTable('Field', 'JTable');
 		$tableFieldLayout = $this->getTable('FieldsLayouts', 'JTable');
 
 		// Get type_id
@@ -513,6 +516,21 @@ class TypesModelType extends JModelDatabase
 
 		// So prepare and store the Fields
 		foreach ($data['fields'] as $field) {
+			// save a main field if new
+			if(empty($field['field_id']))
+			{
+				// Store the Base Field first
+				$field['type_id'] = $type_id;
+				if(!$tableField->save($field))
+				{
+					throw new RuntimeException($tableField->getError());
+				}
+				$field['field_id'] = $tableField->field_id;
+				// reset table
+				$tableField->reset();
+				$tableField->field_id = null;
+			}
+
 			// Load if new
 			$tableFieldLayout->load(array('id' => $field['id']));
 

@@ -24,6 +24,7 @@ class TypesControllerTypeRestore extends JControllerBase
 	 *
 	 * @return  mixed  A rendered view or true
 	 *
+	 * TODO: make me better!!!
 	 */
 	public function execute()
 	{
