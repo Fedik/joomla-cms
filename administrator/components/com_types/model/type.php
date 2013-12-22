@@ -140,8 +140,8 @@ class TypesModelType extends JModelDatabase
 
 		//get fields info
 		$layout_name = $this->state->get('layout_name', 'form');
-		$fields = UcmTypeHelper::getFields($item->type_alias, $layout_name, null, true);
-		$layouts = UcmTypeHelper::getLayouts($item->type_alias);
+		$layouts 	 = UcmTypeHelper::getLayouts($item->type_alias);
+		$fields 	 = UcmTypeHelper::getFields($item->type_alias, $layout_name, null, true);
 
 		// Prepare fields params
 		foreach($fields as $field) {

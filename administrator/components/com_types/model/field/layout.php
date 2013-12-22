@@ -32,17 +32,23 @@ class JFormFieldLayout extends JFormField
 	 */
 	protected function getInput()
 	{
-		// toy
-		$html = '<select name="' . $this->name . '[name]">
-	<option value="">Heading</option>
-	<option value="">Link</option>
-	<option value="">Link Modal</option>
-	<option value="">Date</option>
-	<option value="">Image</option>
-	<option value="">Image Modal</option>
-</select>';
-		//toy : lauput params
-		$html .= '<input type="text" name="' . $this->name . '[params]" />';
+		// fake select for test
+
+		$attr = '';
+		$values = $this->value ? $this->value : array('name' => '', 'params' => '');
+
+		$options = array(
+				JHtml::_('select.option', '', 'Default'),
+				JHtml::_('select.option', 'heading', 'Heading'),
+				JHtml::_('select.option', 'link', 'Link'),
+				JHtml::_('select.option', 'link_modal', 'Link Modal'),
+				JHtml::_('select.option', 'date', 'Date'),
+				JHtml::_('select.option', 'image', 'Image'),
+				JHtml::_('select.option', 'image_modal', 'Image Modal'),
+		);
+
+		$html  = JHtml::_('select.genericlist', $options, $this->name . '[name]', $attr, 'value', 'text', $values['name'], $this->id);
+		$html .= 'Params: <input type="text" name="' . $this->name . '[params]" value="' . $values['params'] . '" />';
 
 		return $html;
 	}
