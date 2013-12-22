@@ -25,15 +25,21 @@ class UcmTypeHelper
 	 */
 	public static function importContentType ($component, $type = null)
 	{
-		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/tables');
-		include_once __DIR__ . '/typesimport.php';
+		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/table');
+		//include_once __DIR__ . '/typesimport.php';
+		include_once __DIR__ . '/ucmparserxml.php';
 
 
 		try{
-			$typesImport = new JUcmTypesImport($component, $type);
-			$typesImport->import();
+			//$typesImport = new JUcmTypesImport($component, $type);
+			//$typesImport->import();
+			$parser = new JUcmParserXml($component);
+			$parser->parse();
+
+			var_dump($parser->types, $parser->layouts);
 		}
 		catch (Exception $e){
+			var_dump($e);
 			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 			return false;
 		}

@@ -29,14 +29,14 @@
 				<!-- Here the fields list for configuration -->
 			</config>
 
-			<views>
-				<!-- Default views -->
-				<view name="form">
+			<layouts>
+				<!-- Default layouts -->
+				<layout name="form">
 					<!-- Related fields list -->
 					<!-- For Form -->
 					<!--
 						Here we define what a curent Content Type can have.
-						As form it is Content Type, this view is required and it need to be first.
+						As form it is Content Type, this layout is required and it need to be first.
 
 						Here we describe the main fields for a current Content Type
 					-->
@@ -84,11 +84,11 @@
 								fields list
 					-->
 
-				</view>
-				<view name="intro">
+				</layout>
+				<layout name="intro">
 					<!-- Related fields list -->
 					<!--
-						Each view can contain also any fields from common form
+						Each layout can contain also any fields from common form
 						eg: metadata, publishoptions, permissions
 					-->
 					<field name="core_title" access="1"	/>
@@ -105,8 +105,8 @@
 						format="introtext" />
 
 					<field name="tags" access="1" />
-				</view>
-				<view name="fullview">
+				</layout>
+				<layout name="fullview">
 					<!-- Related fields list -->
 					<field name="core_title" access="1"	/>
 
@@ -126,9 +126,9 @@
 						format="fulltext" />
 
 					<field name="tags" access="1" />
-				</view>
-				<view name="feed">
-					<!-- Maybe better make this view not here -->
+				</layout>
+				<layout name="feed">
+					<!-- Maybe better make this layout not here -->
 					<!-- Related fields list -->
 					<field name="core_title" access="1"	/>
 
@@ -141,9 +141,9 @@
 					-->
 					<field name="core_body" access="1"
 						format="introtext" />
-				</view>
+				</layout>
 
-			</views>
+			</layouts>
 		</type>
 	</types>
 	<tables>
@@ -174,7 +174,7 @@
 			eg. display the table with columns id/title/created/author
 		-->
 		<type name="article">
-			<view name="table" label="COM_CONTENT_ARTICLES_TITLE">
+			<layout name="table" label="COM_CONTENT_ARTICLES_TITLE">
 				<!-- Define the Fields used for build the table -->
 				<column label="JGRID_HEADING_ID" class="hidden-phone">
 					<field name="id" filter="true" sort="true" />
@@ -210,7 +210,7 @@
 				<column label="JGLOBAL_HITS" class="nowrap hidden-phone">
 					<field name="hits" filter="true" sort="true" />
 				</column>
-			</view>
+			</layout>
 		</type>
 	</administrator>
 </ucm>
