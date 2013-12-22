@@ -46,26 +46,38 @@ class UcmTypeHelper
 	 * Return Content type Fields for given Layout.
 	 *
 	 * @param   string  $type_alias  Type alias.
-	 * @param   string  $layout  Layout name.
-	 * @param   bool  $published  Return only active or not.
-	 * @param	bool  $all load fields that assigned to the current Content Type
-	 * 						but do not exist in current layout
+	 * @param   string  $layout 	 Layout name.
+	 * @param   bool  	$published 	 Return only active or not.
+	 * @param	bool 	$all 		 Load fields that assigned to the current Content Type
+	 * 									but do not assigned to the current layout
 	 *
-	 * @return  array Array with fields
+	 * @return  array 	Array with fields
 	 */
-	public static function getFields($type_alias, $layout = 'form', $published = true, $all = false)
+	public static function getFields($type_alias, $layout_name = 'form', $published = true, $all = false)
 	{
 		static $cache;
-		$key = md5(serialize(array($type_alias, $layout, $published, $all)));
+		$key = md5(serialize(array($type_alias, $layout_name, $published, $all)));
 
 		if(isset($cache[$key]))
 		{
 			return $cache[$key];
 		}
 
-		$user = JFactory::getUser();
+		// Get available layouts for the given content type
+		$layouts = self::getLayouts($type_alias);
+		if(empty($layouts[$layout_name]))
+		{
+			// Layout not exist, so the fields also cannot exist
+			return array();
+		}
+		$layout = $layouts[$layout_name];
+		$user 	= JFactory::getUser();
+		$db   	= JFactory::getDbo();
 
-		$db = JFactory::getDbo();
+		// Make ure that we use the alias for the parent type
+		// because childrens cannot have a own fields
+		$parts = explode('.', $type_alias);
+		$alias = $parts[0] . '.' . $parts[1];
 
 		$query = $db->getQuery(true);
 		$query->select('fl.*, f.field_name, f.field_type, l.layout_name');
@@ -78,8 +90,9 @@ class UcmTypeHelper
 		$query->join('LEFT', '#__content_types as c ON c.type_id=f.type_id');
 		$query->join('LEFT', '#__ucm_fields_layouts as fl ON fl.field_id=f.field_id');
 		$query->join('LEFT', '#__ucm_layouts as l ON l.layout_id=fl.layout_id');
-		$query->where('c.type_alias = '. $db->q($type_alias));
-		$query->where('l.layout_name = '. $db->q($layout));
+		$query->where('c.type_alias = ' . $db->q($alias));
+		$query->where('l.layout_id = '  . (int) $layout->layout_id);
+//		$query->where('l.layout_name = '. $db->q($layout_name));
 
 		// Check access
 		$groups = implode(',', $user->getAuthorisedViewLevels());
@@ -102,14 +115,6 @@ class UcmTypeHelper
 		//TODO: to tricky ???
 		if($all)
 		{
-			// get layout id
-			$table = JTable::getInstance('Layout', 'JTable');
-			if(!$table->load(array('layout_name' => $layout)))
-			{
-				return array();
-			}
-			$layout_id = $table->layout_id;
-
 			$fields_other = self::getFields($type_alias, 'form', null);
 			// check if the field from the form layout, so not related to requested layout
 			foreach($fields_other as $field_name => $field){
@@ -120,18 +125,12 @@ class UcmTypeHelper
 					$field->state = 0;
 					$field->id = null;
 					$field->params = '';
-					$field->layout_id = $layout_id;
-					$field->layout_name = $layout;
+					$field->layout_id = $layout->layout_id;
+					$field->layout_name = $layout_name;
 					$fields[$field_name] = $field;
 				}
 			}
 		}
-
-		// Prepare params
-		// TODO need or???
-// 		foreach($fields as $field){
-// 			$field->params = new JRegistry($field->params);
-// 		}
 
 		// Cache
 		$cache[$key] = $fields;
@@ -163,7 +162,6 @@ class UcmTypeHelper
 		$query->from('#__ucm_layouts as l');
 		$query->join('LEFT', '#__content_types as c ON c.type_id=l.type_id');
 		$query->where('c.type_alias = '. $db->q($type_alias));
-
 		//$query->order('l.layout_name');
 		//echo $query->dump();
 

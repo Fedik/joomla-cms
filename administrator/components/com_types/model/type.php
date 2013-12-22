@@ -419,11 +419,8 @@ class TypesModelType extends JModelDatabase
 			$data['layout_name'] = null;
 
 			//reset field id`s
-			//TODO: need copy the base fields
 			foreach ($data['fields'] as $n => $field) {
-				$field->id		 = null;
-				$field->field_id = null;
-
+				$field->id = null;
 				$data['fields'][$n] = (array) $field;
 			}
 		}
@@ -505,7 +502,6 @@ class TypesModelType extends JModelDatabase
 				'layout_title' => 'Form',
 				'type_id' => $type_id,
 			));
-			//TODO: need copy the base fields
 		}
 		if(!$result)
 		{
@@ -517,19 +513,19 @@ class TypesModelType extends JModelDatabase
 		// So prepare and store the Fields
 		foreach ($data['fields'] as $field) {
 			// save a main field if new
-			if(empty($field['field_id']))
-			{
-				// Store the Base Field first
-				$field['type_id'] = $type_id;
-				if(!$tableField->save($field))
-				{
-					throw new RuntimeException($tableField->getError());
-				}
-				$field['field_id'] = $tableField->field_id;
-				// reset table
-				$tableField->reset();
-				$tableField->field_id = null;
-			}
+// 			if(empty($field['field_id']))
+// 			{
+// 				// Store the Base Field first
+// 				$field['type_id'] = $type_id;
+// 				if(!$tableField->save($field))
+// 				{
+// 					throw new RuntimeException($tableField->getError());
+// 				}
+// 				$field['field_id'] = $tableField->field_id;
+// 				// reset table
+// 				$tableField->reset();
+// 				$tableField->field_id = null;
+// 			}
 
 			// Load if new
 			$tableFieldLayout->load(array('id' => $field['id']));
