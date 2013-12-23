@@ -36,7 +36,7 @@ class UcmTypeHelper
 			$parser = new JUcmParserXml($component);
 			$parser->parse();
 
-			var_dump($parser->types, $parser->layouts);
+			var_dump($parser->tables, $parser->types, $parser->layouts);
 		}
 		catch (Exception $e){
 			var_dump($e);

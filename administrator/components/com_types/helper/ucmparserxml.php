@@ -52,6 +52,14 @@ class JUcmParserXml
 	protected $layouts = array();
 
 	/**
+	 * Associative array contain the database tables description
+	 *
+	 * @var array
+	 *
+	 */
+	protected $tables = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @param   string  $component  Component name where import to.
@@ -114,6 +122,9 @@ class JUcmParserXml
 
 		// TODO: Parse the admin side layouts
 
+		// parse database tables
+		$this->parseTables();
+
 		return $this;
 	}
 
@@ -121,10 +132,29 @@ class JUcmParserXml
 	 * Parse the database tables from the xml data
 	 *
 	 * @return self
-	 * @throws RuntimeException
 	 */
 	public function parseTables()
 	{
+		// Get available Tables
+		$tablesXML = $this->resource->xpath('/ucm[@component="' . $this->component . '"]/tables/table');
+		foreach($tablesXML as $tableXML){
+			$table = array();
+			$info = $this->getAttributes($tableXML);
+			$name = $info->get('name');
+			$key  = $info->get('key');
+			if(!$name || !$key) continue;
+
+			$table['name'] = strstr($name, '#__') ? $name : '#__' . $name;
+			$table['primary_key'] = explode(',', $key);
+
+			$table['fields'] = $this->parseTableFields($tableXML);
+
+			$this->tables[$name] = $table;
+
+			//TODO: parse foreign,unique,index
+		}
+
+
 		return $this;
 	}
 
@@ -134,7 +164,7 @@ class JUcmParserXml
 	 * @return self
 	 * @throws RuntimeException
 	 */
-	protected function parseTypes()
+	public function parseTypes()
 	{
 		// Get available types
 		$typesXML = $this->resource->xpath('/ucm[@component="' . $this->component . '"]/types/type');
@@ -172,7 +202,7 @@ class JUcmParserXml
 			}
 			$type['type_id'] = null; // if anyone will try to set this
 
-			// All data that out of the template goes to params (???)
+			// All data that out of the template goes to params
 			$type['params'] = $this->prepareParams($info, $params_exclude);
 
 
@@ -190,7 +220,7 @@ class JUcmParserXml
 	 *
 	 * @return self
 	 */
-	protected function parseLayouts($type_name)
+	public function parseLayouts($type_name)
 	{
 		// Get layouts for a Conetnt Type
 		$layouts = $this->resource->xpath('/ucm[@component="' . $this->component . '"]/types/type[@name="' . $type_name . '"]/layouts/layout');
@@ -259,10 +289,34 @@ class JUcmParserXml
 	}
 
 	/**
+	 * Parse table fields
+	 *
+	 * @param $table table xml info
+	 *
+	 * @return array with fields properties
+	 */
+
+	protected function parseTableFields(SimpleXMLElement $table)
+	{
+		$fields = array();
+
+		foreach($table->xpath('fields/field') as $fieldXML){
+			$info  = $this->getAttributes($fieldXML);
+			$name  = $info->get('name');
+
+			$fields[$name] = $info->toArray();
+		}
+
+		return $fields;
+	}
+
+	/**
 	 * Return the Type structure based on the type Table properties
 	 *
 	 * @param   string  $type    The table name.
 	 * @param   string  $prefix  The class prefix. Optional.
+	 *
+	 * @TODO: is realy useful (???)
 	 *
 	 * @return  array
 	 */

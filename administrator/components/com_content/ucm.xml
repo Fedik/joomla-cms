@@ -149,8 +149,7 @@
 	<tables>
 		<!-- Table description -->
 		<!-- Table for the fields that do not exist in common table -->
-		<table  type="special" name="#__content" key="id"
-			description="Content Table" >
+		<table name="#__content" key="id" > <!-- key - a primary key like: key1,key2,key3 -->
 			<fields>
 				<field type="int" lenght="10" name="id" default=""
 					extra="NOT NULL AUTO_INCREMENT"
@@ -160,12 +159,15 @@
 					extra="NOT NULL"
 					comment="Store Full Text" />
 			</fields>
-			<indexes>
+			<index>
 				<!-- ??? -->
-			</indexes>
-			<foreignkeys>
+			</index>
+			<foreign>
 				<!-- ??? -->
-			</foreignkeys>
+			</foreign>
+		    <unique>
+				<!-- ??? -->
+		    </unique>
 		</table>
 	</tables>
 	<administrator>
