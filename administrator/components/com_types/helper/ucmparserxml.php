@@ -111,6 +111,9 @@ class JUcmParserXml
 		foreach(array_keys($this->types) as $type_name){
 			$this->parseLayouts($type_name);
 		}
+
+		// TODO: Parse the admin side layouts
+
 		return $this;
 	}
 
@@ -222,17 +225,35 @@ class JUcmParserXml
 	 */
 	protected function parseFields($type_name, $layout_name)
 	{
-		$fields = $this->resource->xpath('/ucm[@component="' . $this->component . '"]/types/type[@name="' . $type_name . '"]/layouts/layout[@name="' . $layout_name . '"]/field');
-		foreach($fields as $i => $fieldXML){
-			$field = array();
+		$fieldsXML = $this->resource->xpath('/ucm[@component="' . $this->component . '"]/types/type[@name="' . $type_name . '"]/layouts/layout[@name="' . $layout_name . '"]/field');
+		$fields = array();
+		foreach($fieldsXML as $i => $fieldXML){
 			$fieldInfo = $this->getAttributes($fieldXML);
-			if(!$fieldInfo->get('ordering'))
-			{
-				$fieldInfo->set('ordering', $i);
-			}
+			$field_name = $fieldInfo->get('name');
+			if(!$field_name) continue;
+
+			$default_access = $layout_name == 'form' ? 3 : 1;
+
+			$field = array(
+				'field_name' => $field_name,
+				'field_type' => $fieldInfo->get('type', 'text'),
+				'locked' 	 => $fieldInfo->get('locked', 1),
+				'ordering' 	 => $fieldInfo->get('ordering', $i),
+				'layout_name'=> $layout_name,
+				'access' 	 => $fieldInfo->get('access', $default_access),
+				'state' 	 => $fieldInfo->get('state', 1),
+				'stage' 	 => $fieldInfo->get('stage', 0),
+			);
+
+			// Prepare params
+			// TODO: what about <option> for a some field types ???
+			$field['params'] = $this->prepareParams($fieldInfo,
+					array('name', 'type', 'ordering', 'access', 'locked', 'state', 'stage'));
+
+			$fields[$field_name] = $field;
 		}
 
-		$this->layouts[$type_name][$layout_name]['fields'] = $field;
+		$this->layouts[$type_name][$layout_name]['fields'] = $fields;
 
 		return $this;
 	}
