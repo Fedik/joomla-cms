@@ -10,7 +10,9 @@
 defined('_JEXEC') or die;
 
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_types&task=types.edit.type&type_id=' . (int) $this->item->type_id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate form-horizontal">
+<form action="<?php echo JRoute::_('index.php?option=com_types&task=types.edit.type&type_id=' . (int) $this->item->type_id); ?>"
+	method="post" name="adminForm" id="adminForm" class="form-validate">
+
 	<div class="row-fluid">
 		<div class="span10 form-horizontal">
 			<!-- Base Type Info -->
@@ -50,11 +52,15 @@ defined('_JEXEC') or die;
 					</div>
 				</div>
 			<?php endforeach; ?>
+		</div>
+		<div class="span10">
+			<!-- Fields and Layouts -->
+			<?php if(!empty($this->item->layouts)): ?>
 
 			<!-- Layouts tabs -->
 			<ul class="nav nav-tabs">
 			<?php foreach($this->item->layouts as $layout):?>
-				<li<?php if($layout->layout_name == $this->item->layout_name) echo ' class="active"'?>>
+				<li<?php if($layout->layout_name == $this->item->layout->layout_name) echo ' class="active"'?>>
 				<?php
 				$link = JRoute::_('index.php?option=com_types&task=types.edit.type&type_id=' . $this->item->type_id . '&layout_name=' . $layout->layout_name);
 				echo JHtml::link($link, $layout->layout_title);
@@ -63,10 +69,24 @@ defined('_JEXEC') or die;
 			<?php endforeach;?>
 			</ul>
 
+			<!-- Layout editing -->
+			<div class="form-inline form-inline-header">
+			<?php foreach($this->form->getGroup('layout') as $layout_field): ?>
+				<div class="control-group">
+					<div class="control-label">
+						<?php echo $layout_field->label; ?>
+					</div>
+					<div class="controls">
+						<?php echo $layout_field->input; ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+			</div>
+
 			<!-- Fields Configuration -->
 			<?php echo JLayoutHelper::render('ucm.type.edit.fields', $this); ?>
 			<?php //echo $this->loadTemplate('fields'); ?>
-
+			<?php endif;?>
 		</div>
 	</div>
 

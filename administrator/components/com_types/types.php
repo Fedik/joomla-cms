@@ -22,7 +22,7 @@ JLoader::register('UcmTypeHelper', __DIR__ . '/helper/ucmtypehelper.php');
 JLoader::registerPrefix('Types', JPATH_COMPONENT);
 
 //test import here hehe
-UCMTypeHelper::importContentType('com_content');exit;
+//UCMTypeHelper::importContentType('com_content');exit;
 
 // Application
 $app = JFactory::getApplication();

@@ -138,10 +138,26 @@ class TypesModelType extends JModelDatabase
 			$item->params = $registry->toArray();
 		}
 
-		//get fields info
+		// Get fields info
 		$layout_name = $this->state->get('layout_name', 'form');
 		$layouts 	 = UcmTypeHelper::getLayouts($item->type_alias);
-		$fields 	 = UcmTypeHelper::getFields($item->type_alias, $layout_name, null, true);
+		// Check whether layout exist
+		$layout = null;
+		if(empty($layouts[$layout_name]))
+		{
+			// Use the Form layout as base Type layout
+			$layout_name = 'form';
+			$this->state->set('layout_name', 'form');
+			$layouts['form'] = empty($layouts['form']) ? (object) array(
+				'layout_name' => 'form',
+				'layout_title' => 'Form',
+			) : $layouts['form'];
+		}
+
+		$layout = $layouts[$layout_name];
+
+		// Get related Fields
+		$fields = UcmTypeHelper::getFields($item->type_alias, $layout_name, null, true);
 
 		// Prepare fields params
 		foreach($fields as $field) {
@@ -149,7 +165,7 @@ class TypesModelType extends JModelDatabase
 			$field->params = $params->toArray();
 		}
 
-		$item->set('layout_name', $layout_name);
+		$item->set('layout', $layout);
 		$item->set('fields', $fields);
 		$item->set('layouts', $layouts);
 		$item->set('type_id_parent', $this->state->get('type_id_parent'));
@@ -177,7 +193,7 @@ class TypesModelType extends JModelDatabase
 		if($data)
 		{
 			$this->state->set('type_alias', $data['type_alias']);
-			$this->state->set('layout_name', $data['layout_name']);
+			$this->state->set('layout_name', $data['layout']['layout_name']);
 		}
 		// Get the form.
 		$form = $this->loadForm($this->context, 'type', array('control' => 'jform', 'load_data' => $loadData));
@@ -388,10 +404,9 @@ class TypesModelType extends JModelDatabase
 			$params = new JRegistry($data['params']);
 			$data['params'] = $params->toString();
 		}
+		$app = JFactory::getApplication();
 		//TODO: Trigger the events.
 		$dispatcher = JEventDispatcher::getInstance();
-
-		// TODO: need to check the alias and so on
 
 		// Get tables
 		$table = $this->getTable();
@@ -399,8 +414,9 @@ class TypesModelType extends JModelDatabase
 
 		// handle new content type, created by user,
 		// create new based on parent
-		if(empty($data[$key]) && !empty($data['type_id_parent']))
+		if($app->input->get('task') == 'types.save.type.new' && !empty($data['type_id_parent']))
 		{
+			$data[$key]		= null;
 			$itemParent		= $this->getItem($data['type_id_parent']);
 			$dataParent 	= $itemParent->getProperties();
 			$alias_suffix 	= JFilterOutput::stringURLSafe($data['type_title']);
@@ -414,11 +430,7 @@ class TypesModelType extends JModelDatabase
 			$data['type_alias'] = $dataParent['type_alias'] . '.' . $alias_suffix;
 			$data = array_merge($dataParent, $data);
 
-			// unset layout_name,
-			// so we will know that need to create a new layout 'form' when do save the fields
-			$data['layout_name'] = null;
-
-			//reset field id`s
+			// Reset field id`s
 			foreach ($data['fields'] as $n => $field) {
 				$field->id = null;
 				$data['fields'][$n] = (array) $field;
@@ -452,6 +464,12 @@ class TypesModelType extends JModelDatabase
 		}
 		$data['type_id'] = $table->type_id;
 
+		// Save layout
+		$layoutModel = new TypesModelLayout;
+		$data['layout']['type_id'] = $data['type_id'];
+		$data['layout'] = $layoutModel->save($data['layout']);
+
+
 		// Save Fields Layout options
 		return $this->saveFieldsLayout($data);
 	}
@@ -467,7 +485,7 @@ class TypesModelType extends JModelDatabase
 	public function saveFieldsLayout($data)
 	{
 		// If empty then nothing to do here
-		if (empty($data['fields']))
+		if (empty($data['fields']) || empty($data['layout']['layout_id']))
 		{
 			return true;
 		}
@@ -475,40 +493,16 @@ class TypesModelType extends JModelDatabase
 		$dispatcher = JEventDispatcher::getInstance();
 
 		// Get tables
-		$tableType   = $this->getTable();
-		$tableLayout = $this->getTable('Layout', 'JTable');
-		$tableField  = $this->getTable('Field', 'JTable');
+		//$tableField  = $this->getTable('Field', 'JTable');
 		$tableFieldLayout = $this->getTable('FieldsLayouts', 'JTable');
 
 		// Get type_id
-		$key = $tableType->getKeyName();
-		$type_id = (!empty($data[$key])) ? $data[$key] : (int) $this->state->get($this->context . '.id');
+		$type_id = $data['type_id'];
+		$layout_id = $data['layout']['layout_id'];
 
 		// Include the content plugins for the on save events.
 		// TODO: "fields" or "content" or something else ???
 		JPluginHelper::importPlugin('fields');
-
-		// Load Layout
-		if($data['layout_name'])
-		{
-			$result = $tableLayout->load(array('layout_name' => $data['layout_name'], 'type_id' => $type_id));
-		}
-		else
-		{
-			// handle new content type created by user, we need make a new layout 'form'
-			// TODO: use TypesModelLayout; ???
-			$result = $tableLayout->save(array(
-				'layout_name' => 'form',
-				'layout_title' => 'Form',
-				'type_id' => $type_id,
-			));
-		}
-		if(!$result)
-		{
-			throw new RuntimeException('Layout should exist!');
-		}
-
-		$layout_id = $tableLayout->layout_id;
 
 		// So prepare and store the Fields
 		foreach ($data['fields'] as $field) {
