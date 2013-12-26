@@ -29,7 +29,7 @@ class TypesControllerTypeSave extends TypesControllerBaseSave
 	{
 		$type_id 		= $this->input->getInt('type_id');
 		$data   		= $this->input->get('jform', array(), 'array');
-		$layout_name 	= empty($data['layout_name']) ? 'form' : $data['layout_name'];
+		$layout_name 	= empty($data['layout']['layout_name']) ? 'form' : $data['layout']['layout_name'];
 		$type_id_parent = empty($data['type_id_parent']) ? 0 : $data['type_id_parent'];
 		//define context
 		$this->context 	= 'com_types.type.edit.data';

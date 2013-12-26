@@ -20,10 +20,11 @@ class UcmTypeHelper
 	 * Import New Content type from content ucm.xml
 	 *
 	 * @param string $component Component name, eg com_content
+	 * @param string $type_only The type name that need to import
 	 *
 	 * @return bool true on success
 	 */
-	public static function importContentType ($component, $type = null)
+	public static function importContentType ($component, $type_only = null)
 	{
 		$app = JFactory::getApplication();
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/table');
@@ -40,6 +41,12 @@ class UcmTypeHelper
 			// Save the Type data
 			$typeModel = new TypesModelType;
 			foreach($parser->types as $name => $typeData){
+				// check whether we need to import only specific type
+				if($type_only && $type_only != $name)
+				{
+					continue;
+				}
+
 				// Try load old if any
 				$type 		 = $typeModel->getItem(array('type_alias' => $typeData['type_alias']));
 				$typeDataOld = $type->getProperties();
@@ -117,7 +124,7 @@ class UcmTypeHelper
 		}
 		catch (Exception $e){
 			var_dump($e);
-			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			$app->enqueueMessage($e->getMessage(), 'error');
 			return false;
 		}
 
