@@ -25,6 +25,7 @@ class UcmTypeHelper
 	 */
 	public static function importContentType ($component, $type = null)
 	{
+		$app = JFactory::getApplication();
 		JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_types/table');
 		//include_once __DIR__ . '/typesimport.php';
 		include_once __DIR__ . '/ucmparserxml.php';
@@ -36,7 +37,83 @@ class UcmTypeHelper
 			$parser = new JUcmParserXml($component);
 			$parser->parse();
 
-			var_dump($parser->tables, $parser->types, $parser->layouts);
+			// Save the Type data
+			$typeModel = new TypesModelType;
+			foreach($parser->types as $name => $typeData){
+				// Try load old if any
+				$type 		 = $typeModel->getItem(array('type_alias' => $typeData['type_alias']));
+				$typeDataOld = $type->getProperties();
+				$data 		 = array_merge($typeDataOld, $typeData);
+
+				// Related layouts
+				$layoutsData = empty($parser->layouts[$name]) ? array() : $parser->layouts[$name];
+				// The Form layout
+				if(!empty($layoutsData['form']))
+				{
+					$data['layout'] = array_merge((array) $data['layout'], $layoutsData['form']);
+				}
+				if(!empty($data['layout']['fields']))
+				{
+					foreach($data['layout']['fields'] as $field_name => $field){
+						if(isset($data['fields'][$field_name]))
+						{
+							$data['fields'][$field_name] = array_merge((array) $data['fields'][$field_name], $field);
+						}
+						else
+						{
+							$data['fields'][$field_name] = $field;
+						}
+					}
+					// Cleat fields from layout
+					unset($data['layout']['fields']);
+				}
+
+				// save the type data
+				$typeSaved = $typeModel->save($data);
+
+				// save the Layouts and related fields
+				foreach ($layoutsData as $layout_name => $layoutData){
+					$data = array('type_id' => $typeSaved['type_id']);
+					// The form layout alredy should be saved
+					if($layout_name == 'form') continue;
+
+					$layoutOld = empty($typeDataOld['layouts'][$layout_name]) ? array() : (array) $typeDataOld['layouts'][$layout_name];
+					$fieldsOld = UcmTypeHelper::getFields($typeSaved['type_alias'], $layout_name, null, true);
+
+					$data['layout'] = array_merge($layoutOld, $layoutData);
+					//  prepare fields
+					if(!empty($data['layout']['fields']))
+					{
+						foreach($data['layout']['fields'] as $field_name => $field){
+							// get base field id
+							$field_id = empty($typeSaved['fields'][$field_name]) ? null : (int) $typeSaved['fields'][$field_name]['field_id'];
+
+							// Merge with old if any
+							if(isset($fieldsOld[$field_name]))
+							{
+								$data['fields'][$field_name] = array_merge((array) $fieldsOld[$field_name], $field);
+							}
+							elseif($field_id)
+							{
+								$field['field_id'] = $field_id;
+								$data['fields'][$field_name] = $field;
+							}
+							else
+							{
+								// Base Field should exist for continue
+								// TODO: can be that this field from "Metadata" or "Publication options"
+								//       need check this too !!!
+								$app->enqueueMessage('Cannot import: ' . $field_name, 'notice');
+							}
+						}
+						// Cleat fields from layout
+						unset($data['layout']['fields']);
+					}
+					// save
+					$typeModel->saveFieldsLayout($data);
+				}
+			}
+
 		}
 		catch (Exception $e){
 			var_dump($e);
@@ -179,5 +256,6 @@ class UcmTypeHelper
 
 		return $layouts;
 	}
+
 
 }

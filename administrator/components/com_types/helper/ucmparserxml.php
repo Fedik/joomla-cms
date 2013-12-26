@@ -190,7 +190,11 @@ class JUcmParserXml
 			foreach($type_template as $n => $v) {
 				$key = str_replace('type_', '', $n);
 				$params_exclude[] = $key;
-				$type[$n] = $info->get($key);
+				$value = $info->get($key);
+				if($value)
+				{
+					$type[$n] = $value;
+				}
 			}
 
 			// Build aliase
@@ -200,7 +204,10 @@ class JUcmParserXml
 			{
 				$type['type_title'] = $type_name;
 			}
-			$type['type_id'] = null; // if anyone will try to set this
+			if(isset($type['type_id'])) // if anyone will try to set this
+			{
+				unset($type['type_id']);
+			}
 
 			// All data that out of the template goes to params
 			$type['params'] = $this->prepareParams($info, $params_exclude);

@@ -65,7 +65,6 @@ class TypesModelType extends JModelDatabase
 	 */
 	public function getTable($type = 'Contenttype', $prefix = 'JTable', $config = array())
 	{
-
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -102,7 +101,7 @@ class TypesModelType extends JModelDatabase
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $pk  The id of the primary key.
+	 * @param   mixed    $pk   An optional primary key value to load the row by, or an array of fields to match.
 	 *
 	 * @return  mixed    Object on success, false on failure.
 	 *
@@ -110,8 +109,9 @@ class TypesModelType extends JModelDatabase
 	public function getItem($pk = null)
 	{
 		$pk = (!empty($pk)) ? $pk : (int) $this->state->get($this->context . '.id');
+		$key = md5(serialize($pk));
 		// check whether alredy loaded
-		if(isset($this->items[$pk])) return $this->items[$pk];
+		if(isset($this->items[$key])) return $this->items[$key];
 
 		// get table
 		$table = $this->getTable();
@@ -171,7 +171,7 @@ class TypesModelType extends JModelDatabase
 		$item->set('type_id_parent', $this->state->get('type_id_parent'));
 
 		// keep cached
-		$this->items[$pk] = $item;
+		$this->items[$key] = $item;
 
 		return $item;
 	}
@@ -391,9 +391,9 @@ class TypesModelType extends JModelDatabase
 	/**
 	 * Method to save the form data.
 	 *
-	 * @param   array  $data  The form data.
+	 * @param  array  $data  The form data.
 	 *
-	 * @return  boolean  True on success.
+	 * @return array  Saved result.
 	 *
 	 */
 	public function save($data)
@@ -462,13 +462,9 @@ class TypesModelType extends JModelDatabase
 		{
 			throw new RuntimeException($table->getError());
 		}
+
+		// Keep saved id
 		$data['type_id'] = $table->type_id;
-
-		// Save layout
-		$layoutModel = new TypesModelLayout;
-		$data['layout']['type_id'] = $data['type_id'];
-		$data['layout'] = $layoutModel->save($data['layout']);
-
 
 		// Save Fields Layout options
 		return $this->saveFieldsLayout($data);
@@ -479,21 +475,33 @@ class TypesModelType extends JModelDatabase
 	 *
 	 * @param   array  $data  The form data, that contain $data[fields].
 	 *
-	 * @return  boolean  True on success.
+	 * @return  array  Saved result.
 	 *
 	 */
 	public function saveFieldsLayout($data)
 	{
 		// If empty then nothing to do here
+		if (empty($data['layout']) || empty($data['type_id']))
+		{
+			return $data;
+		}
+
+		// Save the Layout
+		$layoutModel = new TypesModelLayout;
+		$data['layout']['type_id'] = $data['type_id'];
+		$data['layout'] = $layoutModel->save($data['layout']);
+
+
+		// If empty then nothing to do here
 		if (empty($data['fields']) || empty($data['layout']['layout_id']))
 		{
-			return true;
+			return $data;
 		}
 
 		$dispatcher = JEventDispatcher::getInstance();
 
 		// Get tables
-		//$tableField  = $this->getTable('Field', 'JTable');
+		$tableField  = $this->getTable('Field', 'JTable');
 		$tableFieldLayout = $this->getTable('FieldsLayouts', 'JTable');
 
 		// Get type_id
@@ -505,24 +513,28 @@ class TypesModelType extends JModelDatabase
 		JPluginHelper::importPlugin('fields');
 
 		// So prepare and store the Fields
-		foreach ($data['fields'] as $field) {
+		foreach ($data['fields'] as $name => $field) {
 			// save a main field if new
-// 			if(empty($field['field_id']))
-// 			{
-// 				// Store the Base Field first
-// 				$field['type_id'] = $type_id;
-// 				if(!$tableField->save($field))
-// 				{
-// 					throw new RuntimeException($tableField->getError());
-// 				}
-// 				$field['field_id'] = $tableField->field_id;
-// 				// reset table
-// 				$tableField->reset();
-// 				$tableField->field_id = null;
-// 			}
+			if(empty($field['field_id']))
+			{
+				// Store the Base Field first
+				$field['type_id'] = $type_id;
+				if(!$tableField->save($field))
+				{
+					throw new RuntimeException($tableField->getError());
+				}
+				$field['field_id'] = $tableField->field_id;
 
-			// Load if new
-			$tableFieldLayout->load(array('id' => $field['id']));
+				// reset table
+				$tableField->reset();
+				$tableField->field_id = null;
+			}
+
+			// Load previous
+			if(!empty($field['id']))
+			{
+				$tableFieldLayout->load(array('id' => $field['id']));
+			}
 
 			// Set layout id
 			$field['layout_id'] = $layout_id;
@@ -553,9 +565,12 @@ class TypesModelType extends JModelDatabase
 			// Reset the Table instead of call get new Instanse each time
 			$tableFieldLayout->reset();
 			$tableFieldLayout->{$tableFieldLayout->getKeyName()} = null;
+
+			//save result
+			$data['fields'][$name] = $field;
 		}
 
-		return true;
+		return $data;
 	}
 
 }

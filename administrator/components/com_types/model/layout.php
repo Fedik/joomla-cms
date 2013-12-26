@@ -317,12 +317,15 @@ class TypesModelLayout extends JModelDatabase
 		$key = $table->getKeyName();
 
 		// Load the previous Data
-		if (!$table->load($data[$key]))
+		if(!empty($data[$key]))
 		{
-			throw new RuntimeException($table->getError());
-		}
+			if (!$table->load($data[$key]))
+			{
+				throw new RuntimeException($table->getError());
+			}
 
-		unset($data[$key]);
+			unset($data[$key]);
+		}
 
 		// Bind the data.
 		if (!$table->bind($data))
