@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `#__ucm_fields` (
   PRIMARY KEY (`field_id`),
   KEY `field_id` (`field_id`),
   KEY `type_id` (`type_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 --
 -- Dumping data for table `#__ucm_layouts`
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `#__ucm_layouts` (
   PRIMARY KEY (`layout_id`),
   KEY `layout_name` (`layout_name`),
   KEY `type_id` (`type_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 --
 -- Dumping data for table `#__ucm_fields_layouts`
@@ -53,5 +53,5 @@ CREATE TABLE IF NOT EXISTS `#__ucm_fields_layouts` (
   KEY `layout_id` (`layout_id`),
   KEY `access` (`access`),
   KEY `state` (`state`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=43 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 

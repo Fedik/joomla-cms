@@ -47,6 +47,9 @@ class UcmTypeHelper
 					continue;
 				}
 
+				//FIXME: temporary unset table, because no clear api
+				unset($typeData['table']);
+
 				// Try load old if any
 				$type 		 = $typeModel->getItem(array('type_alias' => $typeData['type_alias']));
 				$typeDataOld = $type->getProperties();
