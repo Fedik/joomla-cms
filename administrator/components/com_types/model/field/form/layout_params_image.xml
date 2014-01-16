@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- example params for image layout -->
+<form>
+	<fieldset name="params">
+
+		<!-- The fields group not supported in current time -->
+
+		<field name="width" type="text" default="800"
+			label="Width" description="" />
+
+		<field name="height" type="text" default="600"
+			label="height" description="" />
+
+	</fieldset>
+</form>

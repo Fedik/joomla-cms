@@ -32,23 +32,105 @@ class JFormFieldLayout extends JFormField
 	 */
 	protected function getInput()
 	{
-		// fake select for test
+		// fake Input for demonstartion
 
 		$attr = '';
 		$values = $this->value ? $this->value : array('name' => '', 'params' => '');
 
-		$options = array(
-				JHtml::_('select.option', '', 'Default'),
-				JHtml::_('select.option', 'heading', 'Heading'),
-				JHtml::_('select.option', 'link', 'Link'),
-				JHtml::_('select.option', 'link_modal', 'Link Modal'),
-				JHtml::_('select.option', 'date', 'Date'),
-				JHtml::_('select.option', 'image', 'Image'),
-				JHtml::_('select.option', 'image_modal', 'Image Modal'),
+		// some fake but possible layouts
+		$layouts = array(
+				'' => array( 'title' => 'Default'),
+				'heading'=> array(
+					'title' => 'Heading',
+					'form' => 'layout_params_heading',
+				),
+				'link' => array( 'title' => 'Link'),
+				//'link_modal' => array( 'title' => 'Link Modal'),
+				'date' => array(
+					'title' => 'Date',
+					'form' => 'layout_params_date',
+				),
+				'image' => array(
+					'title' => 'Image',
+					'form' => 'layout_params_image',
+				),
+				//'image_modal' => array( 'title' => 'Image Modal'),
 		);
 
-		$html  = JHtml::_('select.genericlist', $options, $this->name . '[name]', $attr, 'value', 'text', $values['name'], $this->id);
-		$html .= 'Params: <input type="text" name="' . $this->name . '[params]" value="' . $values['params'] . '" />';
+		$options = array();
+		$layout_forms = array();
+		foreach($layouts as $n => $data) {
+			// select list
+			$options[] = JHtml::_('select.option', $n, $data['title']);
+
+			// Build subform
+			if(!empty($data['form']))
+			{
+				try {
+					$layout_params = empty($values['params'][$n]) ? array() : $values['params'][$n];
+					$form = JForm::getInstance($data['form'], $data['form'], array());
+
+					// Reset if there any data cached
+					$form->reset();
+					// Bind valuse
+					$form->bind($layout_params);
+
+					//TODO: no validation, it is bad (!!!)
+
+					// Render the subform
+					$layout_form = '<div class="layout-params-form ' . $n . '">';
+					foreach($form->getFieldset('params') as $field) {
+						// count new id
+						$field->id = $this->id . '_params_' . $field->id;
+
+						// cound new name
+						//FIXME: no group support (!!!), not so bad but it can make a problem
+						$field->name = $this->name . '[params][' . $n . '][' . $field->name . ']';
+
+						// Render input
+						$layout_form .= $field->getLabel();
+						$layout_form .= $field->getInput();
+					}
+					$layout_form .= '</div>';
+					$layout_forms[] = $layout_form;
+				} catch (Exception $e) {
+					var_dump($e);
+				}
+
+			}
+		}
+
+		$html = '<div class="layout-params">';
+		$html .= JHtml::_('select.genericlist', $options, $this->name . '[name]', $attr, 'value', 'text', $values['name'], $this->id);
+		$html .= implode("\n", $layout_forms);
+		$html .= '</div>';
+
+		//some script
+		static $added;
+		if(!$added)
+		{
+			JFactory::getDocument()->addScriptDeclaration('
+(function($){
+ $(document).ready(function(){
+	$(".layout-params").each(function(){
+		var $lp = $(this);
+		var $lf = $lp.children(".layout-params-form").hide();
+		var $ls = $lp.children("select");
+		var value = $ls.val();
+		if(value) $lf.filter("." + value).show();
+
+		$lp.children("select").bind("change", function(){
+		  var value = $(this).val();
+		  $lf.hide();
+		  if(value) $lf.filter("." + value).slideDown();
+		});
+	});
+
+ });
+})(jQuery);
+');
+			$added = true;
+		}
 
 		return $html;
 	}

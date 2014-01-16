@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- example params for date layout -->
+<form>
+	<fieldset name="params">
+
+		<!-- The fields group not supported in current time -->
+
+		<field name="format" type="text" default="D, d F Y"
+			label="Date format" description="Date format" />
+
+	</fieldset>
+</form>

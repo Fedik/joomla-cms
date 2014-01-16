@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- example params for Heading layout -->
+<form>
+	<fieldset name="params">
+
+		<!-- The fields group not supported in current time -->
+
+		<field name="level" type="integer" default=""
+			first="1" last="6" step="1"
+			label="Heading level" description="Heading level" />
+
+	</fieldset>
+</form>
