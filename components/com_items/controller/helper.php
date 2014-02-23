@@ -73,7 +73,7 @@ class ItemsControllerHelper
 			throw new LogicException('Controller "' . $controllerName . '" not exists.', 404);
 		}
 
-		$controller = new $controllerName;
+		$controller			 = new $controllerName;
 		$controller->options = $tasks;
 
 		return $controller;

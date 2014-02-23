@@ -26,7 +26,45 @@ class ItemsControllerItemView extends JControllerBase
 	 */
 	public function execute()
 	{
-		var_dump($this);
+		// Get the document object.
+	    $document     	= JFactory::getDocument();
+
+	    $viewName     	= empty($this->options[2]) ? '' : strtolower($this->options[2]);
+	    $viewFormat   	= $document->getType();
+	    $layoutName   	= $this->input->getWord('layout', 'default');
+	    $itemLayoutName = empty($this->options[3]) ? '' : strtolower($this->options[3]);
+
+	    if(!$itemLayoutName)
+	    {
+	    	throw new LogicException('Item layout_name must be defined.', 500);
+	    }
+
+	    // Register the layout paths for the view
+	    $paths = new SplPriorityQueue;
+	    $paths->insert(JPATH_COMPONENT . '/view/' . $viewName . '/tmpl', 'normal');
+
+	    $viewClass  = $this->prefix . 'View' . ucfirst($viewName) . ucfirst($viewFormat);
+	    $modelClass = $this->prefix . 'Model' . ucfirst($viewName);
+
+	    if (!class_exists($viewClass))
+	    {
+	    	throw new LogicException('View Class "' . $viewClass . '" not exists.', 404);
+	    }
+
+	    if (!class_exists($modelClass))
+	    {
+	    	throw new LogicException('Model Class "' . $modelClass . '" not exists.', 404);
+	    }
+
+	    // Get View
+	    $model = new $modelClass;
+	    $view  = new $viewClass($model, $paths);
+	    $view->setLayout($layoutName);
+
+	    // Render our view.
+	    echo $view->render();
+
+	    return true;
 	}
 
 }
