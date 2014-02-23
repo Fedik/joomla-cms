@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="2.5.0" method="upgrade">
+	<name>com_items</name>
+	<author>Joomla! Project</author>
+	<creationDate>February 2014</creationDate>
+	<copyright>(C) 2005 - 2014 Open Source Matters. All rights reserved.	</copyright>
+	<license>GNU General Public License version 2 or later; see	LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>1.0.0</version>
+	<description>COM_ITEMS_DESCRIPTION</description>
+
+	<files folder="site">
+		<filename>index.html</filename>
+		<filename>router.php</filename>
+		<filename>items.php</filename>
+		<folder>helper</folder>
+		<folder>model</folder>
+		<folder>view</folder>
+		<folder>language</folder>
+	</files>
+
+	<administration>
+		<menu link="option=com_items">com_items</menu>
+
+		<files folder="admin">
+			<folder>controller</folder>
+			<folder>language</folder>
+			<folder>model</folder>
+			<folder>table</folder>
+			<folder>view</folder>
+			<folder>helper</folder>
+			<filename>items.php</filename>
+			<filename>index.html</filename>
+		</files>
+
+	</administration>
+
+</extension>
+
