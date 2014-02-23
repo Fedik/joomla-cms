@@ -36,18 +36,24 @@ class ItemsControllerHelper
 	 */
 	public function parseController($app)
 	{
+		$itemid = $app->input->get('Itemid');
+		$task = $app->input->get('task');
 		$tasks = array();
 		$location = '';
 		$activity = '';
 		$view = '';
 
-		if ($task = $app->input->get('task'))
+		if ($itemid)
+		{
+			//@TODO: load from the menu item parameters
+		}
+		elseif ($task)
 		{
 			$tasks = explode('.', $task);
 		}
 		else
 		{
-			//@TODO: load from the menu item parameters
+			throw new LogicException('No valid task given.', 500);
 		}
 
 		if (!empty($tasks[0]))
