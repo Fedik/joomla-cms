@@ -9,14 +9,14 @@
 
 defined('_JEXEC') or die;
 
-class ItemsModelItem extends JModelUcm
+class ItemsModelItems extends JModelUcm
 {
 	/**
 	 * Context string for the model type.
 	 *
 	 * @var    string
 	 */
-	protected $context = 'com_items.item';
+	protected $context = 'com_items.items';
 
 
 }
