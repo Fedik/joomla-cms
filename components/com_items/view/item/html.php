@@ -22,7 +22,7 @@ class ItemsViewItemHtml extends JViewHtml
 		try
 		{
 			$this->state = $this->model->getState();
-			//$this->item  = $this->model->getItem();
+			$this->item  = $this->model->getItem();
 			//$this->form  = $this->model->getForm();
 		}
 		catch (Exception $e)

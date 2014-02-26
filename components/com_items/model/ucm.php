@@ -43,7 +43,10 @@ class JModelUcm extends JModelDatabase
 	 */
 	public function getItem()
 	{
+		// TODO: cached getInstanse() would be better !!!
+		//$ucmContent = new JUcmContent(null, $this->getState('content.type_alias'));
 
+		var_dump($this->state);
 	}
 
 	/**

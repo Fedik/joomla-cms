@@ -33,6 +33,8 @@ class ItemsControllerItemView extends JControllerBase
 	    $viewFormat   	= $document->getType();
 	    $layoutName   	= $this->input->getWord('layout', 'default');
 	    $itemLayoutName = empty($this->options[3]) ? '' : strtolower($this->options[3]);
+	    $key            = $this->input->get('key');
+	    $type_alias     = $this->input->get('type_alias');
 
 	    if(!$itemLayoutName)
 	    {
@@ -57,7 +59,12 @@ class ItemsControllerItemView extends JControllerBase
 	    }
 
 	    // Get View
-	    $model = new $modelClass;
+	    $state = new JRegistry(array(
+	    	'key' => $key,
+	    	'type_alias' => $type_alias,
+	    	'layout_name' => $itemLayoutName,
+	    ));
+	    $model = new $modelClass($state);
 	    $view  = new $viewClass($model, $paths);
 	    $view->setLayout($layoutName);
 

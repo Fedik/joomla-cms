@@ -13,16 +13,17 @@ defined('_JEXEC') or die;
  * Display items theory
  *
  * display a form:
- * 	index.php?option=com_items&task=items.view.item.form&type=com_content.article&id=1
+ * 	index.php?option=com_items&task=items.view.item.form&type_alias=com_content.article&key=1
  * display full:
- *  index.php?option=com_items&task=items.view.item.fullview&type=com_content.article&id=1
+ *  index.php?option=com_items&task=items.view.item.fullview&type_alias=com_content.article&key=1
  * display list:
- * 	index.php?option=com_items&task=items.view.list.intro&type=com_content.article&filter[core_catid]=1&filter[core_tag][0]=tag1&order[core_created_time]=asc
+ * 	index.php?option=com_items&task=items.view.list.intro&type_alias=com_content.article&filter[core_catid]=1&filter[core_tag][0]=tag1&order[core_created_time]=asc
  * display custom page (???):
  * 	index.php?option=com_items&view=page&layout_id=2&filter[core_catid]=1&order[core_created_time]=desc
  */
 
 // TODO: move to common place
+JLoader::register('JUcmContentItem', __DIR__ . '/helper/ucmcontentitem.php');
 JLoader::register('JModelUcm', __DIR__ . '/model/ucm.php');
 
 // Register a classes
