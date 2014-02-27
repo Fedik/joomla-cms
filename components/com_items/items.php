@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
  * Display items theory
  *
  * display a form:
- * 	index.php?option=com_items&task=items.view.item.form&type_alias=com_content.article&key=1
+ * 	index.php?option=com_items&task=items.view.item.form&type_alias=com_content.article&filter[key][value]=1&filter[key][clause]='='
  * display full:
  *  index.php?option=com_items&task=items.view.item.fullview&type_alias=com_content.article&key=1
  * display list:
@@ -23,7 +23,7 @@ defined('_JEXEC') or die;
  */
 
 // TODO: move to common place
-JLoader::register('JUcmContentItem', __DIR__ . '/helper/ucmcontentitem.php');
+//JLoader::register('JUcmContentItem', __DIR__ . '/helper/ucmcontentitem.php');
 JLoader::register('JModelUcm', __DIR__ . '/model/ucm.php');
 
 // Register a classes
@@ -31,6 +31,15 @@ JLoader::registerPrefix('Items', JPATH_COMPONENT);
 
 // Application
 $app = JFactory::getApplication();
+
+// test things
+// load item
+$app->input->set('filter', array(
+	'id' => array(
+		'value'  => 24,
+		'clause' => '=',
+	)
+));
 
 // Create the controller
 $controllerHelper = new ItemsControllerHelper;
