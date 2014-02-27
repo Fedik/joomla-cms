@@ -175,6 +175,36 @@ class JModelUcm extends JModelDatabase
 			return $query;
 		}
 
+		var_dump(isset($tables['base']->ucm_id));
+// 		foreach ($filters as $k => $v)
+// 		{
+// 			// Check what the table related, and take alias
+// 			if(property_exists($tables['base'], $k))
+// 			{
+// 				$alias = $this->table_alias['common'];
+// 			}
+// 			elseif(in_array($k, $fields_special))
+// 			{
+// 				$alias = $this->table_alias['special'];
+// 			}
+// 			else
+// 			{
+// 				// Nothing to do with it
+// 				continue;
+// 			}
+
+// 			// if we have array
+// 			if(is_array($v))
+// 			{
+// 				$query->where($alias . '.' . $k . ' IN (' . implode(',', $db->q($v)) . ')');
+// 			}
+// 			else
+// 			{
+// 				$query->where($alias . '.' . $k . ' = ' . $db->q($v));
+// 			}
+
+// 		}
+
 		var_dump($this->state);
 
 		return $query;

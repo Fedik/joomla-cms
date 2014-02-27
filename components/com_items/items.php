@@ -38,6 +38,7 @@ $app->input->set('filter', array(
 	'id' => array(
 		'value'  => 24,
 		'clause' => '=',
+		'glue'   => 'AND',
 	)
 ));
 
