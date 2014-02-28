@@ -137,6 +137,9 @@ class JModelUcm extends JModelDatabase
 		$this->buildQueryWhere($query, $tables);
 		$this->buildQueryOrdering($query, $tables);
 
+		// @TODO: call field plugins for build query for load related data,
+		//        like category name, author name and so on
+
 		//echo $query->dump();
 
 		return $query;
