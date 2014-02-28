@@ -70,7 +70,6 @@ class JModelUcm extends JModelDatabase
 		$this->db->setQuery($query, (int) $this->state->get('offset', 0), (int) $this->state->get('limit', 0));
 		$this->cache[$cache_key] = $this->db->loadObjectList();
 
-
 		return $this->cache[$cache_key];
 	}
 
@@ -98,7 +97,7 @@ class JModelUcm extends JModelDatabase
 		$user  = JFactory::getUser();
 
 
-		// TODO: getInstanse() would be better no? (!!!)
+		// TODO: cached getInstanse() would be better no? (!!!)
 		$type = new JUcmType($this->state->get('type_alias'));
 
 		// Tables info
@@ -107,6 +106,7 @@ class JModelUcm extends JModelDatabase
 
 		// Base table
 		$tables['base'] = JTable::getInstance('Ucm');
+		// @TODO: allow define the table alias in more smart way
 		$tables['base']->_alias = 'base';
 		$query->from($tables['base']->getTableName() . ' AS base');
 
@@ -137,7 +137,7 @@ class JModelUcm extends JModelDatabase
 		$this->buildQueryWhere($query, $tables);
 		$this->buildQueryOrdering($query, $tables);
 
-		echo $query->dump();
+		//echo $query->dump();
 
 		return $query;
 	}
@@ -175,37 +175,47 @@ class JModelUcm extends JModelDatabase
 			return $query;
 		}
 
-		var_dump(isset($tables['base']->ucm_id));
-// 		foreach ($filters as $k => $v)
-// 		{
-// 			// Check what the table related, and take alias
-// 			if(property_exists($tables['base'], $k))
-// 			{
-// 				$alias = $this->table_alias['common'];
-// 			}
-// 			elseif(in_array($k, $fields_special))
-// 			{
-// 				$alias = $this->table_alias['special'];
-// 			}
-// 			else
-// 			{
-// 				// Nothing to do with it
-// 				continue;
-// 			}
+ 		foreach ($filter as $k => $v)
+ 		{
+ 			// Check what the table related, and take it
+ 			$table = $this->findTableByField($k, $tables);
+ 			if(!$table)
+ 			{
+ 				continue;
+ 			}
 
-// 			// if we have array
-// 			if(is_array($v))
-// 			{
-// 				$query->where($alias . '.' . $k . ' IN (' . implode(',', $db->q($v)) . ')');
-// 			}
-// 			else
-// 			{
-// 				$query->where($alias . '.' . $k . ' = ' . $db->q($v));
-// 			}
+ 			$where  = $table->_alias . '.' .$k;
+ 			$clause = empty($v->clause) ? '' : $v->clause;
+ 			$glue   = empty($v->glue) ? 'AND' : strtoupper($v->glue) == 'AND' ? 'AND' : 'OR';
 
-// 		}
+ 			switch (strtoupper($clause)) {
+ 				case 'REGEXP':
+ 					// @TODO: make me work
+ 					break;
 
-		var_dump($this->state);
+ 				case 'LIKE':
+ 					$where .= ' LIKE ' . $this->db->q('%' . $v->value . '%');
+ 					break;
+
+ 				case 'LIKE_LEFT':
+ 					$where .= ' LIKE ' . $this->db->q('%' . $v->value);
+ 					break;
+
+ 				case 'LIKE_RIGHT':
+ 					$where .= ' LIKE ' . $this->db->q($v->value . '%');
+ 					break;
+
+ 				case 'IN':
+ 					// @TODO: make me work
+ 					break;
+
+ 				default:
+ 					$where .= ' = ' . $this->db->q($v->value);
+ 					break;
+ 			}
+
+ 			$query->where($where, $glue);
+ 		}
 
 		return $query;
 	}
@@ -227,7 +237,33 @@ class JModelUcm extends JModelDatabase
 			return $query;
 		}
 
+		// @TODO: make me work
+
 		return $query;
+	}
+
+	/**
+	 * Find table that has a field_name
+	 *
+	 * @param string $field_name - field name
+	 * @param array $tables      - array of JTable`s
+	 *
+	 * @return mixed table that has given field or false
+	 */
+	protected function findTableByField($field_name, $tables)
+	{
+		foreach($tables as $table){
+			$table_fields = $table->getFields(); //it is cached, so do not worry ;)
+
+			if(!empty($table_fields[$field_name]))
+			{
+				// Match found
+				return $table;
+			}
+		}
+
+		// No matches found
+		return false;
 	}
 
 }
