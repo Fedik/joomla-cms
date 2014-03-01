@@ -16,7 +16,7 @@ defined('JPATH_PLATFORM') or die;
  * @subpackage  UCM
  *
  */
-class UcmField //extends JFormField
+class JUcmField //extends JFormField
 {
 	/**
 	 * Field_layout instance id in the database

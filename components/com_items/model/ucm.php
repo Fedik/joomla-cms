@@ -36,6 +36,73 @@ class JModelUcm extends JModelDatabase
 	}
 
 	/**
+	 * Method to get a UCM item.
+	 *
+	 * @return  mixed  An array of objects on success, false on failure.
+	 *
+	 */
+	public function getItemUcm()
+	{
+		$items = $this->getItemsUcm();
+		if (!empty($items[0]))
+		{
+			return $items[0];
+		}
+		return false;
+	}
+
+	/**
+	 * Method to get a UCM items list.
+	 *
+	 * @return  mixed  An array of objects on success, false on failure.
+	 *
+	 */
+	public function getItemsUcm()
+	{
+		$items = $this->getItems();
+		if (!$items)
+		{
+			return false;
+		}
+
+		$layout_name = $this->state->get('layout_name');
+		$type_alias  = $this->state->get('type_alias');
+
+		if(!$layout_name)
+		{
+			throw new LogicException('Layout name is required.', 503);
+		}
+
+		// Get Enabled fields
+		$fields_info = JUcmTypeHelper::getFields($type_alias, $layout_name);
+		// TODO: cached getInstanse() would be better no? (!!!)
+		$type = new JUcmType($type_alias);
+
+		$ucmItems = array();
+		foreach ($items as $item) {
+			$data = (array) $item; // ho ho ho ???
+			//prepare fields and check whether there any related
+			$fields = array();
+			foreach($fields_info as $field_info) {
+				$field = new JUcmField($field_info);
+
+				//TODO: make it works and where better to do it, here or in getListQuery ???
+// 				$related = $field->params->get('related');
+// 				if(!empty($data[$field->field_name]) && !empty($related))
+// 				{
+// 					$data[$field->field_name] = $this->getRelated($data[$field->field_name], $related);
+// 				}
+
+				$fields[$field_info->field_name] = $field;
+			}
+
+			$ucmItems[] = new JUcmItem($data, $fields, $type_alias, $type);
+		}
+
+		return $ucmItems;
+	}
+
+	/**
 	 * Method to get a item.
 	 *
 	 * @return  mixed  An array of objects on success, false on failure.
@@ -76,12 +143,14 @@ class JModelUcm extends JModelDatabase
 	/**
 	 * Method to get a Cache Key based on the model state.
 	 *
+	 * @param   string $context
+	 *
 	 * @return  string  A store id.
 	 *
 	 */
-	protected function getCacheKey()
+	protected function getCacheKey($context = '')
 	{
-		return md5($this->state->toString('json'));
+		return md5($context . $this->state->toString('json'));
 	}
 
 	/**
@@ -94,11 +163,17 @@ class JModelUcm extends JModelDatabase
 	 */
 	protected function buildQuery($query)
 	{
-		$user  = JFactory::getUser();
+		// @TODO: access
+		//$user  = JFactory::getUser();
 
 
 		// TODO: cached getInstanse() would be better no? (!!!)
 		$type = new JUcmType($this->state->get('type_alias'));
+
+		if(!$type->type)
+		{
+			throw new LogicException('Given Content type not exists.', 503);
+		}
 
 		// Tables info
 		$tablesInfo = json_decode($type->type->table);

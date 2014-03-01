@@ -24,7 +24,7 @@ defined('_JEXEC') or die;
 
 // TODO: move to common place
 JLoader::register('JModelUcm', __DIR__ . '/model/ucm.php');
-JLoader::register('JUcmItem', __DIR__ . '/helper/ucmcontentitem.php');
+JLoader::register('JUcmItem', __DIR__ . '/helper/ucmitem.php');
 JLoader::register('JUcmField', __DIR__ . '/helper/ucmfield.php');
 JLoader::register('JUcmTypeHelper', __DIR__ . '/helper/ucmtypehelper.php');
 JLoader::register('JUcmHelper', __DIR__ . '/helper/ucmhelper.php');
