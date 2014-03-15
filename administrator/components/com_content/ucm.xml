@@ -3,7 +3,7 @@
 	Here we:
 	- define the content types related to the current componet
 	- defaine the main table and addittional tables(if need)
-	- define layouts, for display the content items, for frontend and for backend
+	- define layouts, for display the content items, unified for frontend and for backend
 -->
 <ucm component="com_content">
 	<types>
@@ -27,6 +27,7 @@
 					can be achieved by adding/removing the field in to related View
 				-->
 				<!-- Here the fields list for configuration -->
+
 			</config>
 
 			<layouts>
@@ -143,6 +144,31 @@
 						format="introtext" />
 				</layout>
 
+				<!--
+					Describe the table of content for display the items list
+					eg. display the table with columns id/title/created/author
+				-->
+				<layout name="list">
+					<!-- Define the Fields used for build the table -->
+					<field name="core_content_item_id" label="JGLOBAL_FIELD_ID_LABEL"  />
+
+					<field name="state" label="State" />
+
+					<field name="core_title" label="JGLOBAL_TITLE" />
+
+					<field name="core_catid" label="JCATEGORY" />
+
+					<field name="access" label="Access" />
+
+					<field name="created_by" label="COM_CONTENT_FIELD_CREATED_BY_LABEL" />
+
+					<field name="language" label="Language" />
+
+					<field name="created"	format="%Y-%m-%d" label="COM_CONTENT_FIELD_CREATED_LABEL" />
+
+					<field name="hits" label="Hits" />
+				</layout>
+
 			</layouts>
 		</type>
 	</types>
@@ -170,49 +196,4 @@
 		    </unique>
 		</table>
 	</tables>
-	<administrator>
-		<!--
-			Describe the table of content for display the items list
-			eg. display the table with columns id/title/created/author
-		-->
-		<type name="article">
-			<layout name="table" label="COM_CONTENT_ARTICLES_TITLE">
-				<!-- Define the Fields used for build the table -->
-				<column label="JGRID_HEADING_ID" class="hidden-phone">
-					<field name="id" filter="true" sort="true" />
-				</column>
-
-				<column label="JSTATUS" class="hidden-phone">
-					<field name="state" filter="true" sort="true" />
-				</column>
-
-				<column label="JGLOBAL_TITLE">
-					<field name="title" filter="true" sort="true" />
-					<field name="catid" filter="true" sort="true"
-						label="JCATEGORY" />
-				</column>
-
-				<column label="JFIELD_ACCESS_LABEL" class="nowrap hidden-phone">
-					<field name="access" filter="true" sort="true" />
-				</column>
-
-				<column label="JAUTHOR" class="nowrap hidden-phone">
-					<field name="created_by" filter="true" sort="true" />
-				</column>
-
-				<column label="JGRID_HEADING_LANGUAGE" class="nowrap hidden-phone">
-					<field name="language" filter="true" sort="true" />
-				</column>
-
-				<column label="JDATE" class="nowrap hidden-phone">
-					<field name="created" filter="true" sort="true"
-						format="%Y-%m-%d" />
-				</column>
-
-				<column label="JGLOBAL_HITS" class="nowrap hidden-phone">
-					<field name="hits" filter="true" sort="true" />
-				</column>
-			</layout>
-		</type>
-	</administrator>
 </ucm>
