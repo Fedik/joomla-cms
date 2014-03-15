@@ -9,4 +9,13 @@
 
 defined('_JEXEC') or die;
 
-//var_dump($this->item);
+?>
+<?php  if ($this->params->get('show_page_heading')) : ?>
+<h1>
+	<?php echo $this->escape($this->params->get('page_heading')); ?>
+</h1>
+<?php endif;  ?>
+
+<?php //TODO: need fallback to default.php if given layout not exist !!! ?>
+<?php echo JLayoutHelper::render($this->item->getLayoutPath(), $this->item); ?>
+

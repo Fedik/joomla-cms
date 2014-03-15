@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_page
+ * @subpackage  ucm
  *
  * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -22,6 +22,11 @@ class JUcmItem //UcmContentItem extends JUcmContent
 	protected $data;
 
 	/**
+	 * Type alias string
+	 */
+	protected $type_alias;
+
+	/**
 	 * Layout name for current item instance
 	 */
 	protected $layout_name;
@@ -36,23 +41,21 @@ class JUcmItem //UcmContentItem extends JUcmContent
 	 */
 	public $fields;
 
-	/**
-	 * JUcmType object
-	 */
-	public $type;
+
 
 	/**
 	 * Instantiate UCMItem.
 	 *
-	 * @param   array    $data  The item data
-	 * @param   array     $fields  active fields instances
-	 * @param   JUcmType  $type   The type object
+	 * @param   array   $data  The item data
+	 * @param   array   $fields  active fields instances
+	 * @param   string 	$type_alias
+	 * @param   string 	$layout_name
 	 *
 	 */
-	public function __construct($data, $fields, $layout_name, JUcmType $type)
+	public function __construct($data, $fields, $type_alias, $layout_name)
 	{
 		// Keep given info
-		$this->type = $type;
+		$this->type_alias = $type_alias;
 		$this->data = (array) $data;
 		$this->layout_name = $layout_name;
 		$this->fields_inst = $fields;
@@ -109,8 +112,7 @@ class JUcmItem //UcmContentItem extends JUcmContent
 	 */
 	public function getLayoutPath()
 	{
-		//TODO: why so deeep ???
-		return $this->type->type->type_alias . '.' . $this->layout_name;
+		return 'ucm.' . $this->type_alias . '.' . $this->layout_name;
 	}
 
 }

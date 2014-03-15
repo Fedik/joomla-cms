@@ -146,7 +146,7 @@ class JUcmTypeHelper
 	 *
 	 * @return  array 	Array with fields
 	 */
-	public static function getFields($type_alias, $layout_name = 'form', $published = true, $all = false)
+	public static function getFields($type_alias, $layout_name, $published = true, $all = false)
 	{
 		static $cache;
 		$key = md5(serialize(array($type_alias, $layout_name, $published, $all)));

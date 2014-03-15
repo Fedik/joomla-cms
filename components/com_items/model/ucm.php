@@ -36,7 +36,7 @@ class JModelUcm extends JModelDatabase
 	}
 
 	/**
-	 * Method to get a UCM item.
+	 * Method to get the Item wrapped by UCM item.
 	 *
 	 * @return  mixed  An array of objects on success, false on failure.
 	 *
@@ -52,7 +52,7 @@ class JModelUcm extends JModelDatabase
 	}
 
 	/**
-	 * Method to get a UCM items list.
+	 * Method to get the Item list, where each item wrapped by UCM item.
 	 *
 	 * @return  mixed  An array of objects on success, false on failure.
 	 *
@@ -68,15 +68,8 @@ class JModelUcm extends JModelDatabase
 		$layout_name = $this->state->get('layout_name');
 		$type_alias  = $this->state->get('type_alias');
 
-		if(!$layout_name)
-		{
-			throw new LogicException('Layout name is required.', 503);
-		}
-
 		// Get Enabled fields
-		$fields_info = JUcmTypeHelper::getFields($type_alias, $layout_name);
-		// TODO: cached getInstanse() would be better no? (!!!)
-		$type = new JUcmType($type_alias);
+		$fields_info = $this->getFields($layout_name);
 
 		$ucmItems = array();
 		foreach ($items as $item) {
@@ -96,7 +89,7 @@ class JModelUcm extends JModelDatabase
 				$fields[$field_info->field_name] = $field;
 			}
 
-			$ucmItems[] = new JUcmItem($data, $fields, $type_alias, $type);
+			$ucmItems[] = new JUcmItem($data, $fields, $type_alias, $layout_name);
 		}
 
 		return $ucmItems;
@@ -139,6 +132,28 @@ class JModelUcm extends JModelDatabase
 
 		return $this->cache[$cache_key];
 	}
+
+	/**
+	 * Get fields related to current type and give layout
+	 *
+	 * @param string $layout_name Layout name
+	 *
+	 * @return array of enabled fields, and their properties
+	 */
+	public function getFields($layout_name = '')
+	{
+		$layout_name = $layout_name ? $layout_name : $this->state->get('layout_name');
+		$type_alias  = $this->state->get('type_alias');
+
+		if(!$layout_name)
+		{
+			throw new LogicException('Layout name is required.', 503);
+		}
+
+		return JUcmTypeHelper::getFields($type_alias, $layout_name);
+
+	}
+
 
 	/**
 	 * Method to get a Cache Key based on the model state.

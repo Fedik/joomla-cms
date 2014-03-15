@@ -17,13 +17,15 @@ class ItemsViewItemHtml extends JViewHtml
 	 */
 	public function render()
 	{
-		//$app = JFactory::getApplication();
 
 		$this->state = $this->model->getState();
 		$this->item  = $this->model->getItemUcm();
 		//$this->form  = $this->model->getForm();
 
-		var_dump($this->item);
+		//TODO: make it work
+		$this->params = new JRegistry();
+
+		//var_dump($this->item);
 
 		return parent::render();
 	}
