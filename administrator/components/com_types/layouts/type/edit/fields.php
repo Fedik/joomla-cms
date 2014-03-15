@@ -27,11 +27,11 @@ foreach($displayData->item->get('fields') as $field_data) {
 	// All this dance was just for split the fields by the field state
 	if($field_data->state)
 	{
-		$active[] = JLayoutHelper::render('ucm.type.edit.field', $field);
+		$active[] = JLayoutHelper::render('type.edit.field', $field, JPATH_COMPONENT . '/layouts');
 	}
 	else
 	{
-		$inactive[] = JLayoutHelper::render('ucm.type.edit.field', $field);
+		$inactive[] = JLayoutHelper::render('type.edit.field', $field, JPATH_COMPONENT . '/layouts');
 	}
 
 }

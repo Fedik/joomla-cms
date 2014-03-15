@@ -84,7 +84,7 @@ defined('_JEXEC') or die;
 			</div>
 
 			<!-- Fields Configuration -->
-			<?php echo JLayoutHelper::render('ucm.type.edit.fields', $this); ?>
+			<?php echo JLayoutHelper::render('type.edit.fields', $this, JPATH_COMPONENT . '/layouts'); ?>
 			<?php //echo $this->loadTemplate('fields'); ?>
 			<?php endif;?>
 		</div>

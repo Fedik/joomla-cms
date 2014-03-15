@@ -16,6 +16,7 @@
 		<files folder="admin">
 			<folder>controller</folder>
 			<folder>language</folder>
+			<folder>layouts</folder>
 			<folder>model</folder>
 			<folder>table</folder>
 			<folder>view</folder>
