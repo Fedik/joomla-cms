@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="com_items_items_view_default_title" option="com_items_items_view_default_option">
+
+		<message>
+			<![CDATA[com_items_items_view_default_desc]]>
+		</message>
+	</layout>
+
+	<!-- Add fields to the request variables for the layout. -->
+	<fields name="request">
+		<fieldset name="request"
+			addfieldpath="/administrator/components/com_items/model/field">
+
+			<field name="type_alias" type="contenttypealias"
+				label="Content Type"
+				required="true"
+				clear="false"
+				description="Content Type"
+			/>
+			<!-- @TODO: sitch by javascript -->
+			<field name="layout_name" type="contenttypeslayouts"
+				label="Item layout"
+				required="true"
+				clear="false"
+				description="Item layout"
+			/>
+
+			<!-- @TODO: make me better -->
+			<field name="filter" type="text"
+				label="Item Filter"
+				required="true"
+				clear="false"
+				default="id[value]=1"
+				description="Item Filter"
+			/>
+
+
+		</fieldset>
+	</fields>
+
+	<!-- Add fields to the parameters object for the layout. -->
+	<fields name="params">
+
+		<!-- Basic options. -->
+		<fieldset name="basic">
+
+
+		</fieldset>
+	</fields>
+</metadata>
