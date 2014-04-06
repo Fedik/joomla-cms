@@ -31,10 +31,11 @@
 				label="Item Filter"
 				required="true"
 				clear="false"
-				default="id[value]=1"
+				default="catid[value]=1"
 				description="Item Filter"
 			/>
 
+			<!-- @TODO: ordering -->
 
 		</fieldset>
 	</fields>
