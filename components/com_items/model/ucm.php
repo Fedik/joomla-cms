@@ -276,6 +276,11 @@ class JModelUcm extends JModelDatabase
  			{
  				continue;
  			}
+			// whether value just a string or number
+ 			if(is_scalar($v))
+			{
+				$v = (object) array('value' => $v);
+			}
 
  			$where  = $table->_alias . '.' .$k;
  			$clause = empty($v->clause) ? '' : $v->clause;

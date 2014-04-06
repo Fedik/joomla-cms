@@ -46,6 +46,19 @@ class ItemsControllerHelper
 		if ($itemid)
 		{
 			//@TODO: load from the menu item parameters
+			//items.view.item.form
+			//$params = $app->getParams($app->input->get('option'));
+			$tasks = array(
+				'items',
+				'view',
+				$app->input->get('view'),
+				$app->input->get('layout_name'),
+			);
+			// @TODO: make me better
+			$filter_input = $app->input->getString('filter');
+			$filter = array();
+			parse_str($filter_input, $filter);
+			$app->input->set('filter', $filter);
 		}
 		elseif ($task)
 		{

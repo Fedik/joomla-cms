@@ -35,7 +35,7 @@ JLoader::registerPrefix('Items', JPATH_COMPONENT);
 
 // Application
 $app = JFactory::getApplication();
-
+/*
 // test things
 // load item
 $app->input->set('filter', array(
@@ -45,7 +45,7 @@ $app->input->set('filter', array(
 		'glue'   => 'AND',
 	)
 ));
-
+*/
 // Create the controller
 $controllerHelper = new ItemsControllerHelper;
 $controller = $controllerHelper->parseController($app);
