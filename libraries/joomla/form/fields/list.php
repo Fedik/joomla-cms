@@ -83,6 +83,11 @@ class JFormFieldList extends JFormField
 		else
 		// Create a regular list.
 		{
+			if ($this->multiple)
+			{
+				$html[] = '<input type="hidden" name="' . str_replace('[]', '', $this->name) . '" />';
+			}
+
 			$html[] = JHtml::_('select.genericlist', $options, $this->name, trim($attr), 'value', 'text', $this->value, $this->id);
 		}
 

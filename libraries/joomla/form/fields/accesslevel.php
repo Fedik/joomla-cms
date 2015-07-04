@@ -39,6 +39,7 @@ class JFormFieldAccessLevel extends JFormFieldList
 	protected function getInput()
 	{
 		$attr = '';
+		$html = '';
 
 		// Initialize some field attributes.
 		$attr .= !empty($this->class) ? ' class="' . $this->class . '"' : '';
@@ -54,6 +55,11 @@ class JFormFieldAccessLevel extends JFormFieldList
 		// Get the field options.
 		$options = $this->getOptions();
 
-		return JHtml::_('access.level', $this->name, $this->value, $attr, $options, $this->id);
+		if ($this->multiple)
+		{
+			$html = '<input type="hidden" name="' . str_replace('[]', '', $this->name) . '" />';
+		}
+
+		return $html . JHtml::_('access.level', $this->name, $this->value, $attr, $options, $this->id);
 	}
 }
