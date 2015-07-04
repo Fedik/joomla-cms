@@ -142,6 +142,7 @@ class JFormFieldCheckboxes extends JFormField
 
 		// Build the checkbox field output.
 		$html[] = '<ul>';
+		$html[] = '<input type="hidden" name="' . str_replace('[]', '', $this->name) . '" />';
 
 		foreach ($options as $i => $option)
 		{
