@@ -12,13 +12,11 @@ defined('JPATH_BASE') or die;
 $data = $displayData;
 
 ?>
-<textarea
-	name="<?php echo $data->name; ?>"
-	id="<?php echo $data->id; ?>"
-	cols="<?php echo $data->cols; ?>"
-	rows="<?php echo $data->rows; ?>"
-	style="width: <?php echo $data->width; ?>; height: <?php echo $data->height; ?>;"
-	class="mce_editable"
->
-	<?php echo $data->content; ?>
-</textarea>
+<textarea name="<?php
+echo $data->name; ?>" id="<?php
+echo $data->id; ?>" cols="<?php
+echo $data->cols; ?>" rows="<?php
+echo $data->rows; ?>" style="width: <?php echo $data->width; ?>; height: <?php echo $data->height; ?>;" class="<?php
+echo empty($data->class) ? 'mce_editable' : $data->class; ?>" data-options="<?php
+echo htmlspecialchars(json_encode($data->options), ENT_COMPAT, 'UTF-8'); ?>"
+><?php echo $data->content; ?></textarea>
