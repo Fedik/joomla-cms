@@ -236,7 +236,7 @@ jQuery(function() {
 	document.formvalidator = new JFormValidator();
 
     jQuery(document).on("submit", "form.form-validate", function(){
-        if (!document.formvalidator.isValid(this)) {
+        if (!this.noValidate && !document.formvalidator.isValid(this)) {
         	return false;
 		}
 	});
