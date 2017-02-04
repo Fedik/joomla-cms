@@ -26,23 +26,25 @@ class JToolbarButtonStandard extends JToolbarButton
 	/**
 	 * Fetch the HTML for the button
 	 *
-	 * @param   string   $type  Unused string.
-	 * @param   string   $name  The name of the button icon class.
-	 * @param   string   $text  Button text.
-	 * @param   string   $task  Task associated with the button.
-	 * @param   boolean  $list  True to allow lists
+	 * @param   string   $type       Unused string.
+	 * @param   string   $name       The name of the button icon class.
+	 * @param   string   $text       Button text.
+	 * @param   string   $task       Task associated with the button.
+	 * @param   boolean  $list       True to allow lists
+	 * @param   boolean  $validate   True to validate submission
 	 *
 	 * @return  string  HTML string for the button
 	 *
 	 * @since   3.0
 	 */
-	public function fetchButton($type = 'Standard', $name = '', $text = '', $task = '', $list = true)
+	public function fetchButton($type = 'Standard', $name = '', $text = '', $task = '', $list = true, $validate = false)
 	{
 		// Store all data to the options array for use with JLayout
 		$options = array();
-		$options['text'] = JText::_($text);
-		$options['class'] = $this->fetchIconClass($name);
-		$options['doTask'] = $this->_getCommand($options['text'], $task, $list);
+		$options['text']     = JText::_($text);
+		$options['class']    = $this->fetchIconClass($name);
+		$options['doTask']   = $this->_getCommand($options['text'], $task, $list, $validate);
+		$options['validate'] = $validate;
 
 		if ($name == 'apply' || $name == 'new')
 		{
@@ -82,19 +84,27 @@ class JToolbarButtonStandard extends JToolbarButton
 	/**
 	 * Get the JavaScript command for the button
 	 *
-	 * @param   string   $name  The task name as seen by the user
-	 * @param   string   $task  The task used by the application
-	 * @param   boolean  $list  True is requires a list confirmation.
+	 * @param   string   $name       The task name as seen by the user
+	 * @param   string   $task       The task used by the application
+	 * @param   boolean  $list       True is requires a list confirmation.
+	 * @param   boolean  $validate   True to validate submission
 	 *
 	 * @return  string   JavaScript command string
 	 *
 	 * @since   3.0
 	 */
-	protected function _getCommand($name, $task, $list)
+	protected function _getCommand($name, $task, $list, $validate = false)
 	{
 		JText::script('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST');
 
-		$cmd = "Joomla.submitbutton('" . $task . "');";
+		if (!$validate)
+		{
+			$cmd = "Joomla.submitbutton('" . $task . "');";
+		}
+		else
+		{
+			$cmd = "Joomla.submitbutton('" . $task . "', true);";
+		}
 
 		if ($list)
 		{

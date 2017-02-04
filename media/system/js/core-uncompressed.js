@@ -17,6 +17,10 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 
 	/**
 	 * Generic submit form
+	 *
+	 * @param {String} task                 The task name
+	 * @param {HTMLFormElement|null} form   The form element
+	 * @param {Boolean} validate            Whether perform the browser validation
 	 */
 	Joomla.submitform = function(task, form, validate) {
 
@@ -30,7 +34,7 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 
 		// Toggle HTML5 validation
 		form.noValidate = !validate;
-		form.setAttribute('novalidate', !validate)
+		form.setAttribute('novalidate', !validate);
 
 		// Submit the form.
 		// Create the input type="submit"
@@ -47,9 +51,12 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 
 	/**
 	 * Default function. Usually would be overriden by the component
+	 *
+	 * @param {String}  pressbutton   The task name
+     * @param {Boolean} validate      Whether perform the browser validation
 	 */
-	Joomla.submitbutton = function( pressbutton ) {
-		Joomla.submitform( pressbutton );
+	Joomla.submitbutton = function( pressbutton, validate ) {
+		Joomla.submitform( pressbutton, null, validate );
 	};
 
 	/**

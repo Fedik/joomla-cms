@@ -80,12 +80,13 @@ abstract class JToolbarHelper
 	 * @param   string  $iconOver    The image to display when moused over.
 	 * @param   string  $alt         The alt text for the icon image.
 	 * @param   bool    $listSelect  True if required to check that a standard list item is checked.
+	 * @param   bool    $validate    True to validate submission
 	 *
 	 * @return  void
 	 *
 	 * @since   1.5
 	 */
-	public static function custom($task = '', $icon = '', $iconOver = '', $alt = '', $listSelect = true)
+	public static function custom($task = '', $icon = '', $iconOver = '', $alt = '', $listSelect = true, $validate = false)
 	{
 		$bar = JToolbar::getInstance('toolbar');
 
@@ -93,7 +94,7 @@ abstract class JToolbarHelper
 		$icon = preg_replace('#\.[^.]*$#', '', $icon);
 
 		// Add a standard button.
-		$bar->appendButton('Standard', $icon, $alt, $task, $listSelect);
+		$bar->appendButton('Standard', $icon, $alt, $task, $listSelect, $validate);
 	}
 
 	/**
@@ -469,7 +470,7 @@ abstract class JToolbarHelper
 		$bar = JToolbar::getInstance('toolbar');
 
 		// Add an apply button
-		$bar->appendButton('Standard', 'apply', $alt, $task, false);
+		$bar->appendButton('Standard', 'apply', $alt, $task, false, true);
 	}
 
 	/**
@@ -488,7 +489,7 @@ abstract class JToolbarHelper
 		$bar = JToolbar::getInstance('toolbar');
 
 		// Add a save button.
-		$bar->appendButton('Standard', 'save', $alt, $task, false);
+		$bar->appendButton('Standard', 'save', $alt, $task, false, true);
 	}
 
 	/**
@@ -507,7 +508,7 @@ abstract class JToolbarHelper
 		$bar = JToolbar::getInstance('toolbar');
 
 		// Add a save and create new button.
-		$bar->appendButton('Standard', 'save-new', $alt, $task, false);
+		$bar->appendButton('Standard', 'save-new', $alt, $task, false, true);
 	}
 
 	/**
@@ -527,7 +528,7 @@ abstract class JToolbarHelper
 		$bar = JToolbar::getInstance('toolbar');
 
 		// Add a save and create new button.
-		$bar->appendButton('Standard', 'save-copy', $alt, $task, false);
+		$bar->appendButton('Standard', 'save-copy', $alt, $task, false, true);
 	}
 
 	/**
