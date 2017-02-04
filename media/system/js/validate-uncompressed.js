@@ -234,4 +234,10 @@ var JFormValidator = function() {
 document.formvalidator = null;
 jQuery(function() {
 	document.formvalidator = new JFormValidator();
+
+    jQuery(document).on("submit", "form.form-validate", function(){
+        if (!document.formvalidator.isValid(this)) {
+        	return false;
+		}
+	});
 });
