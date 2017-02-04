@@ -32,9 +32,14 @@ Joomla.editors.instances = Joomla.editors.instances || {};
 			form.task.value = task;
 		}
 
-		// Toggle HTML5 validation
+		// Toggle the browser form validation
 		form.noValidate = !validate;
-		form.setAttribute('novalidate', !validate);
+
+		if (!validate) {
+            form.setAttribute('novalidate', '');
+        } else if (form.hasAttribute('novalidate')) {
+		    form.removeAttribute('novalidate')
+        }
 
 		// Submit the form.
 		// Create the input type="submit"
