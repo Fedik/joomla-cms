@@ -64,7 +64,6 @@ if (isset($this->item->attribs['show_urls_images_backend']) && $this->item->attr
 
 JFactory::getDocument()->addScriptDeclaration('
     jQuery(document).on("submit", "#item-form", function(e){
-        jQuery("#permissions-sliders select").attr("disabled", "disabled");
         ' . $this->form->getField('articletext')->save() . '
         
         // @deprecated 4.0  The following js is not needed since 3.7.0.

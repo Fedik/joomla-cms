@@ -131,3 +131,10 @@ function getUrlParam(variable) {
 	}
 	return false;
 }
+
+/**
+ * Disable permissions select on submit
+ */
+jQuery(document).on('submit', 'form', function(){
+    jQuery('#permissions-sliders select').attr('disabled', 'disabled');
+});
