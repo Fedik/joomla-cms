@@ -1,0 +1,233 @@
+{
+	"title" : "Joomla! System",
+	"name"  : "system",
+	"author": "Joomla!",
+
+	"assets": [
+		{
+			"name": "core",
+			"version": "4.x",
+			"js": [
+				"system/core.js"
+			]
+		},
+		{
+			"name": "cms",
+			"version": "4.x",
+			"js": [
+				"system/cms.min.js"
+			]
+		},
+		{
+			"name": "calendar",
+			"dependency": [
+				"calendar.js",
+				"calendar.css"
+			]
+		},
+		{
+			"name": "calendar.rtl",
+			"dependency": [
+				"calendar.js",
+				"calendar.css.rtl"
+			]
+		},
+		{
+			"name": "calendar.js",
+			"js": [
+				"system/fields/calendar.min.js"
+			]
+		},
+		{
+			"name": "calendar.css",
+			"css": [
+				"system/fields/calendar.js"
+			]
+		},
+		{
+			"name": "calendar.css.rtl",
+			"css": [
+				"system/fields/calendar-rtl.js"
+			]
+		},
+		{
+			"name": "caption",
+			"js": [
+				"system/legacy/caption.js"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "frontediting",
+			"js": [
+				"system/frontediting.js"
+			],
+			"css": [
+				"system/frontediting.css"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "helpsite",
+			"js": [
+				"system/helpsite.js"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "highlighter",
+			"js": [
+				"system/highlighter.js"
+			],
+			"dependency": [
+				"core",
+				"jquery"
+			]
+		},
+		{
+			"name": "html5fallback",
+			"js": [
+				"system/legacy/html5fallback.js"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "multiselect",
+			"js": [
+				"system/multiselect.js"
+			],
+			"dependency": [
+				"core",
+				"jquery"
+			]
+		},
+		{
+			"name": "passwordstrength",
+			"js": [
+				"system/fields/passwordstrength.min.js"
+			]
+		},
+		{
+			"name": "permissions",
+			"js": [
+				"system/fields/permissions.min.js"
+			],
+			"dependency": [
+				"core"
+			]
+		},
+		{
+			"name": "subform-repeatable",
+			"js": [
+				"system/fields/subform-repeatable.min.js"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "switcher",
+			"js": [
+				"system/fields/switcher.js"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "tabs-state",
+			"js": [
+				"system/tabs-state.js"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "validate",
+			"js": [
+				"system/fields/validate.js"
+			],
+			"dependency": [
+				"core",
+				"punycode"
+			]
+		},
+		{
+			"name": "adminlist",
+			"css": [
+				"system/adminlist.css"
+			],
+			"dependency": []
+		},
+		{
+			"name": "system.css",
+			"css": [
+				"system/system.css"
+			],
+			"dependency": []
+		},
+		{
+			"name": "chosen",
+			"version": "1.6.2",
+			"js": [
+				"system/legacy/chosen.jquery.min.js"
+			],
+			"css": [
+				"system/legacy/chosen.css"
+			],
+			"dependency": [
+				"jquery"
+			]
+		},
+		{
+			"name": "chosen.ajax",
+			"js": [
+				"system/legacy/ajax-chosen.min.js"
+			],
+			"dependency": [
+				"chosen"
+			]
+		},
+		{
+			"name": "html5shiv",
+			"version": "3.7.3",
+			"js": [
+				"system/legacy/html5.js"
+			]
+		},
+		{
+			"name": "sortablelist",
+			"js": [
+				"system/legacy/sortablelist.js"
+			],
+			"css": [
+				"system/legacy/sortablelist.css"
+			],
+			"dependency": [
+				"jquery.ui.sortable"
+			]
+		},
+		{
+			"name": "associations-edit",
+			"js": [
+				"system/associations-edit.min.js"
+			]
+		},
+		{
+			"name": "bootstrap-init",
+			"js": [
+				"system/bootstrap-init.min.js"
+			],
+			"dependency": ["bootstrap.js"]
+		}
+	]
+}
