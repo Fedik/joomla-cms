@@ -1,0 +1,237 @@
+{
+  "title" : "Joomla! External assets",
+  "name"  : "joomla-external",
+  "author": "Joomla!",
+
+  "assets": [
+    {
+      "name": "awesomplete",
+      "version": "1.1.1",
+      "js": [
+        "vendor/awesomplete/awesomplete.min.js"
+      ],
+      "css": [
+        "vendor/awesomplete/awesomplete.css"
+      ]
+    },
+    {
+      "name": "bootstrap",
+      "version": "4.x",
+      "dependency": ["bootstrap.js", "bootstrap.css"]
+    },
+    {
+      "name": "bootstrap.js",
+      "version": "4.x",
+      "js": [
+        "vendor/bootstrap/bootstrap.min.js"
+      ],
+      "dependency": ["jquery", "tether"]
+    },
+    {
+      "name": "bootstrap.css",
+      "version": "4.x",
+      "css": [
+        "vendor/bootstrap/bootstrap.min.css"
+      ]
+    },
+    {
+      "name": "bootstrap-grid",
+      "version": "4.x",
+      "css": [
+        "vendor/bootstrap/bootstrap-grid.min.css"
+      ],
+      "dependency": ["bootstrap.css"]
+    },
+    {
+      "name": "bootstrap-reboot",
+      "version": "4.x",
+      "css": [
+        "vendor/bootstrap/bootstrap-reboot.min.css"
+      ],
+      "dependency": ["bootstrap.css"]
+    },
+    {
+      "name": "codemirror",
+      "version": "5.25.2",
+      "js": [
+        "vendor/codemirror/lib/codemirror.min.js"
+      ],
+      "css": [
+        "vendor/codemirror/lib/codemirror.min.css"
+      ],
+      "dependency": []
+    },
+    {
+      "name": "cropperjs",
+      "version": "1.0.0-rc",
+      "js": [
+        "vendor/cropperjs/cropper.min.js"
+      ],
+      "css": [
+        "vendor/cropperjs/cropper.min.css"
+      ]
+    },
+    {
+      "name": "diff",
+      "version": "3.2.0",
+      "js": [
+        "vendor/diff/diff.min.js"
+      ]
+    },
+    {
+      "name": "dragula",
+      "version": "3.7.2",
+      "js": [
+        "vendor/dragula/dragula.min.js"
+      ],
+      "css": [
+        "vendor/dragula/dragula.min.css"
+      ]
+    },
+    {
+      "name": "flying-focus-a11y",
+      "version": "1.5.4",
+      "js": [
+        "vendor/flying-focus-a11y/flying-focus.min.js"
+      ]
+    },
+    {
+      "name": "jquery.ui.core",
+      "version": "1.12.1",
+      "js": [
+        "vendor/jquery-ui/jquery.ui.core.min.js"
+      ],
+      "dependency": ["jquery"]
+    },
+    {
+      "name": "jquery.ui.sortable",
+      "version": "0.9.13",
+      "js": [
+        "vendor/jquery-ui/jquery.ui.sortable.min.js"
+      ],
+      "dependency": ["jquery.ui.core"]
+    },
+    {
+      "name": "jquery.core",
+      "version": "3.2.1",
+      "js": [
+        "vendor/jquery/core.js"
+      ]
+    },
+    {
+      "name": "jquery-migrate",
+      "version": "1.4.1",
+      "js": [
+        "vendor/jquery/jquery-migrate.min.js"
+      ],
+      "dependency": ["jquery"]
+    },
+    {
+      "name": "jquery",
+      "version": "3.2.1",
+      "js": [
+        "vendor/jquery/jquery.min.js"
+      ]
+    },
+    {
+      "name": "jquery.slim",
+      "version": "3.2.1",
+      "js": [
+        "vendor/jquery/jquery.slim.min.js"
+      ]
+    },
+    {
+      "name": "mediaelement-and-player",
+      "version": "2.23.4",
+      "js": [
+        "vendor/mediaelement/mediaelement-and-player.min.js"
+      ]
+    },
+    {
+      "name": "mediaelement",
+      "version": "2.23.4",
+      "js": [
+        "vendor/mediaelement/mediaelement.min.js"
+      ]
+    },
+    {
+      "name": "mediaelementplayer",
+      "version": "2.23.4",
+      "js": [
+        "vendor/mediaelement/mediaelementplayer.min.js"
+      ],
+      "css": [
+        "vendor/mediaelement/mediaelementplayer.min.css"
+      ]
+    },
+    {
+      "name": "mediaelement-skins",
+      "version": "2.23.4",
+      "css": [
+        "vendor/mediaelement/mejs-skins.css"
+      ],
+      "dependency": []
+    },
+    {
+      "name": "jquery.minicolors",
+      "version": "2.2.6",
+      "js": [
+        "vendor/minicolors/jquery.minicolors.min.js"
+      ],
+      "css": [
+        "vendor/minicolors/jquery.minicolors.css"
+      ],
+      "dependency": ["jquery"]
+    },
+    {
+      "name": "perfect-scrollbar.jquery",
+      "version": "0.6.16",
+      "js": [
+        "vendor/perfect-scrollbar/perfect-scrollbar.jquery.min.js"
+      ],
+      "css": [
+        "vendor/perfect-scrollbar/perfect-scrollbar.min.css"
+      ],
+      "dependency": ["jquery"]
+    },
+    {
+      "name": "perfect-scrollbar",
+      "version": "0.6.16",
+      "js": [
+        "vendor/perfect-scrollbar/perfect-scrollbar.min.js"
+      ],
+      "css": [
+        "vendor/perfect-scrollbar/perfect-scrollbar.min.css"
+      ]
+    },
+    {
+      "name": "punycode",
+      "version": "1.4.1",
+      "js": [
+        "vendor/punycode/punycode.js"
+      ]
+    },
+    {
+      "name": "tether",
+      "version": "1.4.0",
+      "js": [
+        "vendor/tether/tether.min.js"
+      ]
+    },
+    {
+      "name": "tinymce",
+      "version": "4.6.0",
+      "js": [
+        "vendor/tinymce/tinymce.min.js"
+      ]
+    },
+    {
+      "name": "font-awesome",
+      "version": "4.7.0",
+      "css": [
+        "vendor/font-awesome/font-awesome.min.css"
+      ],
+      "dependency": []
+    }
+  ]
+}
