@@ -36,18 +36,24 @@
 
 		// bind add button
 		this.$container.on('click', this.options.btAdd, function (e) {
-			e.preventDefault();
-			var after = $(this).parents(self.options.repeatableElement);
+			var after = $(this).closest(self.options.repeatableElement);
 			if(!after.length){
 				after = null;
+			} else {
+				// Make sure we in same container
+				var $parent = after.closest('.subform-repeatable');
+				if ($parent[0] && $parent[0] !== self.$container[0]) {
+					after = null;
+				}
 			}
 			self.addRow(after);
+			return false;
 		});
 
 		// bind remove button
 		this.$container.on('click', this.options.btRemove, function (e) {
 			e.preventDefault();
-			var $row = $(this).parents(self.options.repeatableElement);
+			var $row = $(this).closest(self.options.repeatableElement);
 			self.removeRow($row);
 		});
 
@@ -69,7 +75,11 @@
 		// create from template
 		if(this.options.rowTemplateSelector){
 			var tmplElement = this.$container.find(this.options.rowTemplateSelector)[0] || {};
-			this.template = $.trim(tmplElement.text || tmplElement.textContent); //(text || textContent) is IE8 fix
+			this.template = $.trim(tmplElement.text || tmplElement.innerHTML);
+
+			if (!this.template) {
+				throw new Error('Subform template is empty');
+			}
 		}
 		// create from existing rows
 		else {
@@ -260,7 +270,7 @@
 		minimum: 0, // minimum repeating
 		maximum: 10, // maximum repeating
 		repeatableElement: ".subform-repeatable-group",
-		rowTemplateSelector: 'script.subform-repeatable-template-section', // selector for the row template <script>
+		rowTemplateSelector: '.subform-repeatable-template-section', // selector for the row template
 		rowsContainer: null // container for rows, same as main container by default
 	};
 
@@ -290,6 +300,10 @@
 	// wait when all will be loaded, important for scripts fix
 	$(window).on('load', function(){
 		$('div.subform-repeatable').subformRepeatable();
+
+		$(document).on('subform-row-add', function(event, row){
+			$(row).find('div.subform-repeatable').subformRepeatable();
+		});
 	})
 
 })(jQuery);

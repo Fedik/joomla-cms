@@ -54,9 +54,9 @@ $sublayout = empty($groupByFieldset) ? 'section' : 'section-byfieldsets';
 		endforeach;
 		?>
 		<?php if ($multiple) : ?>
-		<script type="text/subform-repeatable-template-section" class="subform-repeatable-template-section">
+		<template class="subform-repeatable-template-section">
 		<?php echo $this->sublayout($sublayout, array('form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons)); ?>
-		</script>
+		</template>
 		<?php endif; ?>
 		</div>
 	</div>
