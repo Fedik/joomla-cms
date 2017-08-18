@@ -99,7 +99,7 @@ else
 			</tbody>
 		</table>
 		<?php if ($multiple) : ?>
-		<template class="subform-repeatable-template-section">
+		<template class="subform-repeatable-template-section" style="display: none;">
 		<?php echo $this->sublayout($sublayout, array('form' => $tmpl, 'basegroup' => $fieldname, 'group' => $fieldname . 'X', 'buttons' => $buttons)); ?>
 		</template>
 		<?php endif; ?>
