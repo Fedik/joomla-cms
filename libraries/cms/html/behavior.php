@@ -61,26 +61,7 @@ abstract class JHtmlBehavior
 	 */
 	public static function core()
 	{
-		// Only load once
-		if (isset(static::$loaded[__METHOD__]))
-		{
-			return;
-		}
-
-		HTMLHelper::_('form.csrf');
 		Factory::getContainer()->get('webasset')->enableAsset('core');
-
-		// Add core and base uri paths so javascript scripts can use them.
-		Factory::getDocument()->addScriptOptions(
-			'system.paths',
-			[
-				'root' => Uri::root(true),
-				'rootFull' => Uri::root(),
-				'base' => Uri::base(true),
-			]
-		);
-
-		static::$loaded[__METHOD__] = true;
 	}
 
 	/**

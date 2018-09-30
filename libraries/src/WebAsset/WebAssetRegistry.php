@@ -14,6 +14,7 @@ use Joomla\CMS\Document\Document;
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\WebAsset\Behavior\SystemBehavior;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Event\DispatcherAwareTrait;
 
@@ -147,6 +148,8 @@ class WebAssetRegistry implements DispatcherAwareInterface
 
 		// Set up Dispatcher
 		$this->setDispatcher($app->getDispatcher());
+
+		$this->getDispatcher()->addSubscriber(new SystemBehavior);
 	}
 
 	/**
