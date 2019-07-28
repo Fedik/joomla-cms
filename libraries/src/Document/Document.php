@@ -330,7 +330,9 @@ class Document
 			$webAssetManager = new WebAssetManager(\Joomla\CMS\Factory::getContainer()->get('webassetregistry'));
 			$wg = $webAssetManager->getRegistry();
 
-			var_dump($wg->get('script', 'core'));;
+			var_dump($wg->get('script', 'core'));
+
+			$webAssetManager->enableScript('core');
 
 var_dump($webAssetManager);
 exit;

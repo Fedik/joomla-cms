@@ -88,7 +88,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Get an existing Asset from a registry, by asset name.
 	 *
-	 * @param   string  $type  Asset type, script or style
+	 * @param   string  $type  Asset type, script or stylesheet
 	 * @param   string  $name  Asset name
 	 *
 	 * @return  WebAssetItem
@@ -113,7 +113,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Add Asset to registry of known assets
 	 *
-	 * @param   string                 $type   Asset type, script or style
+	 * @param   string                 $type   Asset type, script or stylesheet
 	 * @param   WebAssetItemInterface  $asset  Asset instance
 	 *
 	 * @return  self
@@ -122,6 +122,8 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	 */
 	public function add(string $type, WebAssetItemInterface $asset): WebAssetRegistryInterface
 	{
+		$type = strtolower($type);
+
 		if (!array_key_exists($type, $this->assets))
 		{
 			$this->assets[$type] = [];
@@ -135,7 +137,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Remove Asset from registry.
 	 *
-	 * @param   string  $type  Asset type, script or style
+	 * @param   string  $type  Asset type, script or stylesheet
 	 * @param   string  $name  Asset name
 	 *
 	 * @return  self
@@ -288,6 +290,8 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 			{
 				throw new \RuntimeException('Asset data file "' . $path . '" contains incorrect asset definition');
 			}
+
+			$item['type'] = strtolower($item['type']);
 
 			$uri     = $item['uri'] ?? '';
 			$options = $item;

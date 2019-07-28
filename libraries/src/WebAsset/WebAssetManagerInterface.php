@@ -34,7 +34,7 @@ interface WebAssetManagerInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function enableAsset(string $name): self;
+	//public function enableAsset(string $name): self;
 
 	/**
 	 * Deactivate the Asset item
@@ -48,7 +48,7 @@ interface WebAssetManagerInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function disableAsset(string $name): self;
+	//public function disableAsset(string $name): self;
 
 	/**
 	 * Check whether the asset are enabled
@@ -61,7 +61,7 @@ interface WebAssetManagerInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function isAssetActive(string $name): bool;
+	//public function isAssetActive(string $name): bool;
 
 	/**
 	 * Get all assets that was enabled
@@ -75,7 +75,7 @@ interface WebAssetManagerInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function getAssets(bool $sort = false): array;
+	//public function getAssets(bool $sort = false): array;
 
 	/**
 	 * Attach active assets to the document
@@ -88,7 +88,7 @@ interface WebAssetManagerInterface
 	 *
 	 * @since  4.0.0
 	 */
-	public function attachActiveAssetsToDocument(Document $doc): self;
+	//public function attachActiveAssetsToDocument(Document $doc): self;
 
 }
 

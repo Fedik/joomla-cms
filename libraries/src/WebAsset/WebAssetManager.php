@@ -125,8 +125,50 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	}
 
 	/**
-	 * Activate the Asset item
+	 * Adds support for magic method calls
 	 *
+	 * @param   string  $method     A method name
+	 * @param   string  $arguments  An arguments for a method
+	 *
+	 * @return self
+	 *
+	 * @throws  \BadMethodCallException
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function __call($method, $arguments)
+	{
+		if (0 === strpos($method, 'enable'))
+		{
+			$type = strtolower(substr($method, 6));
+
+			if (empty($arguments[0]))
+			{
+				throw new \BadMethodCallException('Asset name are required');
+			}
+
+			return $this->enable($type, $arguments[0]);
+		}
+
+		if (0 === strpos($method, 'disable'))
+		{
+			$type = strtolower(substr($method, 7));
+
+			if (empty($arguments[0]))
+			{
+				throw new \BadMethodCallException('Asset name are required');
+			}
+
+			return $this->disable($type, $arguments[0]);
+		}
+
+		throw new \BadMethodCallException(sprintf('Undefined method %s in class %s', $method, get_class($this)));
+	}
+
+	/**
+	 * Enable an asset item to be attached to a Document
+	 *
+	 * @param   string  $type  The asset type, script or stylesheet
 	 * @param   string  $name  The asset name
 	 *
 	 * @return self
@@ -134,9 +176,9 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 * @throws  UnknownAssetException  When Asset cannot be found
 	 * @throws  InvalidActionException When the Manager already attached to a Document
 	 *
-	 * @since  4.0.0
+	 * @since  __DEPLOY_VERSION__
 	 */
-	public function enableAsset(string $name): WebAssetManagerInterface
+	public function enable(string $type, string $name): WebAssetManagerInterface
 	{
 		if ($this->assetsAttached)
 		{
@@ -144,18 +186,23 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		}
 
 		// Check whether asset exists
-		$this->registry->get($name);
+		$this->registry->get($type, $name);
+
+		if (empty($this->activeAssets[$type]))
+		{
+			$this->activeAssets[$type] = [];
+		}
 
 		// Asset already enabled
-		if (!empty($this->activeAssets[$name]))
+		if (!empty($this->activeAssets[$type][$name]))
 		{
 			// Set state to active, in case it was ASSET_STATE_DEPENDENCY
-			$this->activeAssets[$name] = static::ASSET_STATE_ACTIVE;
+			$this->activeAssets[$type][$name] = static::ASSET_STATE_ACTIVE;
 
 			return $this;
 		}
 
-		$this->activeAssets[$name] = static::ASSET_STATE_ACTIVE;
+		$this->activeAssets[$type][$name] = static::ASSET_STATE_ACTIVE;
 
 		// To re-check dependencies
 		$this->dependenciesIsActual = false;
@@ -164,8 +211,9 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	}
 
 	/**
-	 * Deactivate the Asset item
+	 * Deactivate an asset item, so it will not be attached to a Document
 	 *
+	 * @param   string  $type  The asset type, script or stylesheet
 	 * @param   string  $name  The asset name
 	 *
 	 * @return  self
@@ -175,14 +223,17 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 *
 	 * @since  4.0.0
 	 */
-	public function disableAsset(string $name): WebAssetManagerInterface
+	public function disable(string $type, string $name): WebAssetManagerInterface
 	{
 		if ($this->assetsAttached)
 		{
 			throw new InvalidActionException('WebAssetManager already attached to a Document');
 		}
 
-		unset($this->activeAssets[$name]);
+		// Check whether asset exists
+		$this->registry->get($type, $name);
+
+		unset($this->activeAssets[$type][$name]);
 
 		// To re-check dependencies
 		$this->dependenciesIsActual = false;
@@ -193,6 +244,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Get a state for the Asset
 	 *
+	 * @param   string  $type  The asset type, script or stylesheet
 	 * @param   string  $name  The asset name
 	 *
 	 * @return  integer
@@ -201,10 +253,10 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 *
 	 * @since  4.0.0
 	 */
-	public function getAssetState(string $name): int
+	public function getAssetState(string $type, string $name): int
 	{
 		// Check whether asset exists first
-		$this->registry->get($name);
+		$this->registry->get($type, $name);
 
 		// Make sure that all dependencies are active
 		if (!$this->dependenciesIsActual)
@@ -212,9 +264,9 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 			$this->enableDependencies();
 		}
 
-		if (!empty($this->activeAssets[$name]))
+		if (!empty($this->activeAssets[$type][$name]))
 		{
-			return $this->activeAssets[$name];
+			return $this->activeAssets[$type][$name];
 		}
 
 		return static::ASSET_STATE_INACTIVE;
@@ -223,6 +275,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Check whether the asset are enabled
 	 *
+	 * @param   string  $type  The asset type, script or stylesheet
 	 * @param   string  $name  The asset name
 	 *
 	 * @return  boolean
@@ -231,9 +284,9 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 *
 	 * @since  4.0.0
 	 */
-	public function isAssetActive(string $name): bool
+	public function isAssetActive(string $type, string $name): bool
 	{
-		return $this->getAssetState($name) !== static::ASSET_STATE_INACTIVE;
+		return $this->getAssetState($type, $name) !== static::ASSET_STATE_INACTIVE;
 	}
 
 	/**
