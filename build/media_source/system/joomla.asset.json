@@ -29,7 +29,7 @@
       "uri": "media/system/js/multiselect.min.js"
     },
     {
-      "name": "searchtools.js",
+      "name": "searchtools",
       "type": "script",
       "dependencies": [
         "core"
@@ -37,16 +37,16 @@
       "uri": "media/system/js/searchtools.min.js"
     },
     {
-      "name": "searchtools.css",
-      "type": "style",
+      "name": "searchtools",
+      "type": "stylesheet",
       "uri": "system/searchtools.css"
     },
     {
       "name": "searchtools",
       "type": "group",
       "dependencies": [
-        "searchtools.css",
-        "searchtools.js"
+        "searchtools#stylesheet",
+        "searchtools#script"
       ]
     },
     {
@@ -59,7 +59,7 @@
     },
     {
       "name": "switcher",
-      "type": "style",
+      "type": "stylesheet",
       "uri": "media/system/css/fields/switcher.min.css"
     },
     {

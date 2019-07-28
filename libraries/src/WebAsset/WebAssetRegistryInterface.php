@@ -30,7 +30,7 @@ interface WebAssetRegistryInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function get(string $name): WebAssetItemInterface;
+	//public function get(string $name): WebAssetItemInterface;
 
 	/**
 	 * Add Asset to registry of known assets
@@ -41,7 +41,7 @@ interface WebAssetRegistryInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function add(WebAssetItemInterface $asset): self;
+	//public function add(WebAssetItemInterface $asset): self;
 
 	/**
 	 * Remove Asset from registry.
@@ -52,7 +52,7 @@ interface WebAssetRegistryInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function remove(string $name): self;
+	//public function remove(string $name): self;
 
 	/**
 	 * Check whether the asset exists in the registry.
@@ -63,7 +63,7 @@ interface WebAssetRegistryInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function exists(string $name): bool;
+	//public function exists(string $name): bool;
 
 }
 

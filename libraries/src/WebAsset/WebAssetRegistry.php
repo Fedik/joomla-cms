@@ -88,6 +88,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Get an existing Asset from a registry, by asset name.
 	 *
+	 * @param   string  $type  Asset type, script or style
 	 * @param   string  $name  Asset name
 	 *
 	 * @return  WebAssetItem
@@ -96,31 +97,37 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function get(string $name): WebAssetItemInterface
+	public function get(string $type, string $name): WebAssetItemInterface
 	{
 		// Check if any new file was added
 		$this->parseRegistryFiles();
 
-		if (empty($this->assets[$name]))
+		if (empty($this->assets[$type][$name]))
 		{
-			throw new UnknownAssetException($name);
+			throw new UnknownAssetException(sprintf('There is no a "%s" asset of a "%s" type in the registry.', $name, $type));
 		}
 
-		return $this->assets[$name];
+		return $this->assets[$type][$name];
 	}
 
 	/**
 	 * Add Asset to registry of known assets
 	 *
+	 * @param   string                 $type   Asset type, script or style
 	 * @param   WebAssetItemInterface  $asset  Asset instance
 	 *
 	 * @return  self
 	 *
 	 * @since   4.0.0
 	 */
-	public function add(WebAssetItemInterface $asset): WebAssetRegistryInterface
+	public function add(string $type, WebAssetItemInterface $asset): WebAssetRegistryInterface
 	{
-		$this->assets[$asset->getName()] = $asset;
+		if (!array_key_exists($type, $this->assets))
+		{
+			$this->assets[$type] = [];
+		}
+
+		$this->assets[$type][$asset->getName()] = $asset;
 
 		return $this;
 	}
@@ -128,15 +135,16 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Remove Asset from registry.
 	 *
+	 * @param   string  $type  Asset type, script or style
 	 * @param   string  $name  Asset name
 	 *
 	 * @return  self
 	 *
 	 * @since   4.0.0
 	 */
-	public function remove(string $name): WebAssetRegistryInterface
+	public function remove(string $type, string $name): WebAssetRegistryInterface
 	{
-		unset($this->assets[$name]);
+		unset($this->assets[$type][$name]);
 
 		return $this;
 	}
@@ -144,40 +152,49 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Check whether the asset exists in the registry.
 	 *
+	 * @param   string  $type  Asset type, script or style
 	 * @param   string  $name  Asset name
 	 *
 	 * @return  boolean
 	 *
 	 * @since   4.0.0
 	 */
-	public function exists(string $name): bool
+	public function exists(string $type, string $name): bool
 	{
-		return !empty($this->assets[$name]);
+		return !empty($this->assets[$type][$name]);
 	}
 
 	/**
 	 * Prepare new Asset instance.
 	 *
-	 * @param   string  $name  Asset name
-	 * @param   array   $data  Asset information
+	 * @param   string  $name          The asset name
+	 * @param   string  $uri           The URI for the asset
+	 * @param   array   $options       Additional options for the asset
+	 * @param   array   $attributes    Attributes for the asset
+	 * @param   array   $dependencies  Asset dependencies
 	 *
 	 * @return  WebAssetItem
 	 *
 	 * @since   4.0.0
 	 */
-	public function createAsset(string $name, array $data = []): WebAssetItem
+	public function createAsset(string $name,
+								string $uri = null,
+								array $options = [],
+								array $attributes = [],
+								array $dependencies = []
+	): WebAssetItem
 	{
-		$nameSpace = array_key_exists('namespace', $data) ? $data['namespace'] : __NAMESPACE__ . '\\AssetItem';
-		$className = array_key_exists('class', $data) ? $data['class'] : null;
+		$nameSpace = array_key_exists('namespace', $options) ? $options['namespace'] : __NAMESPACE__ . '\\AssetItem';
+		$className = array_key_exists('class', $options) ? $options['class'] : null;
 
 		if ($className && class_exists($nameSpace . '\\' . $className))
 		{
 			$className = $nameSpace . '\\' . $className;
 
-			return new $className($name, $data);
+			return new $className($name, $uri, $options, $attributes, $dependencies);
 		}
 
-		return new WebAssetItem($name, $data);
+		return new WebAssetItem($name, $uri, $options, $attributes, $dependencies);
 	}
 
 	/**
@@ -262,25 +279,30 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 			'registryFile' => $path,
 		];
 
-		$namespace = array_key_exists('namespace', $data) ? $data['namespace'] : null;
+		//$namespace = array_key_exists('namespace', $data) ? $data['namespace'] : null;
 
 		// Prepare WebAssetItem instances
 		foreach ($data['assets'] as $item)
 		{
-			if (empty($item['name']))
+			if (empty($item['name']) || empty($item['type']))
 			{
 				throw new \RuntimeException('Asset data file "' . $path . '" contains incorrect asset definition');
 			}
 
-			// Inheriting the Namespace
-			if ($namespace && !array_key_exists('namespace', $item))
-			{
-				$item['namespace'] = $namespace;
-			}
+			$uri     = $item['uri'] ?? '';
+			$options = $item;
+			$options['assetSource'] = $assetSource;
 
-			$item['assetSource'] = $assetSource;
-			$assetItem = $this->createAsset($item['name'], $item);
-			$this->add($assetItem);
+			unset($options['uri']);
+
+			// Inheriting the Namespace
+//			if ($namespace && !array_key_exists('namespace', $options))
+//			{
+//				$options['namespace'] = $namespace;
+//			}
+
+			$assetItem = $this->createAsset($item['name'], $uri, $options);
+			$this->add($item['type'], $assetItem);
 		}
 	}
 }

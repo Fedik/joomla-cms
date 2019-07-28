@@ -54,7 +54,7 @@ interface WebAssetItemInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function setWeight(float $weight): self;
+	//public function setWeight(float $weight): self;
 
 	/**
 	 * Return the weight of the Asset in Graph.
@@ -63,7 +63,7 @@ interface WebAssetItemInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function getWeight(): float;
+	//public function getWeight(): float;
 
 	/**
 	 * Get CSS files
@@ -74,7 +74,7 @@ interface WebAssetItemInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function getStylesheetFiles($resolvePath = true): array;
+	//public function getStylesheetFiles($resolvePath = true): array;
 
 	/**
 	 * Get JS files
@@ -85,6 +85,6 @@ interface WebAssetItemInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function getScriptFiles($resolvePath = true): array;
+	//public function getScriptFiles($resolvePath = true): array;
 
 }

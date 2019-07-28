@@ -28,6 +28,38 @@ class WebAssetItem implements WebAssetItemInterface
 	protected $name;
 
 	/**
+	 * The URI for the asset
+	 *
+	 * @var    string
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $uri;
+
+	/**
+	 * Additional options for the asset
+	 *
+	 * @var    array
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $options = [];
+
+	/**
+	 * Attributes for the asset, to be rendered in the asset's HTML tag
+	 *
+	 * @var    array
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $attributes = [];
+
+	/**
+	 * Asset dependencies
+	 *
+	 * @var    string[]
+	 * @since  4.0.0
+	 */
+	protected $dependencies = [];
+
+	/**
 	 * Asset version
 	 *
 	 * @var    string
@@ -53,82 +85,58 @@ class WebAssetItem implements WebAssetItemInterface
 	protected $weight = 0;
 
 	/**
-	 * List of JavaScript files, and its attributes.
-	 * The key is file path, the value is array of attributes.
-	 *
-	 * @var    array
-	 * @since  4.0.0
-	 */
-	protected $js = [];
-
-	/**
-	 * List of StyleSheet files, and its attributes
-	 * The key is file path, the value is array of attributes.
-	 *
-	 * @var    array
-	 * @since  4.0.0
-	 */
-	protected $css = [];
-
-	/**
-	 * Asset dependencies
-	 *
-	 * @var    string[]
-	 * @since  4.0.0
-	 */
-	protected $dependencies = [];
-
-	/**
-	 * Internal use, to keep track of resolved paths
-	 *
-	 * @var    array
-	 *
-	 * @since  4.0.0
-	 */
-	protected $resolvedPaths = [];
-
-	/**
 	 * Class constructor
 	 *
-	 * @param   string  $name  The asset name
-	 * @param   array   $data  The Asset information
+	 * @param   string  $name          The asset name
+	 * @param   string  $uri           The URI for the asset
+	 * @param   array   $options       Additional options for the asset
+	 * @param   array   $attributes    Attributes for the asset
+	 * @param   array   $dependencies  Asset dependencies
 	 *
 	 * @since   4.0.0
 	 */
-	public function __construct(string $name, array $data = [])
+	public function __construct(
+		string $name,
+		string $uri = null,
+		array $options = [],
+		array $attributes = [],
+		array $dependencies = []
+	)
 	{
-		$this->name        = $name;
-		$this->version     = !empty($data['version']) ? $data['version'] : null;
-		$this->assetSource = !empty($data['assetSource']) ? $data['assetSource'] : null;
+		$this->name         = $name;
+		$this->uri          = $uri;
+		$this->version      = !empty($options['version']) ? $options['version'] : null;
+		$this->assetSource  = !empty($options['assetSource']) ? $options['assetSource'] : null;
 
-		$attributes = empty($data['attribute']) ? [] : $data['attribute'];
-
-		// Check for Scripts and StyleSheets, and their attributes
-		if (!empty($data['js']))
+		if (array_key_exists('attributes', $options))
 		{
-			foreach ($data['js'] as $js)
-			{
-				$this->js[$js] = empty($attributes[$js]) ? [] : $attributes[$js];
-			}
+			$this->attributes = (array) $options['attributes'];
+			unset($options['attributes']);
+		}
+		else
+		{
+			$this->attributes = $attributes;
 		}
 
-		if (!empty($data['css']))
+		if (array_key_exists('dependencies', $options))
 		{
-			foreach ($data['css'] as $css)
-			{
-				$this->css[$css] = empty($attributes[$css]) ? [] : $attributes[$css];
-			}
+			$this->dependencies = (array) $options['dependencies'];
+			unset($options['dependencies']);
+		}
+		else
+		{
+			$this->dependencies = $dependencies;
 		}
 
-		if (!empty($data['dependencies']))
+		if (!empty($options['weight']))
 		{
-			$this->dependencies = (array) $data['dependencies'];
+			$this->weight = (float) $options['weight'];
+			unset($options['weight']);
 		}
 
-		if (!empty($data['weight']))
-		{
-			$this->weight = (float) $data['weight'];
-		}
+		unset($options['version'], $options['assetSource']);
+
+		$this->options = $options;
 	}
 
 	/**
@@ -197,6 +205,27 @@ class WebAssetItem implements WebAssetItemInterface
 	}
 
 	/**
+	 * Get the file path
+	 *
+	 * @param   boolean  $resolvePath  Whether need to search for a real paths
+	 *
+	 * @return array
+	 *
+	 * @since   4.0.0
+	 */
+	public function getUri($resolvePath = true): string
+	{
+		$path = $this->uri;
+
+		if ($resolvePath)
+		{
+			// @TODO: resolve path
+		}
+
+		return $path;
+	}
+
+	/**
 	 * Get CSS files
 	 *
 	 * @param   boolean  $resolvePath  Whether need to search for a real paths
@@ -205,33 +234,33 @@ class WebAssetItem implements WebAssetItemInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function getStylesheetFiles($resolvePath = true): array
-	{
-		if ($resolvePath)
-		{
-			$files = [];
-
-			foreach ($this->css as $path => $attr)
-			{
-				$resolved = $this->resolvePath($path, 'stylesheet');
-				$fullPath = $resolved['fullPath'];
-
-				if (!$fullPath)
-				{
-					// File not found, But we keep going ???
-					continue;
-				}
-
-				$files[$fullPath] = $attr;
-				$files[$fullPath]['__isExternal'] = $resolved['external'];
-				$files[$fullPath]['__pathOrigin'] = $path;
-			}
-
-			return $files;
-		}
-
-		return $this->css;
-	}
+//	public function getStylesheetFiles($resolvePath = true): array
+//	{
+//		if ($resolvePath)
+//		{
+//			$files = [];
+//
+//			foreach ($this->css as $path => $attr)
+//			{
+//				$resolved = $this->resolvePath($path, 'stylesheet');
+//				$fullPath = $resolved['fullPath'];
+//
+//				if (!$fullPath)
+//				{
+//					// File not found, But we keep going ???
+//					continue;
+//				}
+//
+//				$files[$fullPath] = $attr;
+//				$files[$fullPath]['__isExternal'] = $resolved['external'];
+//				$files[$fullPath]['__pathOrigin'] = $path;
+//			}
+//
+//			return $files;
+//		}
+//
+//		return $this->css;
+//	}
 
 	/**
 	 * Get JS files
@@ -242,33 +271,33 @@ class WebAssetItem implements WebAssetItemInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function getScriptFiles($resolvePath = true): array
-	{
-		if ($resolvePath)
-		{
-			$files = [];
-
-			foreach ($this->js as $path => $attr)
-			{
-				$resolved = $this->resolvePath($path, 'script');
-				$fullPath = $resolved['fullPath'];
-
-				if (!$fullPath)
-				{
-					// File not found, But we keep going ???
-					continue;
-				}
-
-				$files[$fullPath] = $attr;
-				$files[$fullPath]['__isExternal'] = $resolved['external'];
-				$files[$fullPath]['__pathOrigin'] = $path;
-			}
-
-			return $files;
-		}
-
-		return $this->js;
-	}
+//	public function getScriptFiles($resolvePath = true): array
+//	{
+//		if ($resolvePath)
+//		{
+//			$files = [];
+//
+//			foreach ($this->js as $path => $attr)
+//			{
+//				$resolved = $this->resolvePath($path, 'script');
+//				$fullPath = $resolved['fullPath'];
+//
+//				if (!$fullPath)
+//				{
+//					// File not found, But we keep going ???
+//					continue;
+//				}
+//
+//				$files[$fullPath] = $attr;
+//				$files[$fullPath]['__isExternal'] = $resolved['external'];
+//				$files[$fullPath]['__pathOrigin'] = $path;
+//			}
+//
+//			return $files;
+//		}
+//
+//		return $this->js;
+//	}
 
 	/**
 	 * Resolve path
