@@ -189,6 +189,8 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 		$nameSpace = array_key_exists('namespace', $options) ? $options['namespace'] : __NAMESPACE__ . '\\AssetItem';
 		$className = array_key_exists('class', $options) ? $options['class'] : null;
 
+		unset($options['namespace'], $options['class'], $options['name']);
+
 		if ($className && class_exists($nameSpace . '\\' . $className))
 		{
 			$className = $nameSpace . '\\' . $className;
@@ -267,7 +269,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 
 		if (!$data)
 		{
-			throw new \RuntimeException('Asset data file "' . $path . '" is broken');
+			throw new \RuntimeException(sprintf('Asset registry file "%s" are broken', $path));
 		}
 
 		// Asset exists but empty, skip it silently
@@ -286,9 +288,18 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 		// Prepare WebAssetItem instances
 		foreach ($data['assets'] as $item)
 		{
-			if (empty($item['name']) || empty($item['type']))
+			if (empty($item['name']))
 			{
-				throw new \RuntimeException('Asset data file "' . $path . '" contains incorrect asset definition');
+				throw new \RuntimeException(
+					sprintf('Fail parsing of asset registry file "%". Property "name" are required', $path)
+				);
+			}
+
+			if (empty($item['type']))
+			{
+				throw new \RuntimeException(
+					sprintf('Fail parsing of asset registry file "%". Property "type" are required', $path)
+				);
 			}
 
 			$item['type'] = strtolower($item['type']);

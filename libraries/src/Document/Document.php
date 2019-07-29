@@ -330,11 +330,12 @@ class Document
 			$webAssetManager = new WebAssetManager(\Joomla\CMS\Factory::getContainer()->get('webassetregistry'));
 			$wg = $webAssetManager->getRegistry();
 
-			var_dump($wg->get('script', 'core'));
+			$webAssetManager->enableGroup('searchtools');
 
-			$webAssetManager->enableScript('core');
+			$scripts = $webAssetManager->getAssets('script');
+			$styles  = $webAssetManager->getAssets('stylesheet');
 
-var_dump($webAssetManager);
+var_dump($scripts, $styles);
 exit;
 			$webAssetManager->setDispatcher(CmsFactory::getApplication()->getDispatcher());
 

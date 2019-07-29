@@ -36,6 +36,14 @@ class WebAssetItem implements WebAssetItemInterface
 	protected $uri;
 
 	/**
+	 * The asset type, script or stylesheet
+	 *
+	 * @var    string
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $type;
+
+	/**
 	 * Additional options for the asset
 	 *
 	 * @var    array
@@ -68,14 +76,6 @@ class WebAssetItem implements WebAssetItemInterface
 	protected $version;
 
 	/**
-	 * The Asset source info, where the asset comes from.
-	 *
-	 * @var    array
-	 * @since  4.0.0
-	 */
-	protected $assetSource;
-
-	/**
 	 * Item weight
 	 *
 	 * @var    float
@@ -105,8 +105,8 @@ class WebAssetItem implements WebAssetItemInterface
 	{
 		$this->name         = $name;
 		$this->uri          = $uri;
+		$this->type         = !empty($options['type']) ? $options['type'] : null;
 		$this->version      = !empty($options['version']) ? $options['version'] : null;
-		$this->assetSource  = !empty($options['assetSource']) ? $options['assetSource'] : null;
 
 		if (array_key_exists('attributes', $options))
 		{
@@ -134,7 +134,7 @@ class WebAssetItem implements WebAssetItemInterface
 			unset($options['weight']);
 		}
 
-		unset($options['version'], $options['assetSource']);
+		unset($options['version'], $options['type']);
 
 		$this->options = $options;
 	}
@@ -149,6 +149,18 @@ class WebAssetItem implements WebAssetItemInterface
 	public function getName(): string
 	{
 		return $this->name;
+	}
+
+	/**
+	 * Return Asset type
+	 *
+	 * @return  string
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getType(): string
+	{
+		return $this->type;
 	}
 
 	/**
@@ -223,6 +235,38 @@ class WebAssetItem implements WebAssetItemInterface
 		}
 
 		return $path;
+	}
+
+	/**
+	 * Get the option
+	 *
+	 * @param   string  $key      An option key
+	 * @param   string  $default  A default value
+	 *
+	 * @return mixed
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getOption(string $key, $default = null)
+	{
+		if (array_key_exists($key, $this->options))
+		{
+			return $this->options[$key];
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Get all options
+	 *
+	 * @return array
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getOptions(): array
+	{
+		return $this->options;
 	}
 
 	/**

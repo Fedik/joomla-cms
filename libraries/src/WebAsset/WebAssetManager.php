@@ -292,7 +292,8 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Get all assets that was enabled
 	 *
-	 * @param   bool  $sort  Whether need to sort the assets to follow the dependency Graph
+	 * @param   string  $type  The asset type, script or stylesheet
+	 * @param   bool    $sort  Whether need to sort the assets to follow the dependency Graph
 	 *
 	 * @return  WebAssetItem[]
 	 *
@@ -301,7 +302,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 *
 	 * @since  4.0.0
 	 */
-	public function getAssets(bool $sort = false): array
+	public function getAssets(string $type, bool $sort = false): array
 	{
 		// Make sure that all dependencies are active
 		if (!$this->dependenciesIsActual)
@@ -316,9 +317,14 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 
 		$assets = [];
 
-		foreach (array_keys($this->activeAssets) as $name)
+		if (empty($this->activeAssets[$type]))
 		{
-			$assets[$name] = $this->registry->get($name);
+			return $assets;
+		}
+
+		foreach (array_keys($this->activeAssets[$type]) as $name)
+		{
+			$assets[$name] = $this->registry->get($type, $name);
 		}
 
 		return $assets;
@@ -342,26 +348,29 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 			foreach ($allDependencies as $depItem)
 			{
 				// Set dependency state only when it is inactive, to keep a manually activated Asset in their original state
-				if (empty($this->activeAssets[$depItem->getName()]))
+				if (empty($this->activeAssets[$depItem->getType()][$depItem->getName()]))
 				{
-					$this->activeAssets[$depItem->getName()] = static::ASSET_STATE_DEPENDENCY;
+					$this->activeAssets[$depItem->getType()][$depItem->getName()] = static::ASSET_STATE_DEPENDENCY;
 				}
 			}
 		}
 		else
 		{
 			// Re-Check for Dependencies for all active assets
-			$this->activeAssets = array_filter(
-				$this->activeAssets,
-				function ($state) {
-					return $state === WebAssetManager::ASSET_STATE_ACTIVE;
-				}
-			);
-
-			foreach (array_keys($this->activeAssets) as $name)
+			foreach ($this->activeAssets as $type => $activeAsset)
 			{
-				$asset = $this->registry->get($name);
-				$this->enableDependencies($asset);
+				$this->activeAssets[$type] = array_filter(
+					$activeAsset,
+					function ($state) {
+						return $state === WebAssetManager::ASSET_STATE_ACTIVE;
+					}
+				);
+
+				foreach (array_keys($this->activeAssets[$type]) as $name)
+				{
+					$asset = $this->registry->get($type, $name);
+					$this->enableDependencies($asset);
+				}
 			}
 
 			$this->dependenciesIsActual = true;
@@ -626,23 +635,35 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	{
 		$assets        = [];
 		$recursionRoot = $recursionRoot ?? $asset;
+		$type          = $asset->getType();
 
 		foreach ($asset->getDependencies() as $depName)
 		{
+			$depType = $type;
+
+			// Check for "depname#type" case
+			if ($pos = strrpos($depName, '#'))
+			{
+				$depType = substr($depName, $pos + 1);
+				$depName = substr($depName, 0, $pos);
+			}
+
 			// Skip already loaded in recursion
-			if ($recursionRoot->getName() === $depName)
+			if ($recursionRoot->getName() === $depName && $recursionRoot->getType() === $depType)
 			{
 				continue;
 			}
 
-			if (!$this->registry->exists($depName))
+			if (!$this->registry->exists($depType, $depName))
 			{
-				throw new UnsatisfiedDependencyException('Unsatisfied dependency "' . $depName . '" for Asset "' . $asset->getName() . '"');
+				throw new UnsatisfiedDependencyException(
+					sprintf('Unsatisfied dependency "%s" for an asset "%s"', $depName, $asset->getName())
+				);
 			}
 
-			$dep = $this->registry->get($depName);
+			$dep = $this->registry->get($depType, $depName);
 
-			$assets[$depName] = $dep;
+			$assets[$depType.$depName] = $dep;
 
 			if (!$recursively)
 			{
