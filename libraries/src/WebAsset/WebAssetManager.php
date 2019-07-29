@@ -343,6 +343,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	{
 		if ($asset)
 		{
+			// Get all dependencies of given asset recursively
 			$allDependencies = $this->getDependenciesForAsset($asset, true);
 
 			foreach ($allDependencies as $depItem)
@@ -356,7 +357,8 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		}
 		else
 		{
-			// Re-Check for Dependencies for all active assets
+			// Re-Check for dependencies for all active assets
+			// Firstly, filter out only active assets
 			foreach ($this->activeAssets as $type => $activeAsset)
 			{
 				$this->activeAssets[$type] = array_filter(
@@ -365,8 +367,13 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 						return $state === WebAssetManager::ASSET_STATE_ACTIVE;
 					}
 				);
+			}
 
-				foreach (array_keys($this->activeAssets[$type]) as $name)
+			// Secondary, check for dependencies of each active asset
+			// This need to be separated from previous step because we may have "cross type" dependency
+			foreach ($this->activeAssets as $type => $activeAsset)
+			{
+				foreach (array_keys($activeAsset) as $name)
 				{
 					$asset = $this->registry->get($type, $name);
 					$this->enableDependencies($asset);
