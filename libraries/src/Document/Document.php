@@ -328,16 +328,16 @@ class Document
 		else
 		{
 			$webAssetManager = new WebAssetManager(\Joomla\CMS\Factory::getContainer()->get('webassetregistry'));
-			$wg = $webAssetManager->getRegistry();
-
-			$webAssetManager->enableGroup('searchtools');
-
-			$scripts = $webAssetManager->getAssets('script', true);
-			$styles  = [];//$webAssetManager->getAssets('stylesheet');
-
-var_dump($scripts, $styles);
-exit;
-			$webAssetManager->setDispatcher(CmsFactory::getApplication()->getDispatcher());
+//			$wg = $webAssetManager->getRegistry();
+//
+//			$webAssetManager->enableGroup('searchtools');
+//
+//			$scripts = $webAssetManager->getAssets('script', true);
+//			$styles  = [];//$webAssetManager->getAssets('stylesheet');
+//
+//var_dump($scripts, $styles);
+//exit;
+//			$webAssetManager->setDispatcher(CmsFactory::getApplication()->getDispatcher());
 
 			$this->setWebAssetManager($webAssetManager);
 		}

@@ -286,19 +286,19 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 		//$namespace = array_key_exists('namespace', $data) ? $data['namespace'] : null;
 
 		// Prepare WebAssetItem instances
-		foreach ($data['assets'] as $item)
+		foreach ($data['assets'] as $i => $item)
 		{
 			if (empty($item['name']))
 			{
 				throw new \RuntimeException(
-					sprintf('Fail parsing of asset registry file "%". Property "name" are required', $path)
+					sprintf('Fail parsing of asset registry file "%s". Property "name" are required for asset index "%s"', $path, $i)
 				);
 			}
 
 			if (empty($item['type']))
 			{
 				throw new \RuntimeException(
-					sprintf('Fail parsing of asset registry file "%". Property "type" are required', $path)
+					sprintf('Fail parsing of asset registry file "%s". Property "type" are required for asset "%s"', $path, $item['name'])
 				);
 			}
 

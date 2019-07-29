@@ -74,13 +74,14 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	protected $activeAssets = [];
 
 	/**
-	 * Internal marker to check the manager state, to prevent use the manager after an attach happened
+	 * Internal marker to check the manager state,
+	 * to prevent use of the manager after an assets are rendered
 	 *
 	 * @var    boolean
 	 *
 	 * @since  4.0.0
 	 */
-	protected $assetsAttached = false;
+	protected $locked = false;
 
 	/**
 	 * Whether append asset version to asset path
@@ -130,7 +131,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 * @param   string  $method     A method name
 	 * @param   string  $arguments  An arguments for a method
 	 *
-	 * @return self
+	 * @return mixed
 	 *
 	 * @throws  \BadMethodCallException
 	 *
@@ -180,9 +181,9 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 */
 	public function enable(string $type, string $name): WebAssetManagerInterface
 	{
-		if ($this->assetsAttached)
+		if ($this->locked)
 		{
-			throw new InvalidActionException('WebAssetManager already attached to a Document');
+			throw new InvalidActionException('WebAssetManager are locked, you are came late');
 		}
 
 		// Check whether asset exists
@@ -221,13 +222,13 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 * @throws  UnknownAssetException  When Asset cannot be found
 	 * @throws  InvalidActionException When the Manager already attached to a Document
 	 *
-	 * @since  4.0.0
+	 * @since  __DEPLOY_VERSION__
 	 */
 	public function disable(string $type, string $name): WebAssetManagerInterface
 	{
-		if ($this->assetsAttached)
+		if ($this->locked)
 		{
-			throw new InvalidActionException('WebAssetManager already attached to a Document');
+			throw new InvalidActionException('WebAssetManager are locked, you are came late');
 		}
 
 		// Check whether asset exists
@@ -331,6 +332,20 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	}
 
 	/**
+	 * Lock the manager to prevent further modifications
+	 *
+	 * @return self
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function lock(): self
+	{
+		$this->locked = true;
+
+		return $this;
+	}
+
+	/**
 	 * Update Dependencies state for all active Assets or only for given
 	 *
 	 * @param   WebAssetItem  $asset  The asset instance to which need to enable dependencies
@@ -399,9 +414,9 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 */
 	public function attachActiveAssetsToDocument(Document $doc): WebAssetManagerInterface
 	{
-		if ($this->assetsAttached)
+		if ($this->locked)
 		{
-			throw new InvalidActionException('WebAssetManager already attached to a Document');
+			throw new InvalidActionException('WebAssetManager are locked, you are came late');
 		}
 
 		// Trigger the event
@@ -422,7 +437,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		$assets = $this->getAssets(true);
 
 		// Prevent further use of manager if an attach  already happened
-		$this->assetsAttached = true;
+		$this->locked = true;
 
 		// Pre-save existing Scripts, and attach them after requested assets.
 		$jsBackup = $doc->_scripts;

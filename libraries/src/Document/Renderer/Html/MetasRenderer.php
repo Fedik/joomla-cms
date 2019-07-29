@@ -12,6 +12,7 @@ namespace Joomla\CMS\Document\Renderer\Html;
 defined('JPATH_PLATFORM') or die;
 
 use Joomla\CMS\Document\DocumentRenderer;
+use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -49,13 +50,25 @@ class MetasRenderer extends DocumentRenderer
 			HTMLHelper::_('behavior.core');
 		}
 
-		// Attach Assets
-		$wa = $this->_doc->getWebAssetManager();
-		$wa->attachActiveAssetsToDocument($this->_doc);
+		/** @var \Joomla\CMS\Application\CMSApplication $app */
+		$app = Factory::getApplication();
+
+		// Trigger the onWebAssetBeforeAttach event
+		$event = AbstractEvent::create(
+			'onWebAssetBeforeAttach',
+			[
+				'eventClass' => 'Joomla\\CMS\\Event\\WebAsset\\WebAssetBeforeAttachEvent',
+				'subject'  => $this->_doc->getWebAssetManager(),
+				'document' => $this->_doc,
+			]
+		);
+		$app->getDispatcher()->dispatch($event->getName(), $event);
 
 		// Trigger the onBeforeCompileHead event
-		$app = Factory::getApplication();
 		$app->triggerEvent('onBeforeCompileHead');
+
+		// Lock the AssetManager
+		$this->_doc->getWebAssetManager()->lock();
 
 		// Get line endings
 		$lnEnd        = $this->_doc->_getLineEnd();

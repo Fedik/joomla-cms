@@ -40,11 +40,11 @@ abstract class JHtmlBehavior
 	 *
 	 * @since   3.3
 	 *
-	 * @deprecated 5.0  Use Joomla\CMS\WebAsset\WebAssetManager::enableAsset();
+	 * @deprecated 5.0  Use Joomla\CMS\WebAsset\WebAssetManager::enable();
 	 */
 	public static function core()
 	{
-		Factory::getApplication()->getDocument()->getWebAssetManager()->enableAsset('core');
+		Factory::getApplication()->getDocument()->getWebAssetManager()->enableScript('core');
 	}
 
 	/**
@@ -76,7 +76,7 @@ abstract class JHtmlBehavior
 		Text::script('JLIB_FORM_FIELD_REQUIRED_CHECK');
 		Text::script('JLIB_FORM_FIELD_INVALID_VALUE');
 
-		Factory::getDocument()->getWebAssetManager()->enableAsset('fields.validate');
+		Factory::getDocument()->getWebAssetManager()->enableScript('fields.validate');
 
 		static::$loaded[__METHOD__] = true;
 	}
@@ -188,11 +188,11 @@ abstract class JHtmlBehavior
 	 *
 	 * @since   1.5
 	 *
-	 * @deprecated 5.0  Use Joomla\CMS\WebAsset\WebAssetManager::enableAsset();
+	 * @deprecated 5.0  Use Joomla\CMS\WebAsset\WebAssetManager::enable();
 	 */
 	public static function keepalive()
 	{
-		Factory::getApplication()->getDocument()->getWebAssetManager()->enableAsset('keepalive');
+		Factory::getApplication()->getDocument()->getWebAssetManager()->enableScript('keepalive');
 
 		return;
 	}
