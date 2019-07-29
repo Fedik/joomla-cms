@@ -310,17 +310,17 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 			$this->enableDependencies();
 		}
 
+		if (empty($this->activeAssets[$type]))
+		{
+			return [];
+		}
+
 		if ($sort)
 		{
-			return $this->calculateOrderOfActiveAssets();
+			return $this->calculateOrderOfActiveAssets($type);
 		}
 
 		$assets = [];
-
-		if (empty($this->activeAssets[$type]))
-		{
-			return $assets;
-		}
 
 		foreach (array_keys($this->activeAssets[$type]) as $name)
 		{
@@ -456,15 +456,17 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Calculate weight of active Assets, by its Dependencies
 	 *
+	 * @param   string  $type  The asset type, script or stylesheet
+	 *
 	 * @return  WebAssetItem[]
 	 *
 	 * @since  4.0.0
 	 */
-	protected function calculateOrderOfActiveAssets(): array
+	protected function calculateOrderOfActiveAssets($type): array
 	{
 		// See https://en.wikipedia.org/wiki/Topological_sorting#Kahn.27s_algorithm
 		$graphOrder    = [];
-		$activeAssets  = $this->getAssets();
+		$activeAssets  = $this->getAssets($type, false);
 
 		// Get Graph of Outgoing and Incoming connections
 		$connectionsGraph = $this->getConnectionsGraph($activeAssets);
@@ -510,7 +512,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		$graphWeights     = [];
 		$requestedWeights = [];
 
-		foreach (array_keys($this->activeAssets) as $index => $name)
+		foreach (array_keys($this->activeAssets[$type]) as $index => $name)
 		{
 			$fifoWeights[$name] = $index * 10 + 10;
 		}

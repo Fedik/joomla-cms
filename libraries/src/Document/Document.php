@@ -332,8 +332,8 @@ class Document
 
 			$webAssetManager->enableGroup('searchtools');
 
-			$scripts = $webAssetManager->getAssets('script');
-			$styles  = $webAssetManager->getAssets('stylesheet');
+			$scripts = $webAssetManager->getAssets('script', true);
+			$styles  = [];//$webAssetManager->getAssets('stylesheet');
 
 var_dump($scripts, $styles);
 exit;
