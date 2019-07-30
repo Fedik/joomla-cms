@@ -169,7 +169,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Enable an asset item to be attached to a Document
 	 *
-	 * @param   string  $type  The asset type, script or stylesheet
+	 * @param   string  $type  The asset type, script or style
 	 * @param   string  $name  The asset name
 	 *
 	 * @return self
@@ -214,7 +214,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Deactivate an asset item, so it will not be attached to a Document
 	 *
-	 * @param   string  $type  The asset type, script or stylesheet
+	 * @param   string  $type  The asset type, script or style
 	 * @param   string  $name  The asset name
 	 *
 	 * @return  self
@@ -245,7 +245,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Get a state for the Asset
 	 *
-	 * @param   string  $type  The asset type, script or stylesheet
+	 * @param   string  $type  The asset type, script or style
 	 * @param   string  $name  The asset name
 	 *
 	 * @return  integer
@@ -276,7 +276,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Check whether the asset are enabled
 	 *
-	 * @param   string  $type  The asset type, script or stylesheet
+	 * @param   string  $type  The asset type, script or style
 	 * @param   string  $name  The asset name
 	 *
 	 * @return  boolean
@@ -293,7 +293,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Get all assets that was enabled
 	 *
-	 * @param   string  $type  The asset type, script or stylesheet
+	 * @param   string  $type  The asset type, script or style
 	 * @param   bool    $sort  Whether need to sort the assets to follow the dependency Graph
 	 *
 	 * @return  WebAssetItem[]
@@ -478,7 +478,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	/**
 	 * Calculate weight of active Assets, by its Dependencies
 	 *
-	 * @param   string  $type  The asset type, script or stylesheet
+	 * @param   string  $type  The asset type, script or style
 	 *
 	 * @return  WebAssetItem[]
 	 *

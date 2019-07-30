@@ -39,9 +39,10 @@ class StylesRenderer extends DocumentRenderer
 		$tagEnd       = ' />';
 		$buffer       = '';
 		$mediaVersion = $this->_doc->getMediaVersion();
+		$styles       = $this->_doc->getWebAssetManager()->getAssets('style');
 
 		$defaultCssMimes = array('text/css');
-
+var_dump($styles);
 		// Generate stylesheet links
 		foreach ($this->_doc->_styleSheets as $src => $attribs)
 		{

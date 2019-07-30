@@ -7,27 +7,27 @@
   "assets": [
     {
       "name": "bootstrap.css",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "bootstrap.min.css"
     },
     {
       "name": "fontawesome",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "fontawesome.min.css"
     },
     {
       "name": "template.atum.ltr",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "template.min.css"
     },
     {
       "name": "template.atum.rtl",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "template-rtl.min.css"
     },
     {
       "name": "template.atum.user",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "user.css"
     },
     {
@@ -35,8 +35,8 @@
       "type": "group",
       "dependencies": [
         "core#script",
-        "fontawesome#stylesheet",
-        "bootstrap.css#stylesheet",
+        "fontawesome#style",
+        "bootstrap.css#style",
         "css-vars-ponyfill#script"
       ]
     },
@@ -45,8 +45,8 @@
       "type": "group",
       "dependencies": [
         "template.atum.base",
-        "template.atum.ltr#stylesheet",
-        "template.atum.user#stylesheet"
+        "template.atum.ltr#style",
+        "template.atum.user#style"
       ]
     },
     {
@@ -54,8 +54,8 @@
       "type": "group",
       "dependencies": [
         "template.atum.base",
-        "template.atum.rtl#stylesheet",
-        "template.atum.user#stylesheet"
+        "template.atum.rtl#style",
+        "template.atum.user#style"
       ]
     }
   ]

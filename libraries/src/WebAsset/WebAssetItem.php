@@ -231,7 +231,17 @@ class WebAssetItem implements WebAssetItemInterface
 
 		if ($resolvePath)
 		{
-			// @TODO: resolve path
+			switch ($this->getType()){
+				case 'script':
+					$path = $this->resolvePath($path, 'script');
+					break;
+				case 'style':
+				case 'stylesheet':
+					$path = $this->resolvePath($path, 'stylesheet');
+					break;
+				default:
+					return $path;
+			}
 		}
 
 		return $path;
@@ -349,17 +359,12 @@ class WebAssetItem implements WebAssetItemInterface
 	 * @param   string  $path  The path to resolve
 	 * @param   string  $type  The resolver method
 	 *
-	 * @return array
+	 * @return string
 	 *
 	 * @since  4.0.0
 	 */
 	protected function resolvePath(string $path, string $type): array
 	{
-		if (!empty($this->resolvedPaths[$path]))
-		{
-			return $this->resolvedPaths[$path];
-		}
-
 		if ($type !== 'script' && $type !== 'stylesheet')
 		{
 			throw new \UnexpectedValueException('Unexpected [type], expected "script" or "stylesheet"');
@@ -381,12 +386,7 @@ class WebAssetItem implements WebAssetItemInterface
 			);
 		}
 
-		$this->resolvedPaths[$path] = [
-			'external' => $external,
-			'fullPath' => $file ? $file : false,
-		];
-
-		return $this->resolvedPaths[$path];
+		return $file;
 	}
 
 	/**

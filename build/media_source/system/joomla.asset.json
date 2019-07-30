@@ -38,14 +38,14 @@
     },
     {
       "name": "searchtools",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "system/searchtools.css"
     },
     {
       "name": "searchtools",
       "type": "group",
       "dependencies": [
-        "searchtools#stylesheet",
+        "searchtools#style",
         "searchtools#script"
       ]
     },
@@ -59,7 +59,7 @@
     },
     {
       "name": "switcher",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "media/system/css/fields/switcher.min.css"
     },
     {

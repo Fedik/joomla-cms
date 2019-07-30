@@ -7,17 +7,17 @@
   "assets": [
     {
       "name": "template.cassiopeia.ltr",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "template.min.css"
     },
     {
       "name": "template.cassiopeia.rtl",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "template-rtl.min.css"
     },
     {
       "name": "template.cassiopeia.user",
-      "type": "stylesheet",
+      "type": "style",
       "uri": "user.css"
     },
     {
@@ -35,9 +35,9 @@
       "name": "template.cassiopeia.base",
       "type": "group",
       "dependencies": [
-        "core",
-        "jquery",
-        "fontawesome-free",
+        "core#script",
+        "jquery#script",
+        "fontawesome-free#style",
         "bootstrap.js.bundle",
         "template.cassiopeia#script",
         "template.cassiopeia.user#script"
@@ -48,8 +48,8 @@
       "type": "group",
       "dependencies": [
         "template.cassiopeia.base",
-        "template.cassiopeia.ltr#stylesheet",
-        "template.cassiopeia.user#stylesheet"
+        "template.cassiopeia.ltr#style",
+        "template.cassiopeia.user#style"
       ]
     },
     {
@@ -57,8 +57,8 @@
       "type": "group",
       "dependencies": [
         "template.cassiopeia.base",
-        "template.cassiopeia.rtl#stylesheet",
-        "template.cassiopeia.user#stylesheet"
+        "template.cassiopeia.rtl#style",
+        "template.cassiopeia.user#style"
       ]
     }
   ]

@@ -88,7 +88,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Get an existing Asset from a registry, by asset name.
 	 *
-	 * @param   string  $type  Asset type, script or stylesheet
+	 * @param   string  $type  Asset type, script or style
 	 * @param   string  $name  Asset name
 	 *
 	 * @return  WebAssetItem
@@ -113,7 +113,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Add Asset to registry of known assets
 	 *
-	 * @param   string                 $type   Asset type, script or stylesheet
+	 * @param   string                 $type   Asset type, script or style
 	 * @param   WebAssetItemInterface  $asset  Asset instance
 	 *
 	 * @return  self
@@ -137,7 +137,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	/**
 	 * Remove Asset from registry.
 	 *
-	 * @param   string  $type  Asset type, script or stylesheet
+	 * @param   string  $type  Asset type, script or style
 	 * @param   string  $name  Asset name
 	 *
 	 * @return  self
