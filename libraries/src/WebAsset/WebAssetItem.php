@@ -41,7 +41,7 @@ class WebAssetItem implements WebAssetItemInterface
 	 * @var    string
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $type;
+	protected $type = '';
 
 	/**
 	 * Additional options for the asset

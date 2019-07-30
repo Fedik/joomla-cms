@@ -148,7 +148,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 				throw new \BadMethodCallException('Asset name are required');
 			}
 
-			return $this->enable($type, $arguments[0]);
+			return $this->enableAsset($type, $arguments[0]);
 		}
 
 		if (0 === strpos($method, 'disable'))
@@ -160,7 +160,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 				throw new \BadMethodCallException('Asset name are required');
 			}
 
-			return $this->disable($type, $arguments[0]);
+			return $this->disableAsset($type, $arguments[0]);
 		}
 
 		throw new \BadMethodCallException(sprintf('Undefined method %s in class %s', $method, get_class($this)));
@@ -179,11 +179,11 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 *
 	 * @since  __DEPLOY_VERSION__
 	 */
-	public function enable(string $type, string $name): WebAssetManagerInterface
+	public function enableAsset(string $type, string $name): WebAssetManagerInterface
 	{
 		if ($this->locked)
 		{
-			throw new InvalidActionException('WebAssetManager are locked, you are came late');
+			throw new InvalidActionException('WebAssetManager are locked, you came late');
 		}
 
 		// Check whether asset exists
@@ -224,11 +224,11 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 *
 	 * @since  __DEPLOY_VERSION__
 	 */
-	public function disable(string $type, string $name): WebAssetManagerInterface
+	public function disableAsset(string $type, string $name): WebAssetManagerInterface
 	{
 		if ($this->locked)
 		{
-			throw new InvalidActionException('WebAssetManager are locked, you are came late');
+			throw new InvalidActionException('WebAssetManager are locked, you came late');
 		}
 
 		// Check whether asset exists
@@ -416,7 +416,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	{
 		if ($this->locked)
 		{
-			throw new InvalidActionException('WebAssetManager are locked, you are came late');
+			throw new InvalidActionException('WebAssetManager are locked, you came late');
 		}
 
 		// Trigger the event

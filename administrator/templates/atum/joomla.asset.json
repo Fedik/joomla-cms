@@ -16,17 +16,17 @@
       "uri": "fontawesome.min.css"
     },
     {
-      "name": "template.atum.ltr.css",
+      "name": "template.atum.ltr",
       "type": "stylesheet",
       "uri": "template.min.css"
     },
     {
-      "name": "template.atum.rtl.css",
+      "name": "template.atum.rtl",
       "type": "stylesheet",
       "uri": "template-rtl.min.css"
     },
     {
-      "name": "template.atum.user.css",
+      "name": "template.atum.user",
       "type": "stylesheet",
       "uri": "user.css"
     },
@@ -45,8 +45,8 @@
       "type": "group",
       "dependencies": [
         "template.atum.base",
-        "template.atum.ltr.css#stylesheet",
-        "template.atum.user.css#stylesheet"
+        "template.atum.ltr#stylesheet",
+        "template.atum.user#stylesheet"
       ]
     },
     {
@@ -54,8 +54,8 @@
       "type": "group",
       "dependencies": [
         "template.atum.base",
-        "template.atum.rtl.css#stylesheet",
-        "template.atum.user.css#stylesheet"
+        "template.atum.rtl#stylesheet",
+        "template.atum.user#stylesheet"
       ]
     }
   ]
