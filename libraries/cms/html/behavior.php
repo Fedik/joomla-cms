@@ -105,7 +105,7 @@ abstract class JHtmlBehavior
 	 */
 	public static function combobox()
 	{
-		Factory::getDocument()->getWebAssetManager()->enableAsset('awesomplete');
+		Factory::getDocument()->getWebAssetManager()->enableGroup('awesomplete');
 	}
 
 	/**
@@ -156,7 +156,7 @@ abstract class JHtmlBehavior
 			return;
 		}
 
-		Factory::getDocument()->getWebAssetManager()->enableAsset('multiselect');
+		Factory::getDocument()->getWebAssetManager()->enableGroup('multiselect');
 
 		// Pass the required options to the javascript
 		Factory::getDocument()->addScriptOptions('js-multiselect', ['formName' => $id]);

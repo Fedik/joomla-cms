@@ -38,21 +38,33 @@ class ScriptsRenderer extends DocumentRenderer
 		$tab          = $this->_doc->_getTab();
 		$buffer       = '';
 		$mediaVersion = $this->_doc->getMediaVersion();
+		$scripts      = $this->_doc->getWebAssetManager()->getAssets('script', true);
+		$rendered     = [];
 
 		$defaultJsMimes         = array('text/javascript', 'application/javascript', 'text/x-javascript', 'application/x-javascript');
 		$html5NoValueAttributes = array('defer', 'async');
 
 		// Generate script file links
-		foreach ($this->_doc->_scripts as $src => $attribs)
+		foreach ($scripts as $scriptAsset)
 		{
+			$src = $scriptAsset->getUri();
+
+			if (!$src || !empty($rendered[$src]))
+			{
+				continue;
+			}
+
+			$rendered[$src] = true;
+			$attribs        = $scriptAsset->getAttributes();
+
 			// Check if script uses IE conditional statements.
-			$conditional = isset($attribs['options']) && isset($attribs['options']['conditional']) ? $attribs['options']['conditional'] : null;
+			$conditional = $scriptAsset->getOption('conditional');
+			$version     = $scriptAsset->getVersion();
 
 			// Check if script uses media version.
-			if (isset($attribs['options']['version']) && $attribs['options']['version'] && strpos($src, '?') === false
-				&& ($mediaVersion || $attribs['options']['version'] !== 'auto'))
+			if ($version && strpos($src, '?') === false && ($mediaVersion || $version !== 'auto'))
 			{
-				$src .= '?' . ($attribs['options']['version'] === 'auto' ? $mediaVersion : $attribs['options']['version']);
+				$src .= '?' . ($version === 'auto' ? $mediaVersion : $version);
 			}
 
 			$buffer .= $tab;

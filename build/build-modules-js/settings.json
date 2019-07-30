@@ -24,6 +24,14 @@
             "name": "awesomplete",
             "type": "script",
             "uri": "awesomplete.min.js"
+          },
+          {
+            "name": "awesomplete",
+            "type": "group",
+            "dependencies": [
+              "awesomplete#style",
+              "awesomplete#script"
+            ]
           }
         ],
         "dependencies": [],

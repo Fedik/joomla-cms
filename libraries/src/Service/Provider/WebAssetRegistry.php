@@ -41,7 +41,7 @@ class WebAssetRegistry implements ServiceProviderInterface
 
 					// Add Core registry files
 					$registry
-						//->addRegistryFile('media/vendor/joomla.asset.json')
+						->addRegistryFile('media/vendor/joomla.asset.json')
 						->addRegistryFile('media/system/joomla.asset.json')
 						->addRegistryFile('media/legacy/joomla.asset.json');
 

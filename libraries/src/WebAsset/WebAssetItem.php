@@ -236,11 +236,10 @@ class WebAssetItem implements WebAssetItemInterface
 					$path = $this->resolvePath($path, 'script');
 					break;
 				case 'style':
-				case 'stylesheet':
 					$path = $this->resolvePath($path, 'stylesheet');
 					break;
 				default:
-					return $path;
+					break;
 			}
 		}
 
@@ -277,6 +276,38 @@ class WebAssetItem implements WebAssetItemInterface
 	public function getOptions(): array
 	{
 		return $this->options;
+	}
+
+	/**
+	 * Get the attribute
+	 *
+	 * @param   string  $key      An attributes key
+	 * @param   string  $default  A default value
+	 *
+	 * @return mixed
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getAttribute(string $key, $default = null)
+	{
+		if (array_key_exists($key, $this->attributes))
+		{
+			return $this->attributes[$key];
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Get all attributes
+	 *
+	 * @return array
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getAttributes(): array
+	{
+		return $this->attributes;
 	}
 
 	/**
@@ -363,7 +394,7 @@ class WebAssetItem implements WebAssetItemInterface
 	 *
 	 * @since  4.0.0
 	 */
-	protected function resolvePath(string $path, string $type): array
+	protected function resolvePath(string $path, string $type): string
 	{
 		if ($type !== 'script' && $type !== 'stylesheet')
 		{
@@ -386,7 +417,7 @@ class WebAssetItem implements WebAssetItemInterface
 			);
 		}
 
-		return $file;
+		return $file ?? '';
 	}
 
 	/**

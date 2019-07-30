@@ -160,8 +160,8 @@ abstract class JHtmlBootstrap
 
 		// Load the needed scripts
 		Factory::getDocument()->getWebAssetManager()
-			->enableAsset('core')
-			->enableAsset('bootstrap.js.bundle');
+			->enableScript('core')
+			->enableScript('bootstrap.js.bundle');
 		HTMLHelper::_('script', 'legacy/bootstrap-init.min.js', array('version' => 'auto', 'relative' => true, 'detectDebug' => $debug));
 
 		static::$loaded[__METHOD__] = true;

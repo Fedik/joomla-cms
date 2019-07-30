@@ -37,8 +37,8 @@
       "dependencies": [
         "core#script",
         "jquery#script",
-        "fontawesome-free#style",
-        "bootstrap.js.bundle",
+        "fontawesome#style",
+        "bootstrap.js.bundle#script",
         "template.cassiopeia#script",
         "template.cassiopeia.user#script"
       ]

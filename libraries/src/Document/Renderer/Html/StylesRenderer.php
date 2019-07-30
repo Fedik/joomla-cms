@@ -39,21 +39,32 @@ class StylesRenderer extends DocumentRenderer
 		$tagEnd       = ' />';
 		$buffer       = '';
 		$mediaVersion = $this->_doc->getMediaVersion();
-		$styles       = $this->_doc->getWebAssetManager()->getAssets('style');
+		$styles       = $this->_doc->getWebAssetManager()->getAssets('style', true);
+		$rendered     = [];
 
 		$defaultCssMimes = array('text/css');
-var_dump($styles);
+
 		// Generate stylesheet links
-		foreach ($this->_doc->_styleSheets as $src => $attribs)
+		foreach ($styles as $styleAsset)
 		{
+			$src = $styleAsset->getUri();
+
+			if (!$src || !empty($rendered[$src]))
+			{
+				continue;
+			}
+
+			$rendered[$src] = true;
+			$attribs        = $styleAsset->getAttributes();
+
 			// Check if stylesheet uses IE conditional statements.
-			$conditional = isset($attribs['options']) && isset($attribs['options']['conditional']) ? $attribs['options']['conditional'] : null;
+			$conditional = $styleAsset->getOption('conditional');
+			$version     = $styleAsset->getVersion();
 
 			// Check if script uses media version.
-			if (isset($attribs['options']['version']) && $attribs['options']['version'] && strpos($src, '?') === false
-				&& ($mediaVersion || $attribs['options']['version'] !== 'auto'))
+			if ($version && strpos($src, '?') === false && ($mediaVersion || $version !== 'auto'))
 			{
-				$src .= '?' . ($attribs['options']['version'] === 'auto' ? $mediaVersion : $attribs['options']['version']);
+				$src .= '?' . ($version === 'auto' ? $mediaVersion : $version);
 			}
 
 			$buffer .= $tab;

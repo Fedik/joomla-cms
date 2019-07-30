@@ -45,18 +45,18 @@ abstract class JHtmlJquery
 	public static function framework($noConflict = true, $debug = null, $migrate = false)
 	{
 		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-		$wa->enableAsset('jquery');
+		$wa->enableScript('jquery');
 
 		// Check if we are loading in noConflict
 		if ($noConflict)
 		{
-			$wa->enableAsset('jquery-noconflict');
+			$wa->enableScript('jquery-noconflict');
 		}
 
 		// Check if we are loading Migrate
 		if ($migrate)
 		{
-			$wa->enableAsset('jquery-migrate');
+			$wa->enableScript('jquery-migrate');
 		}
 
 		return;
@@ -87,7 +87,7 @@ abstract class JHtmlJquery
 		{
 			if (in_array($component, $supported))
 			{
-				$wa->enableAsset('jquery.ui.' . $component);
+				$wa->enableScript('jquery.ui.' . $component);
 			}
 		}
 
