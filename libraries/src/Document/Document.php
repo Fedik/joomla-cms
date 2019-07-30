@@ -13,6 +13,7 @@ defined('JPATH_PLATFORM') or die;
 use Joomla\Application\AbstractWebApplication;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory as CmsFactory;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\WebAsset\WebAssetManager;
 use Symfony\Component\WebLink\HttpHeaderSerializer;
 
@@ -534,8 +535,24 @@ class Document
 			$attribs['type'] = 'text/javascript';
 		}
 
-		$this->_scripts[$url]            = isset($this->_scripts[$url]) ? array_replace($this->_scripts[$url], $attribs) : $attribs;
-		$this->_scripts[$url]['options'] = isset($this->_scripts[$url]['options']) ? array_replace($this->_scripts[$url]['options'], $options) : $options;
+		// Create an asset
+		$wa   = $this->getWebAssetManager();
+		$wr   = $wa->getRegistry();
+		$name = $url;//str_replace([Uri::root(true) . '/media/', Uri::base(true) . '/templates/'], '', $url);
+
+		if (Uri::root(true) && strpos($url, Uri::root(true)) === 0)
+		{
+			$url = substr($url, strlen(Uri::root(true)));
+		}
+
+		$options['type'] = 'script';
+
+		$asset = $wr->createAsset($name, $url, $options, $attribs);
+		$wr->add('script', $asset);
+		$wa->enableAsset('script', $name);
+
+//		$this->_scripts[$url]            = isset($this->_scripts[$url]) ? array_replace($this->_scripts[$url], $attribs) : $attribs;
+//		$this->_scripts[$url]['options'] = isset($this->_scripts[$url]['options']) ? array_replace($this->_scripts[$url]['options'], $options) : $options;
 
 		return $this;
 	}
@@ -634,16 +651,32 @@ class Document
 			$attribs['type'] = 'text/css';
 		}
 
-		$this->_styleSheets[$url] = isset($this->_styleSheets[$url]) ? array_replace($this->_styleSheets[$url], $attribs) : $attribs;
+		// Create an asset
+		$wa   = $this->getWebAssetManager();
+		$wr   = $wa->getRegistry();
+		$name = $url; //str_replace([Uri::root(true) . '/media/', Uri::base(true) . '/templates/'], '', $url);
 
-		if (isset($this->_styleSheets[$url]['options']))
+		if (Uri::root(true) && strpos($url, Uri::root(true)) === 0)
 		{
-			$this->_styleSheets[$url]['options'] = array_replace($this->_styleSheets[$url]['options'], $options);
+			$url = substr($url, strlen(Uri::root(true)));
 		}
-		else
-		{
-			$this->_styleSheets[$url]['options'] = $options;
-		}
+
+		$options['type'] = 'style';
+
+		$asset = $wr->createAsset($name, $url, $options, $attribs);
+		$wr->add('style', $asset);
+		$wa->enableAsset('style', $name);
+
+//		$this->_styleSheets[$url] = isset($this->_styleSheets[$url]) ? array_replace($this->_styleSheets[$url], $attribs) : $attribs;
+//
+//		if (isset($this->_styleSheets[$url]['options']))
+//		{
+//			$this->_styleSheets[$url]['options'] = array_replace($this->_styleSheets[$url]['options'], $options);
+//		}
+//		else
+//		{
+//			$this->_styleSheets[$url]['options'] = $options;
+//		}
 
 		return $this;
 	}
