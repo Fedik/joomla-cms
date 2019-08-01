@@ -25,7 +25,7 @@ class WebAssetItem implements WebAssetItemInterface
 	 * @var    string  $name
 	 * @since  4.0.0
 	 */
-	protected $name;
+	protected $name = '';
 
 	/**
 	 * The URI for the asset
@@ -33,7 +33,7 @@ class WebAssetItem implements WebAssetItemInterface
 	 * @var    string
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $uri;
+	protected $uri = '';
 
 	/**
 	 * The asset type, script or stylesheet
@@ -73,7 +73,7 @@ class WebAssetItem implements WebAssetItemInterface
 	 * @var    string
 	 * @since  4.0.0
 	 */
-	protected $version;
+	protected $version = 'auto';
 
 	/**
 	 * Item weight
@@ -103,10 +103,10 @@ class WebAssetItem implements WebAssetItemInterface
 		array $dependencies = []
 	)
 	{
-		$this->name         = $name;
-		$this->uri          = $uri;
-		$this->type         = !empty($options['type']) ? $options['type'] : null;
-		$this->version      = !empty($options['version']) ? $options['version'] : null;
+		$this->name    = $name;
+		$this->uri     = $uri;
+		$this->type    = !empty($options['type']) ? $options['type'] : '';
+		$this->version = array_key_exists('version', $options) ? $options['version'] : '';
 
 		if (array_key_exists('attributes', $options))
 		{
@@ -229,7 +229,7 @@ class WebAssetItem implements WebAssetItemInterface
 	{
 		$path = $this->uri;
 
-		if ($resolvePath)
+		if ($resolvePath && $path)
 		{
 			switch ($this->getType()){
 				case 'script':

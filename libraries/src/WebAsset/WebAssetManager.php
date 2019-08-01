@@ -21,6 +21,13 @@ use Joomla\Event\DispatcherAwareTrait;
 /**
  * Web Asset Manager class
  *
+ * @method WebAssetManager registerStyle(WebAssetItem $asset)
+ * @method WebAssetManager enableStyle($name)
+ * @method WebAssetManager disableStyle($name)
+ * @method WebAssetManager registerScript(WebAssetItem $asset)
+ * @method WebAssetManager enableScript($name)
+ * @method WebAssetManager disableScript($name)
+ *
  * @since  4.0.0
  */
 class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterface
@@ -163,6 +170,18 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 			return $this->disableAsset($type, $arguments[0]);
 		}
 
+		if (0 === strpos($method, 'register'))
+		{
+			$type = strtolower(substr($method, 8));
+
+			if (empty($arguments[0]))
+			{
+				throw new \BadMethodCallException('Asset instance are required');
+			}
+
+			return $this->registerAsset($type, $arguments[0]);
+		}
+
 		throw new \BadMethodCallException(sprintf('Undefined method %s in class %s', $method, get_class($this)));
 	}
 
@@ -288,6 +307,23 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	public function isAssetActive(string $type, string $name): bool
 	{
 		return $this->getAssetState($type, $name) !== static::ASSET_STATE_INACTIVE;
+	}
+
+	/**
+	 * Register a new asset
+	 *
+	 * @param   string        $type   The asset type, script or style
+	 * @param   WebAssetItem  $asset  The asset to register
+	 *
+	 * @return  self
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function registerAsset(string $type, WebAssetItem $asset)
+	{
+		$this->registry->add($type, $asset);
+
+		return $this;
 	}
 
 	/**

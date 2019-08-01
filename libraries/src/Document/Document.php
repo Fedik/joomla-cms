@@ -14,6 +14,7 @@ use Joomla\Application\AbstractWebApplication;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory as CmsFactory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\WebAsset\WebAssetItem;
 use Joomla\CMS\WebAsset\WebAssetManager;
 use Symfony\Component\WebLink\HttpHeaderSerializer;
 
@@ -536,20 +537,17 @@ class Document
 		}
 
 		// Create an asset
-		$wa   = $this->getWebAssetManager();
-		$wr   = $wa->getRegistry();
-		$name = $url;//str_replace([Uri::root(true) . '/media/', Uri::base(true) . '/templates/'], '', $url);
+		$wa = $this->getWebAssetManager();
 
 		if (Uri::root(true) && strpos($url, Uri::root(true)) === 0)
 		{
 			$url = substr($url, strlen(Uri::root(true)));
 		}
 
+		$name = $url;
 		$options['type'] = 'script';
 
-		$asset = $wr->createAsset($name, $url, $options, $attribs);
-		$wr->add('script', $asset);
-		$wa->enableAsset('script', $name);
+		$wa->registerScript(new WebAssetItem($name, $url, $options, $attribs))->enableScript($name);
 
 //		$this->_scripts[$url]            = isset($this->_scripts[$url]) ? array_replace($this->_scripts[$url], $attribs) : $attribs;
 //		$this->_scripts[$url]['options'] = isset($this->_scripts[$url]['options']) ? array_replace($this->_scripts[$url]['options'], $options) : $options;
@@ -652,20 +650,17 @@ class Document
 		}
 
 		// Create an asset
-		$wa   = $this->getWebAssetManager();
-		$wr   = $wa->getRegistry();
-		$name = $url; //str_replace([Uri::root(true) . '/media/', Uri::base(true) . '/templates/'], '', $url);
+		$wa = $this->getWebAssetManager();
 
 		if (Uri::root(true) && strpos($url, Uri::root(true)) === 0)
 		{
 			$url = substr($url, strlen(Uri::root(true)));
 		}
 
+		$name = $url;
 		$options['type'] = 'style';
 
-		$asset = $wr->createAsset($name, $url, $options, $attribs);
-		$wr->add('style', $asset);
-		$wa->enableAsset('style', $name);
+		$wa->registerStyle(new WebAssetItem($name, $url, $options, $attribs))->enableStyle($name);
 
 //		$this->_styleSheets[$url] = isset($this->_styleSheets[$url]) ? array_replace($this->_styleSheets[$url], $attribs) : $attribs;
 //
