@@ -121,6 +121,17 @@ class ScriptsRenderer extends DocumentRenderer
 				}
 			}
 
+			// To help to debug the asset
+			if (JDEBUG)
+			{
+				$buffer .= ' data-asset-name="' . htmlspecialchars($scriptAsset->getName()) . '"';
+
+				if ($scriptAsset->getDependencies())
+				{
+					$buffer .= ' data-asset-dependencies="' . htmlspecialchars(implode(',', $scriptAsset->getDependencies())) . '"';
+				}
+			}
+
 			$buffer .= '></script>';
 
 			// This is for IE conditional statements support.

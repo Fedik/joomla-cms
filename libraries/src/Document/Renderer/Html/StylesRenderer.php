@@ -107,6 +107,17 @@ class StylesRenderer extends DocumentRenderer
 				$buffer .= '="' . htmlspecialchars($value, ENT_COMPAT, 'UTF-8') . '"';
 			}
 
+			// To help to debug the asset
+			if (JDEBUG)
+			{
+				$buffer .= ' data-asset-name="' . htmlspecialchars($styleAsset->getName()) . '"';
+
+				if ($styleAsset->getDependencies())
+				{
+					$buffer .= ' data-asset-dependencies="' . htmlspecialchars(implode(',', $styleAsset->getDependencies())) . '"';
+				}
+			}
+
 			$buffer .= $tagEnd;
 
 			// This is for IE conditional statements support.

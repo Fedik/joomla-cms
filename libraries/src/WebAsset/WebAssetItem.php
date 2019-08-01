@@ -231,11 +231,11 @@ class WebAssetItem implements WebAssetItemInterface
 
 		if ($resolvePath && $path)
 		{
-			switch ($this->getType()){
-				case 'script':
+			switch (pathinfo($path, PATHINFO_EXTENSION)){
+				case 'js':
 					$path = $this->resolvePath($path, 'script');
 					break;
-				case 'style':
+				case 'css':
 					$path = $this->resolvePath($path, 'stylesheet');
 					break;
 				default:
@@ -412,7 +412,7 @@ class WebAssetItem implements WebAssetItemInterface
 				$path,
 				[
 					'pathOnly' => true,
-					'relative' => !$this->isPathAbsolute($path)
+					'relative' => !$this->isPathAbsolute($path),
 				]
 			);
 		}

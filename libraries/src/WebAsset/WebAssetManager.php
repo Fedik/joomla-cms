@@ -24,6 +24,7 @@ use Joomla\Event\DispatcherAwareTrait;
  * @method WebAssetManager registerStyle(WebAssetItem $asset)
  * @method WebAssetManager enableStyle($name)
  * @method WebAssetManager disableStyle($name)
+ *
  * @method WebAssetManager registerScript(WebAssetItem $asset)
  * @method WebAssetManager enableScript($name)
  * @method WebAssetManager disableScript($name)
@@ -206,7 +207,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		}
 
 		// Check whether asset exists
-		$this->registry->get($type, $name);
+		$asset = $this->registry->get($type, $name);
 
 		if (empty($this->activeAssets[$type]))
 		{
@@ -225,7 +226,10 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		$this->activeAssets[$type][$name] = static::ASSET_STATE_ACTIVE;
 
 		// To re-check dependencies
-		$this->dependenciesIsActual = false;
+		if ($asset->getDependencies())
+		{
+			$this->dependenciesIsActual = false;
+		}
 
 		return $this;
 	}

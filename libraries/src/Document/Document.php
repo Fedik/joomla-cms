@@ -545,7 +545,8 @@ class Document
 		}
 
 		$name = $url;
-		$options['type'] = 'script';
+		$options['type']   = 'script';
+		$options['weight'] = count($wa->getAssets('script')) * 1000;
 
 		$wa->registerScript(new WebAssetItem($name, $url, $options, $attribs))->enableScript($name);
 
@@ -658,7 +659,8 @@ class Document
 		}
 
 		$name = $url;
-		$options['type'] = 'style';
+		$options['type']   = 'style';
+		$options['weight'] = count($wa->getAssets('style')) * 1000;
 
 		$wa->registerStyle(new WebAssetItem($name, $url, $options, $attribs))->enableStyle($name);
 
