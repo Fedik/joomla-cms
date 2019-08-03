@@ -312,6 +312,21 @@ class WebAssetManager implements WebAssetManagerInterface
 	}
 
 	/**
+	 * Check whether the asset exists in the registry.
+	 *
+	 * @param   string  $type  Asset type, script or style
+	 * @param   string  $name  Asset name
+	 *
+	 * @return  boolean
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function assetExists(string $type, string $name): bool
+	{
+		return $this->registry->exists($type, $name);
+	}
+
+	/**
 	 * Register a new asset.
 	 * Allow to register WebAssetItem instance in the registry, by call registerAsset($type, $assetInstance)
 	 * Or create an asset on fly (from name and Uri) and register in the registry, by call registerAsset($type, $assetName, $uri, $options ....)

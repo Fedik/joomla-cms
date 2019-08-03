@@ -231,13 +231,13 @@ abstract class JHtmlBehavior
 			return;
 		}
 
-		// Include core
-		static::core();
+		/** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
+		$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-		// Include jQuery
-		HTMLHelper::_('jquery.framework');
-
-		HTMLHelper::_('script', 'legacy/highlighter.min.js', array('version' => 'auto', 'relative' => true));
+		$wa
+			->registerScript('joomla.highlighter', 'legacy/highlighter.min.js', ['dependencies' => ['core', 'jquery']])
+			->useScript('joomla.highlighter')
+		;
 
 		foreach ($terms as $i => $term)
 		{
