@@ -52,23 +52,53 @@ class MetasRenderer extends DocumentRenderer
 
 		/** @var \Joomla\CMS\Application\CMSApplication $app */
 		$app = Factory::getApplication();
+		$wa  = $this->_doc->getWebAssetManager();
 
 		// Trigger the onWebAssetBeforeAttach event
 		$event = AbstractEvent::create(
 			'onWebAssetBeforeAttach',
 			[
 				'eventClass' => 'Joomla\\CMS\\Event\\WebAsset\\WebAssetBeforeAttachEvent',
-				'subject'  => $this->_doc->getWebAssetManager(),
+				'subject'  => $wa,
 				'document' => $this->_doc,
 			]
 		);
 		$app->getDispatcher()->dispatch($event->getName(), $event);
 
-		// Trigger the onBeforeCompileHead event
-		$app->triggerEvent('onBeforeCompileHead');
+		// Merge assets with an existing, to keep b.c.
+		$styles  = [];
+		$scripts = [];
+
+		foreach ($wa->getAssets('style', true) as $asset)
+		{
+			$uri = $asset->getUri();
+
+			if (!$uri) continue;
+
+			$styles[$uri] = $asset->getAttributes();
+			$styles[$uri]['options']   = $asset->getOptions();
+			$styles[$uri]['assetName'] = $asset->getName();
+		}
+
+		foreach ($wa->getAssets('script', true) as $asset)
+		{
+			$uri = $asset->getUri();
+
+			if (!$uri) continue;
+
+			$scripts[$uri] = $asset->getAttributes();
+			$scripts[$uri]['options']   = $asset->getOptions();
+			$scripts[$uri]['assetName'] = $asset->getName();
+		}
+
+		$this->_doc->_styleSheets = array_replace($styles, $this->_doc->_styleSheets);
+		$this->_doc->_scripts     = array_replace($scripts, $this->_doc->_scripts);
 
 		// Lock the AssetManager
-		$this->_doc->getWebAssetManager()->lock();
+		$wa->lock();
+
+		// Trigger the onBeforeCompileHead event
+		$app->triggerEvent('onBeforeCompileHead');
 
 		// Get line endings
 		$lnEnd        = $this->_doc->_getLineEnd();
