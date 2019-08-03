@@ -43,7 +43,7 @@
     },
     {
       "name": "searchtools",
-      "type": "group",
+      "type": "preset",
       "dependencies": [
         "searchtools#style",
         "searchtools#script"

@@ -44,7 +44,7 @@ abstract class JHtmlBehavior
 	 */
 	public static function core()
 	{
-		Factory::getApplication()->getDocument()->getWebAssetManager()->enableScript('core');
+		Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('core');
 	}
 
 	/**
@@ -76,7 +76,7 @@ abstract class JHtmlBehavior
 		Text::script('JLIB_FORM_FIELD_REQUIRED_CHECK');
 		Text::script('JLIB_FORM_FIELD_INVALID_VALUE');
 
-		Factory::getDocument()->getWebAssetManager()->enableScript('fields.validate');
+		Factory::getDocument()->getWebAssetManager()->useScript('fields.validate');
 
 		static::$loaded[__METHOD__] = true;
 	}
@@ -105,7 +105,7 @@ abstract class JHtmlBehavior
 	 */
 	public static function combobox()
 	{
-		Factory::getDocument()->getWebAssetManager()->enableGroup('awesomplete');
+		Factory::getDocument()->getWebAssetManager()->usePreset('awesomplete');
 	}
 
 	/**
@@ -156,7 +156,7 @@ abstract class JHtmlBehavior
 			return;
 		}
 
-		Factory::getDocument()->getWebAssetManager()->enableGroup('multiselect');
+		Factory::getDocument()->getWebAssetManager()->useScript('multiselect');
 
 		// Pass the required options to the javascript
 		Factory::getDocument()->addScriptOptions('js-multiselect', ['formName' => $id]);
@@ -192,7 +192,7 @@ abstract class JHtmlBehavior
 	 */
 	public static function keepalive()
 	{
-		Factory::getApplication()->getDocument()->getWebAssetManager()->enableScript('keepalive');
+		Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('keepalive');
 
 		return;
 	}

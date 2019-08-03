@@ -32,7 +32,7 @@
     },
     {
       "name": "template.atum.base",
-      "type": "group",
+      "type": "preset",
       "dependencies": [
         "core#script",
         "fontawesome#style",
@@ -42,7 +42,7 @@
     },
     {
       "name": "template.atum.ltr",
-      "type": "group",
+      "type": "preset",
       "dependencies": [
         "template.atum.base",
         "template.atum.ltr#style",
@@ -51,7 +51,7 @@
     },
     {
       "name": "template.atum.rtl",
-      "type": "group",
+      "type": "preset",
       "dependencies": [
         "template.atum.base",
         "template.atum.rtl#style",

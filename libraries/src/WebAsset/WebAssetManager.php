@@ -22,12 +22,16 @@ use Joomla\Event\DispatcherAwareTrait;
  * Web Asset Manager class
  *
  * @method WebAssetManager registerStyle(WebAssetItem $asset)
- * @method WebAssetManager enableStyle($name)
+ * @method WebAssetManager useStyle($name)
  * @method WebAssetManager disableStyle($name)
  *
  * @method WebAssetManager registerScript(WebAssetItem $asset)
- * @method WebAssetManager enableScript($name)
+ * @method WebAssetManager useScript($name)
  * @method WebAssetManager disableScript($name)
+ *
+ * @method WebAssetManager registerPreset(WebAssetItem $asset)
+ * @method WebAssetManager usePreset($name)
+ * @method WebAssetManager disablePreset($name)
  *
  * @since  4.0.0
  */
@@ -147,16 +151,16 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 */
 	public function __call($method, $arguments)
 	{
-		if (0 === strpos($method, 'enable'))
+		if (0 === strpos($method, 'use'))
 		{
-			$type = strtolower(substr($method, 6));
+			$type = strtolower(substr($method, 3));
 
 			if (empty($arguments[0]))
 			{
 				throw new \BadMethodCallException('Asset name are required');
 			}
 
-			return $this->enableAsset($type, $arguments[0]);
+			return $this->useAsset($type, $arguments[0]);
 		}
 
 		if (0 === strpos($method, 'disable'))
@@ -199,7 +203,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	 *
 	 * @since  __DEPLOY_VERSION__
 	 */
-	public function enableAsset(string $type, string $name): WebAssetManagerInterface
+	public function useAsset(string $type, string $name): WebAssetManagerInterface
 	{
 		if ($this->locked)
 		{

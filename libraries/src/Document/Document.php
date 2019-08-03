@@ -332,7 +332,7 @@ class Document
 			$webAssetManager = new WebAssetManager(\Joomla\CMS\Factory::getContainer()->get('webassetregistry'));
 //			$wg = $webAssetManager->getRegistry();
 //
-//			$webAssetManager->enableGroup('searchtools');
+//			$webAssetManager->usePreset('searchtools');
 //
 //			$scripts = $webAssetManager->getAssets('script', true);
 //			$styles  = [];//$webAssetManager->getAssets('stylesheet');
@@ -548,7 +548,7 @@ class Document
 		$options['type']   = 'script';
 		$options['weight'] = count($wa->getAssets('script')) * 1000;
 
-		$wa->registerScript(new WebAssetItem($name, $url, $options, $attribs))->enableScript($name);
+		$wa->registerScript(new WebAssetItem($name, $url, $options, $attribs))->useScript($name);
 
 //		$this->_scripts[$url]            = isset($this->_scripts[$url]) ? array_replace($this->_scripts[$url], $attribs) : $attribs;
 //		$this->_scripts[$url]['options'] = isset($this->_scripts[$url]['options']) ? array_replace($this->_scripts[$url]['options'], $options) : $options;
@@ -662,7 +662,7 @@ class Document
 		$options['type']   = 'style';
 		$options['weight'] = count($wa->getAssets('style')) * 1000;
 
-		$wa->registerStyle(new WebAssetItem($name, $url, $options, $attribs))->enableStyle($name);
+		$wa->registerStyle(new WebAssetItem($name, $url, $options, $attribs))->useStyle($name);
 
 //		$this->_styleSheets[$url] = isset($this->_styleSheets[$url]) ? array_replace($this->_styleSheets[$url], $attribs) : $attribs;
 //

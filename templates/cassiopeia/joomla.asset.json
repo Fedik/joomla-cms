@@ -33,7 +33,7 @@
 
     {
       "name": "template.cassiopeia.base",
-      "type": "group",
+      "type": "preset",
       "dependencies": [
         "core#script",
         "jquery#script",
@@ -45,7 +45,7 @@
     },
     {
       "name": "template.cassiopeia.ltr",
-      "type": "group",
+      "type": "preset",
       "dependencies": [
         "template.cassiopeia.base",
         "template.cassiopeia.ltr#style",
@@ -54,7 +54,7 @@
     },
     {
       "name": "template.cassiopeia.rtl",
-      "type": "group",
+      "type": "preset",
       "dependencies": [
         "template.cassiopeia.base",
         "template.cassiopeia.rtl#style",

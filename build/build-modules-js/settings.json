@@ -27,7 +27,7 @@
           },
           {
             "name": "awesomplete",
-            "type": "group",
+            "type": "preset",
             "dependencies": [
               "awesomplete#style",
               "awesomplete#script"
@@ -114,7 +114,7 @@
           },
           {
             "name": "cropperjs",
-            "type": "group",
+            "type": "preset",
             "dependencies": [
               "cropperjs#style",
               "cropperjs#script"
@@ -147,7 +147,7 @@
           },
           {
             "name": "choicesjs",
-            "type": "group",
+            "type": "preset",
             "dependencies": [
               "choicesjs#style",
               "choicesjs#script"
@@ -196,7 +196,7 @@
           },
           {
             "name": "dragula",
-            "type": "group",
+            "type": "preset",
             "dependencies": [
               "dragula#style",
               "dragula#script"
@@ -369,7 +369,7 @@
           },
           {
             "name": "minicolors",
-            "type": "group",
+            "type": "preset",
             "dependencies": [
               "minicolors#style",
               "minicolors#script"
@@ -442,7 +442,7 @@
           },
           {
             "name": "chosen",
-            "type": "group",
+            "type": "preset",
             "dependencies": [
               "chosen#style",
               "chosen#script"
@@ -507,7 +507,7 @@
           },
           {
             "name": "qrcode",
-            "type": "group",
+            "type": "preset",
             "dependencies": [
               "qrcode#script",
               "qrcode_SJIS#script",
