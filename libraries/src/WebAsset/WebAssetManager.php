@@ -90,15 +90,6 @@ class WebAssetManager implements WebAssetManagerInterface
 	protected $locked = false;
 
 	/**
-	 * Whether append asset version to asset path
-	 *
-	 * @var    boolean
-	 *
-	 * @since  4.0.0
-	 */
-	protected $useVersioning = true;
-
-	/**
 	 * Internal marker to keep track when need to recheck dependencies
 	 *
 	 * @var    boolean
@@ -151,7 +142,7 @@ class WebAssetManager implements WebAssetManagerInterface
 
 			if (empty($arguments[0]))
 			{
-				throw new \BadMethodCallException('Asset name are required');
+				throw new \BadMethodCallException('An asset name are required');
 			}
 
 			return $this->useAsset($type, $arguments[0]);
@@ -163,7 +154,7 @@ class WebAssetManager implements WebAssetManagerInterface
 
 			if (empty($arguments[0]))
 			{
-				throw new \BadMethodCallException('Asset name are required');
+				throw new \BadMethodCallException('An asset name are required');
 			}
 
 			return $this->disableAsset($type, $arguments[0]);
@@ -175,7 +166,7 @@ class WebAssetManager implements WebAssetManagerInterface
 
 			if (empty($arguments[0]))
 			{
-				throw new \BadMethodCallException('Asset instance are required');
+				throw new \BadMethodCallException('An asset instance or an asset name are required');
 			}
 
 			return $this->registerAsset($type, ...$arguments);
@@ -544,7 +535,7 @@ class WebAssetManager implements WebAssetManagerInterface
 		foreach (array_reverse($graphOrder) as $index => $name)
 		{
 			$graphWeights[$name]     = $index * 10 + 10;
-			$requestedWeights[$name] = $activeAssets[$name]->getWeight() ?: $fifoWeights[$name];
+			$requestedWeights[$name] = $activeAssets[$name]->getOption('weight') ?: $fifoWeights[$name];
 		}
 
 		// Try to set a requested weight, or make it close as possible to requested, but keep the Graph order
@@ -728,21 +719,5 @@ class WebAssetManager implements WebAssetManagerInterface
 		}
 
 		return $assets;
-	}
-
-	/**
-	 * Whether append asset version to asset path
-	 *
-	 * @param   bool  $useVersioning  Boolean flag
-	 *
-	 * @return  self
-	 *
-	 * @since   4.0.0
-	 */
-	public function useVersioning(bool $useVersioning): self
-	{
-		$this->useVersioning = $useVersioning;
-
-		return $this;
 	}
 }

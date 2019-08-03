@@ -189,8 +189,6 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 		$nameSpace = array_key_exists('namespace', $options) ? $options['namespace'] : __NAMESPACE__ . '\\AssetItem';
 		$className = array_key_exists('class', $options) ? $options['class'] : null;
 
-		unset($options['namespace'], $options['class'], $options['name']);
-
 		if ($className && class_exists($nameSpace . '\\' . $className))
 		{
 			$className = $nameSpace . '\\' . $className;
@@ -304,11 +302,12 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 
 			$item['type'] = strtolower($item['type']);
 
+			$name    = $item['name'];
 			$uri     = $item['uri'] ?? '';
 			$options = $item;
 			$options['assetSource'] = $assetSource;
 
-			unset($options['uri']);
+			unset($options['uri'], $options['name']);
 
 			// Inheriting the Namespace
 			if ($namespace && !array_key_exists('namespace', $options))
@@ -316,7 +315,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 				$options['namespace'] = $namespace;
 			}
 
-			$assetItem = $this->createAsset($item['name'], $uri, $options);
+			$assetItem = $this->createAsset($name, $uri, $options);
 			$this->add($item['type'], $assetItem);
 		}
 	}

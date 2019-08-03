@@ -68,15 +68,6 @@ class WebAssetItem implements WebAssetItemInterface
 	protected $version = 'auto';
 
 	/**
-	 * Item weight
-	 *
-	 * @var    float
-	 *
-	 * @since  4.0.0
-	 */
-	protected $weight = 0;
-
-	/**
 	 * Class constructor
 	 *
 	 * @param   string  $name          The asset name
@@ -97,7 +88,12 @@ class WebAssetItem implements WebAssetItemInterface
 	{
 		$this->name    = $name;
 		$this->uri     = $uri;
-		$this->version = array_key_exists('version', $options) ? $options['version'] : '';
+
+		if (array_key_exists('version', $options))
+		{
+			$this->version = $options['version'];
+			unset($options['version']);
+		}
 
 		if (array_key_exists('attributes', $options))
 		{
@@ -118,14 +114,6 @@ class WebAssetItem implements WebAssetItemInterface
 		{
 			$this->dependencies = $dependencies;
 		}
-
-		if (!empty($options['weight']))
-		{
-			$this->weight = (float) $options['weight'];
-			unset($options['weight']);
-		}
-
-		unset($options['version'], $options['type']);
 
 		$this->options = $options;
 	}
@@ -149,9 +137,9 @@ class WebAssetItem implements WebAssetItemInterface
 	 *
 	 * @since   4.0.0
 	 */
-	public function getVersion()
+	public function getVersion(): string
 	{
-		return $this->version;
+		return $this->version ?? '';
 	}
 
 	/**
@@ -164,35 +152,6 @@ class WebAssetItem implements WebAssetItemInterface
 	public function getDependencies(): array
 	{
 		return $this->dependencies;
-	}
-
-	/**
-	 * Set the desired weight for the Asset in Graph.
-	 * Final weight will be calculated by AssetManager according to dependency Graph.
-	 *
-	 * @param   float  $weight  The asset weight
-	 *
-	 * @return  self
-	 *
-	 * @since   4.0.0
-	 */
-	public function setWeight(float $weight): WebAssetItemInterface
-	{
-		$this->weight = $weight;
-
-		return $this;
-	}
-
-	/**
-	 * Return the weight of the Asset.
-	 *
-	 * @return  float
-	 *
-	 * @since   4.0.0
-	 */
-	public function getWeight(): float
-	{
-		return $this->weight;
 	}
 
 	/**
@@ -246,6 +205,23 @@ class WebAssetItem implements WebAssetItemInterface
 	}
 
 	/**
+	 * Set the option
+	 *
+	 * @param   string  $key    An option key
+	 * @param   string  $value  An option value
+	 *
+	 * @return self
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function setOption(string $key, $value = null): WebAssetItemInterface
+	{
+		$this->options[$key] = $value;
+
+		return $this;
+	}
+
+	/**
 	 * Get all options
 	 *
 	 * @return array
@@ -278,6 +254,23 @@ class WebAssetItem implements WebAssetItemInterface
 	}
 
 	/**
+	 * Set the attribute
+	 *
+	 * @param   string  $key    An attribute key
+	 * @param   string  $value  An attribute value
+	 *
+	 * @return self
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function setAttribute(string $key, $value = null): WebAssetItemInterface
+	{
+		$this->attributes[$key] = $value;
+
+		return $this;
+	}
+
+	/**
 	 * Get all attributes
 	 *
 	 * @return array
@@ -288,80 +281,6 @@ class WebAssetItem implements WebAssetItemInterface
 	{
 		return $this->attributes;
 	}
-
-	/**
-	 * Get CSS files
-	 *
-	 * @param   boolean  $resolvePath  Whether need to search for a real paths
-	 *
-	 * @return array
-	 *
-	 * @since   4.0.0
-	 */
-//	public function getStylesheetFiles($resolvePath = true): array
-//	{
-//		if ($resolvePath)
-//		{
-//			$files = [];
-//
-//			foreach ($this->css as $path => $attr)
-//			{
-//				$resolved = $this->resolvePath($path, 'stylesheet');
-//				$fullPath = $resolved['fullPath'];
-//
-//				if (!$fullPath)
-//				{
-//					// File not found, But we keep going ???
-//					continue;
-//				}
-//
-//				$files[$fullPath] = $attr;
-//				$files[$fullPath]['__isExternal'] = $resolved['external'];
-//				$files[$fullPath]['__pathOrigin'] = $path;
-//			}
-//
-//			return $files;
-//		}
-//
-//		return $this->css;
-//	}
-
-	/**
-	 * Get JS files
-	 *
-	 * @param   boolean  $resolvePath  Whether we need to search for a real paths
-	 *
-	 * @return array
-	 *
-	 * @since   4.0.0
-	 */
-//	public function getScriptFiles($resolvePath = true): array
-//	{
-//		if ($resolvePath)
-//		{
-//			$files = [];
-//
-//			foreach ($this->js as $path => $attr)
-//			{
-//				$resolved = $this->resolvePath($path, 'script');
-//				$fullPath = $resolved['fullPath'];
-//
-//				if (!$fullPath)
-//				{
-//					// File not found, But we keep going ???
-//					continue;
-//				}
-//
-//				$files[$fullPath] = $attr;
-//				$files[$fullPath]['__isExternal'] = $resolved['external'];
-//				$files[$fullPath]['__pathOrigin'] = $path;
-//			}
-//
-//			return $files;
-//		}
-//
-//		return $this->js;
-//	}
 
 	/**
 	 * Resolve path
