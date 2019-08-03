@@ -420,25 +420,29 @@ class WebAssetManager implements WebAssetManagerInterface
 	/**
 	 * Update Dependencies state for all active Assets or only for given
 	 *
+	 * @param   string        $type  The asset type, script or style
 	 * @param   WebAssetItem  $asset  The asset instance to which need to enable dependencies
 	 *
 	 * @return  self
 	 *
 	 * @since  4.0.0
 	 */
-	protected function enableDependencies(WebAssetItem $asset = null): self
+	protected function enableDependencies(string $type = null, WebAssetItem $asset = null): self
 	{
 		if ($asset)
 		{
 			// Get all dependencies of given asset recursively
-			$allDependencies = $this->getDependenciesForAsset($asset, true);
+			$allDependencies = $this->getDependenciesForAsset($type, $asset, true);
 
-			foreach ($allDependencies as $depItem)
+			foreach ($allDependencies as $depType => $depItems)
 			{
-				// Set dependency state only when it is inactive, to keep a manually activated Asset in their original state
-				if (empty($this->activeAssets[$depItem->getType()][$depItem->getName()]))
+				foreach ($depItems as $depItem)
 				{
-					$this->activeAssets[$depItem->getType()][$depItem->getName()] = static::ASSET_STATE_DEPENDENCY;
+					// Set dependency state only when it is inactive, to keep a manually activated Asset in their original state
+					if (empty($this->activeAssets[$depType][$depItem->getName()]))
+					{
+						$this->activeAssets[$depType][$depItem->getName()] = static::ASSET_STATE_DEPENDENCY;
+					}
 				}
 			}
 		}
@@ -463,7 +467,7 @@ class WebAssetManager implements WebAssetManagerInterface
 				foreach (array_keys($activeAsset) as $name)
 				{
 					$asset = $this->registry->get($type, $name);
-					$this->enableDependencies($asset);
+					$this->enableDependencies($type, $asset);
 				}
 			}
 
@@ -663,21 +667,28 @@ class WebAssetManager implements WebAssetManagerInterface
 	/**
 	 * Return dependencies for Asset as array of WebAssetItem objects
 	 *
+	 * @param   string        $type           The asset type, script or style
 	 * @param   WebAssetItem  $asset          Asset instance
-	 * @param   boolean       $recursively    Whether to search for dependancy recursively
+	 * @param   boolean       $recursively    Whether to search for dependency recursively
+	 * @param   string        $recursionType  The type of initial item to prevent loop
 	 * @param   WebAssetItem  $recursionRoot  Initial item to prevent loop
 	 *
-	 * @return  WebAssetItem[]
+	 * @return  array
 	 *
 	 * @throws  UnsatisfiedDependencyException When Dependency cannot be found
 	 *
 	 * @since   4.0.0
 	 */
-	protected function getDependenciesForAsset(WebAssetItem $asset, $recursively = false, WebAssetItem $recursionRoot = null): array
+	protected function getDependenciesForAsset(
+		string $type,
+		WebAssetItem $asset,
+		$recursively = false,
+		string $recursionType = null,
+		WebAssetItem $recursionRoot = null): array
 	{
 		$assets        = [];
 		$recursionRoot = $recursionRoot ?? $asset;
-		$type          = $asset->getType();
+		$recursionType = $recursionType ?? $type;
 
 		foreach ($asset->getDependencies() as $depName)
 		{
@@ -691,7 +702,7 @@ class WebAssetManager implements WebAssetManagerInterface
 			}
 
 			// Skip already loaded in recursion
-			if ($recursionRoot->getName() === $depName && $recursionRoot->getType() === $depType)
+			if ($recursionRoot->getName() === $depName && $recursionType === $depType)
 			{
 				continue;
 			}
@@ -699,21 +710,21 @@ class WebAssetManager implements WebAssetManagerInterface
 			if (!$this->registry->exists($depType, $depName))
 			{
 				throw new UnsatisfiedDependencyException(
-					sprintf('Unsatisfied dependency "%s" for an asset "%s"', $depName, $asset->getName())
+					sprintf('Unsatisfied dependency "%s" for an asset "%s" of type "%s"', $depName, $asset->getName(), $depType)
 				);
 			}
 
 			$dep = $this->registry->get($depType, $depName);
 
-			$assets[$depType.$depName] = $dep;
+			$assets[$depType][$depName] = $dep;
 
 			if (!$recursively)
 			{
 				continue;
 			}
 
-			$parentDeps = $this->getDependenciesForAsset($dep, true, $recursionRoot);
-			$assets     = array_replace($assets, $parentDeps);
+			$parentDeps = $this->getDependenciesForAsset($depType, $dep, true, $recursionType, $recursionRoot);
+			$assets     = array_replace_recursive($assets, $parentDeps);
 		}
 
 		return $assets;

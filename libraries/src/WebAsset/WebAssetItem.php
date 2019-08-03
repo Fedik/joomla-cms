@@ -36,14 +36,6 @@ class WebAssetItem implements WebAssetItemInterface
 	protected $uri = '';
 
 	/**
-	 * The asset type, script or stylesheet
-	 *
-	 * @var    string
-	 * @since  __DEPLOY_VERSION__
-	 */
-	protected $type = '';
-
-	/**
 	 * Additional options for the asset
 	 *
 	 * @var    array
@@ -105,7 +97,6 @@ class WebAssetItem implements WebAssetItemInterface
 	{
 		$this->name    = $name;
 		$this->uri     = $uri;
-		$this->type    = !empty($options['type']) ? $options['type'] : '';
 		$this->version = array_key_exists('version', $options) ? $options['version'] : '';
 
 		if (array_key_exists('attributes', $options))
@@ -149,18 +140,6 @@ class WebAssetItem implements WebAssetItemInterface
 	public function getName(): string
 	{
 		return $this->name;
-	}
-
-	/**
-	 * Return Asset type
-	 *
-	 * @return  string
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function getType(): string
-	{
-		return $this->type;
 	}
 
 	/**
