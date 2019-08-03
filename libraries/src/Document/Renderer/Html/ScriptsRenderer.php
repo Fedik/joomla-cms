@@ -38,33 +38,21 @@ class ScriptsRenderer extends DocumentRenderer
 		$tab          = $this->_doc->_getTab();
 		$buffer       = '';
 		$mediaVersion = $this->_doc->getMediaVersion();
-		$scripts      = $this->_doc->getWebAssetManager()->getAssets('script', true);
-		$rendered     = [];
 
 		$defaultJsMimes         = array('text/javascript', 'application/javascript', 'text/x-javascript', 'application/x-javascript');
 		$html5NoValueAttributes = array('defer', 'async');
 
 		// Generate script file links
-		foreach ($scripts as $scriptAsset)
+		foreach ($this->_doc->_scripts as $src => $attribs)
 		{
-			$src = $scriptAsset->getUri();
-
-			if (!$src || !empty($rendered[$src]))
-			{
-				continue;
-			}
-
-			$rendered[$src] = true;
-			$attribs        = $scriptAsset->getAttributes();
-
 			// Check if script uses IE conditional statements.
-			$conditional = $scriptAsset->getOption('conditional');
-			$version     = $scriptAsset->getVersion();
+			$conditional = isset($attribs['options']) && isset($attribs['options']['conditional']) ? $attribs['options']['conditional'] : null;
 
 			// Check if script uses media version.
-			if ($version && strpos($src, '?') === false && ($mediaVersion || $version !== 'auto'))
+			if (isset($attribs['options']['version']) && $attribs['options']['version'] && strpos($src, '?') === false
+				&& ($mediaVersion || $attribs['options']['version'] !== 'auto'))
 			{
-				$src .= '?' . ($version === 'auto' ? $mediaVersion : $version);
+				$src .= '?' . ($attribs['options']['version'] === 'auto' ? $mediaVersion : $attribs['options']['version']);
 			}
 
 			$buffer .= $tab;
@@ -118,17 +106,6 @@ class ScriptsRenderer extends DocumentRenderer
 					$value = !is_scalar($value) ? json_encode($value) : $value;
 
 					$buffer .= '="' . htmlspecialchars($value, ENT_COMPAT, 'UTF-8') . '"';
-				}
-			}
-
-			// To help to debug the asset
-			if (JDEBUG)
-			{
-				$buffer .= ' data-asset-name="' . htmlspecialchars($scriptAsset->getName()) . '"';
-
-				if ($scriptAsset->getDependencies())
-				{
-					$buffer .= ' data-asset-dependencies="' . htmlspecialchars(implode(',', $scriptAsset->getDependencies())) . '"';
 				}
 			}
 

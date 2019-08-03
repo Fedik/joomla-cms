@@ -39,32 +39,20 @@ class StylesRenderer extends DocumentRenderer
 		$tagEnd       = ' />';
 		$buffer       = '';
 		$mediaVersion = $this->_doc->getMediaVersion();
-		$styles       = $this->_doc->getWebAssetManager()->getAssets('style', true);
-		$rendered     = [];
 
 		$defaultCssMimes = array('text/css');
 
 		// Generate stylesheet links
-		foreach ($styles as $styleAsset)
+		foreach ($this->_doc->_styleSheets as $src => $attribs)
 		{
-			$src = $styleAsset->getUri();
-
-			if (!$src || !empty($rendered[$src]))
-			{
-				continue;
-			}
-
-			$rendered[$src] = true;
-			$attribs        = $styleAsset->getAttributes();
-
 			// Check if stylesheet uses IE conditional statements.
-			$conditional = $styleAsset->getOption('conditional');
-			$version     = $styleAsset->getVersion();
+			$conditional = isset($attribs['options']) && isset($attribs['options']['conditional']) ? $attribs['options']['conditional'] : null;
 
 			// Check if script uses media version.
-			if ($version && strpos($src, '?') === false && ($mediaVersion || $version !== 'auto'))
+			if (isset($attribs['options']['version']) && $attribs['options']['version'] && strpos($src, '?') === false
+				&& ($mediaVersion || $attribs['options']['version'] !== 'auto'))
 			{
-				$src .= '?' . ($version === 'auto' ? $mediaVersion : $version);
+				$src .= '?' . ($attribs['options']['version'] === 'auto' ? $mediaVersion : $attribs['options']['version']);
 			}
 
 			$buffer .= $tab;
@@ -105,17 +93,6 @@ class StylesRenderer extends DocumentRenderer
 				$value = !is_scalar($value) ? json_encode($value) : $value;
 
 				$buffer .= '="' . htmlspecialchars($value, ENT_COMPAT, 'UTF-8') . '"';
-			}
-
-			// To help to debug the asset
-			if (JDEBUG)
-			{
-				$buffer .= ' data-asset-name="' . htmlspecialchars($styleAsset->getName()) . '"';
-
-				if ($styleAsset->getDependencies())
-				{
-					$buffer .= ' data-asset-dependencies="' . htmlspecialchars(implode(',', $styleAsset->getDependencies())) . '"';
-				}
 			}
 
 			$buffer .= $tagEnd;
