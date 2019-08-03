@@ -13,8 +13,6 @@ defined('JPATH_PLATFORM') or die;
 use Joomla\Application\AbstractWebApplication;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory as CmsFactory;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\WebAsset\WebAssetItem;
 use Joomla\CMS\WebAsset\WebAssetManager;
 use Symfony\Component\WebLink\HttpHeaderSerializer;
 
@@ -330,16 +328,7 @@ class Document
 		else
 		{
 			$webAssetManager = new WebAssetManager(\Joomla\CMS\Factory::getContainer()->get('webassetregistry'));
-//			$wg = $webAssetManager->getRegistry();
-//
-//			$webAssetManager->usePreset('searchtools');
-//
-//			$scripts = $webAssetManager->getAssets('script', true);
-//			$styles  = [];//$webAssetManager->getAssets('stylesheet');
-//
-//var_dump($scripts, $styles);
-//exit;
-//			$webAssetManager->setDispatcher(CmsFactory::getApplication()->getDispatcher());
+			$webAssetManager->setDispatcher(CmsFactory::getApplication()->getDispatcher());
 
 			$this->setWebAssetManager($webAssetManager);
 		}
@@ -536,21 +525,8 @@ class Document
 			$attribs['type'] = 'text/javascript';
 		}
 
-		// Create an asset
-		$wa = $this->getWebAssetManager();
-
-		if (Uri::root(true) && strpos($url, Uri::root(true)) === 0)
-		{
-			$url = substr($url, strlen(Uri::root(true)));
-		}
-
-		$name = $url;
-		$options['weight'] = count($wa->getAssets('script')) * 1000;
-
-		$wa->registerScript($name, $url, $options, $attribs)->useScript($name);
-
-//		$this->_scripts[$url]            = isset($this->_scripts[$url]) ? array_replace($this->_scripts[$url], $attribs) : $attribs;
-//		$this->_scripts[$url]['options'] = isset($this->_scripts[$url]['options']) ? array_replace($this->_scripts[$url]['options'], $options) : $options;
+		$this->_scripts[$url]            = isset($this->_scripts[$url]) ? array_replace($this->_scripts[$url], $attribs) : $attribs;
+		$this->_scripts[$url]['options'] = isset($this->_scripts[$url]['options']) ? array_replace($this->_scripts[$url]['options'], $options) : $options;
 
 		return $this;
 	}
@@ -649,29 +625,16 @@ class Document
 			$attribs['type'] = 'text/css';
 		}
 
-		// Create an asset
-		$wa = $this->getWebAssetManager();
+		$this->_styleSheets[$url] = isset($this->_styleSheets[$url]) ? array_replace($this->_styleSheets[$url], $attribs) : $attribs;
 
-		if (Uri::root(true) && strpos($url, Uri::root(true)) === 0)
+		if (isset($this->_styleSheets[$url]['options']))
 		{
-			$url = substr($url, strlen(Uri::root(true)));
+			$this->_styleSheets[$url]['options'] = array_replace($this->_styleSheets[$url]['options'], $options);
 		}
-
-		$name = $url;
-		$options['weight'] = count($wa->getAssets('style')) * 1000;
-
-		$wa->registerStyle($name, $url, $options, $attribs)->useStyle($name);
-
-//		$this->_styleSheets[$url] = isset($this->_styleSheets[$url]) ? array_replace($this->_styleSheets[$url], $attribs) : $attribs;
-//
-//		if (isset($this->_styleSheets[$url]['options']))
-//		{
-//			$this->_styleSheets[$url]['options'] = array_replace($this->_styleSheets[$url]['options'], $options);
-//		}
-//		else
-//		{
-//			$this->_styleSheets[$url]['options'] = $options;
-//		}
+		else
+		{
+			$this->_styleSheets[$url]['options'] = $options;
+		}
 
 		return $this;
 	}
