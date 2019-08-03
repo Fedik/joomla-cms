@@ -67,16 +67,7 @@ abstract class JHtmlBehavior
 			return;
 		}
 
-		// Include core
-		static::core();
-
-		// Add validate.js language strings
-		Text::script('JLIB_FORM_CONTAINS_INVALID_FIELDS');
-		Text::script('JLIB_FORM_FIELD_REQUIRED_VALUE');
-		Text::script('JLIB_FORM_FIELD_REQUIRED_CHECK');
-		Text::script('JLIB_FORM_FIELD_INVALID_VALUE');
-
-		Factory::getDocument()->getWebAssetManager()->useScript('fields.validate');
+		Factory::getDocument()->getWebAssetManager()->useScript('form.validate');
 
 		static::$loaded[__METHOD__] = true;
 	}

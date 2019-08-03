@@ -63,8 +63,9 @@
       "uri": "media/system/css/fields/switcher.min.css"
     },
     {
-      "name": "fields.validate",
+      "name": "form.validate",
       "type": "script",
+      "class": "FormValidateAssetItem",
       "dependencies": [
         "core",
         "punycode"
