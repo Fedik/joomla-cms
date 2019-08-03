@@ -24,7 +24,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	 * Files with Asset info. File path should be relative.
 	 *
 	 * @var    array
-	 * @example of data file:
+	 * @example of registry file:
 	 *
 	 * {
 	 *		"title" : "Example",
@@ -34,30 +34,38 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 	 *			{
 	 *				"name": "library1",
 	 *				"version": "3.5.0",
-	 *				"js": [
-	 *					"com_example/library1.min.js"
-	 *				]
+	 * 				"type":  "script",
+	 *				"uri": "com_example/library1.min.js"
 	 *			},
 	 *			{
 	 *				"name": "library2",
 	 *				"version": "3.5.0",
-	 *				"js": [
-	 *					"com_example/library2.min.js"
-	 *				],
-	 *				"css": [
-	 *					"com_example/library2.css"
-	 *				],
-	 *				"dependency": [
+	 * 				"type":  "script",
+	 *				"uri": "com_example/library2.min.js",
+	 *				"dependencies": [
 	 *					"core",
 	 *					"library1"
 	 *				],
 	 *				"attribute": {
-	 *					"com_example/library2.min.js": {
-	 *						"attrname": "attrvalue"
-	 *					},
-	 *					"com_example/library2.css": {
-	 *						"media": "all"
-	 *					}
+	 *					"attr-name": "attr value"
+	 *					"defer": true
+	 *				}
+	 *			},
+	 * 			{
+	 *				"name": "library1",
+	 *				"version": "3.5.0",
+	 * 				"type":  "style",
+	 *				"uri": "com_example/library1.min.css"
+	 * 				"attribute": {
+	 *					"media": "all"
+	 *				}
+	 *			},
+	 * 			{
+	 *				"name": "library1",
+	 * 				"type":  "preset",
+	 * 				"dependencies": {
+	 *					"library1#style",
+	 * 					"library1#script"
 	 *				}
 	 *			},
 	 *		]

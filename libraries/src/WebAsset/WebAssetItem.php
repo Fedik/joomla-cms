@@ -139,7 +139,7 @@ class WebAssetItem implements WebAssetItemInterface
 	 */
 	public function getVersion(): string
 	{
-		return $this->version ?? '';
+		return (string) $this->version;
 	}
 
 	/**
