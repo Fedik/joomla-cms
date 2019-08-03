@@ -21,15 +21,15 @@ use Joomla\Event\DispatcherAwareTrait;
 /**
  * Web Asset Manager class
  *
- * @method WebAssetManager registerStyle(WebAssetItem $asset)
+ * @method WebAssetManager registerStyle(WebAssetItem|string $asset, string $uri = '', array $options = [], array $attributes = [], array $dependencies = [])
  * @method WebAssetManager useStyle($name)
  * @method WebAssetManager disableStyle($name)
  *
- * @method WebAssetManager registerScript(WebAssetItem $asset)
+ * @method WebAssetManager registerScript(WebAssetItem|string $asset, string $uri = '', array $options = [], array $attributes = [], array $dependencies = [])
  * @method WebAssetManager useScript($name)
  * @method WebAssetManager disableScript($name)
  *
- * @method WebAssetManager registerPreset(WebAssetItem $asset)
+ * @method WebAssetManager registerPreset(WebAssetItem|string $asset, string $uri = '', array $options = [], array $attributes = [], array $dependencies = [])
  * @method WebAssetManager usePreset($name)
  * @method WebAssetManager disablePreset($name)
  *
@@ -184,7 +184,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 				throw new \BadMethodCallException('Asset instance are required');
 			}
 
-			return $this->registerAsset($type, $arguments[0]);
+			return $this->registerAsset($type, ...$arguments);
 		}
 
 		throw new \BadMethodCallException(sprintf('Undefined method %s in class %s', $method, get_class($this)));
@@ -318,18 +318,37 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	}
 
 	/**
-	 * Register a new asset
+	 * Register a new asset.
+	 * Allow to register WebAssetItem instance in the registry, by call registerAsset($type, $assetInstance)
+	 * Or create an asset on fly (from name and Uri) and register in the registry, by call registerAsset($type, $assetName, $uri, $options ....)
 	 *
-	 * @param   string        $type   The asset type, script or style
-	 * @param   WebAssetItem  $asset  The asset to register
+	 * @param   string               $type          The asset type, script or style
+	 * @param   WebAssetItem|string  $asset         The asset name or instance to register
+	 * @param   string               $uri           The URI for the asset
+	 * @param   array                $options       Additional options for the asset
+	 * @param   array                $attributes    Attributes for the asset
+	 * @param   array                $dependencies  Asset dependencies
 	 *
 	 * @return  self
 	 *
 	 * @since  __DEPLOY_VERSION__
 	 */
-	public function registerAsset(string $type, WebAssetItem $asset)
+	public function registerAsset(string $type, $asset, string $uri = '', array $options = [], array $attributes = [], array $dependencies = [])
 	{
-		$this->registry->add($type, $asset);
+		if ($asset instanceof WebAssetItemInterface)
+		{
+			$this->registry->add($type, $asset);
+		}
+		elseif (is_string($asset))
+		{
+			$options['type'] = $type;
+			$assetInstance = $this->registry->createAsset($asset, $uri, $options, $attributes, $dependencies);
+			$this->registry->add($type, $assetInstance);
+		}
+		else
+		{
+			throw new \BadMethodCallException('The $asset variable should be either WebAssetItemInterface or a string of the asset name');
+		}
 
 		return $this;
 	}
