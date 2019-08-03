@@ -274,12 +274,13 @@ const copyFiles = (options) => {
         }
 
         // Update path to file
-        if (assetInfo.uri && (assetInfo.type === 'script' || assetInfo.type === 'style')) {
+        if (assetInfo.uri && (assetInfo.type === 'script' || assetInfo.type === 'style' || assetInfo.type === 'webcomponent')) {
           let itemPath = assetInfo.uri;
-          let ext = assetInfo.type === 'style' ? 'css' : 'js';
 
           // Check for external path
           if (itemPath.indexOf('http://') !== 0 && itemPath.indexOf('https://') !== 0 && itemPath.indexOf('//') !== 0) {
+            let ext = assetInfo.type === 'style' ? 'css' : 'js';
+
             itemPath = `media/vendor/${vendorName}/${ext}/${itemPath}`;
           }
 

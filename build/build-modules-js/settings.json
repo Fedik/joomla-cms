@@ -299,6 +299,28 @@
           "dist/css/joomla-tab.css": "css/joomla-tab.css",
           "dist/css/joomla-tab.min.css": "css/joomla-tab.min.css"
         },
+        "provideAssets": [
+          {
+            "name": "joomla-alert",
+            "type": "style",
+            "uri": "joomla-alert.min.css"
+          },
+          {
+            "name": "joomla-tab",
+            "type": "style",
+            "uri": "joomla-tab.min.css"
+          },
+          {
+            "name": "joomla-alert",
+            "type": "webcomponent",
+            "uri": "joomla-alert.min.js"
+          },
+          {
+            "name": "joomla-tab",
+            "type": "webcomponent",
+            "uri": "joomla-tab.min.js"
+          }
+        ],
         "dependencies": [],
         "licenseFilename": "LICENSE"
       },
