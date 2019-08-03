@@ -243,7 +243,7 @@ class WebAssetItem implements WebAssetItemInterface
 			}
 		}
 
-		return $path;
+		return $path ?? '';
 	}
 
 	/**

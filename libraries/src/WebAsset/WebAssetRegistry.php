@@ -283,7 +283,7 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 			'registryFile' => $path,
 		];
 
-		//$namespace = array_key_exists('namespace', $data) ? $data['namespace'] : null;
+		$namespace = array_key_exists('namespace', $data) ? $data['namespace'] : null;
 
 		// Prepare WebAssetItem instances
 		foreach ($data['assets'] as $i => $item)
@@ -311,10 +311,10 @@ class WebAssetRegistry implements WebAssetRegistryInterface
 			unset($options['uri']);
 
 			// Inheriting the Namespace
-//			if ($namespace && !array_key_exists('namespace', $options))
-//			{
-//				$options['namespace'] = $namespace;
-//			}
+			if ($namespace && !array_key_exists('namespace', $options))
+			{
+				$options['namespace'] = $namespace;
+			}
 
 			$assetItem = $this->createAsset($item['name'], $uri, $options);
 			$this->add($item['type'], $assetItem);

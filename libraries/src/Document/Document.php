@@ -328,7 +328,6 @@ class Document
 		else
 		{
 			$webAssetManager = new WebAssetManager(\Joomla\CMS\Factory::getContainer()->get('webassetregistry'));
-			$webAssetManager->setDispatcher(CmsFactory::getApplication()->getDispatcher());
 
 			$this->setWebAssetManager($webAssetManager);
 		}

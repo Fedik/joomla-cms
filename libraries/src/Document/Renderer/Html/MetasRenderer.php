@@ -16,6 +16,7 @@ use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\WebAsset\WebAssetAttachBehaviorInterface;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -82,6 +83,12 @@ class MetasRenderer extends DocumentRenderer
 
 		foreach ($wa->getAssets('script', true) as $asset)
 		{
+			// Check for AttachBehavior
+			if ($asset instanceof WebAssetAttachBehaviorInterface)
+			{
+				$asset->onAttachCallback($this->_doc);
+			}
+
 			$uri = $asset->getUri();
 
 			if (!$uri) continue;
@@ -89,6 +96,15 @@ class MetasRenderer extends DocumentRenderer
 			$scripts[$uri] = $asset->getAttributes();
 			$scripts[$uri]['options']   = $asset->getOptions();
 			$scripts[$uri]['assetName'] = $asset->getName();
+		}
+
+		foreach ($wa->getAssets('preset', true) as $asset)
+		{
+			// Check for AttachBehavior
+			if ($asset instanceof WebAssetAttachBehaviorInterface)
+			{
+				$asset->onAttachCallback($this->_doc);
+			}
 		}
 
 		$this->_doc->_styleSheets = array_replace($styles, $this->_doc->_styleSheets);

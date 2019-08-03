@@ -10,13 +10,9 @@ namespace Joomla\CMS\WebAsset;
 
 defined('JPATH_PLATFORM') or die;
 
-use Joomla\CMS\Document\Document;
-use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\WebAsset\Exception\InvalidActionException;
 use Joomla\CMS\WebAsset\Exception\UnknownAssetException;
 use Joomla\CMS\WebAsset\Exception\UnsatisfiedDependencyException;
-use Joomla\Event\DispatcherAwareInterface;
-use Joomla\Event\DispatcherAwareTrait;
 
 /**
  * Web Asset Manager class
@@ -35,10 +31,8 @@ use Joomla\Event\DispatcherAwareTrait;
  *
  * @since  4.0.0
  */
-class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterface
+class WebAssetManager implements WebAssetManagerInterface
 {
-	use DispatcherAwareTrait;
-
 	/**
 	 * Mark inactive asset
 	 *
@@ -465,80 +459,6 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 	}
 
 	/**
-	 * Attach active assets to the document
-	 *
-	 * @param   Document  $doc  Document for attach StyleSheet/JavaScript
-	 *
-	 * @return  self
-	 *
-	 * @throws InvalidActionException When the Manager already attached to a Document
-	 *
-	 * @since  4.0.0
-	 */
-	public function attachActiveAssetsToDocument(Document $doc): WebAssetManagerInterface
-	{
-		if ($this->locked)
-		{
-			throw new InvalidActionException('WebAssetManager are locked, you came late');
-		}
-
-		// Trigger the event
-		if ($this->getDispatcher())
-		{
-			$event = AbstractEvent::create(
-				'onWebAssetBeforeAttach',
-				[
-					'eventClass' => 'Joomla\\CMS\\Event\\WebAsset\\WebAssetBeforeAttachEvent',
-					'subject'  => $this,
-					'document' => $doc,
-				]
-			);
-			$this->getDispatcher()->dispatch($event->getName(), $event);
-		}
-
-		// Resolve an Order of Assets and their Dependencies
-		$assets = $this->getAssets(true);
-
-		// Prevent further use of manager if an attach  already happened
-		$this->locked = true;
-
-		// Pre-save existing Scripts, and attach them after requested assets.
-		$jsBackup = $doc->_scripts;
-		$doc->_scripts = [];
-
-		// Attach active assets to the document
-		foreach ($assets as $asset)
-		{
-			// Add StyleSheets of the asset
-			foreach ($asset->getStylesheetFiles(true) as $path => $attr)
-			{
-				unset($attr['__isExternal'], $attr['__pathOrigin']);
-				$version = $this->useVersioning ? ($asset->getVersion() ?: 'auto') : false;
-				$doc->addStyleSheet($path, ['version' => $version], $attr);
-			}
-
-			// Add Scripts of the asset
-			foreach ($asset->getScriptFiles(true) as $path => $attr)
-			{
-				unset($attr['__isExternal'], $attr['__pathOrigin']);
-				$version = $this->useVersioning ? ($asset->getVersion() ?: 'auto') : false;
-				$doc->addScript($path, ['version' => $version], $attr);
-			}
-
-			// Allow to Asset to add a Script options
-			if ($asset instanceof WebAssetAttachBehaviorInterface)
-			{
-				$asset->onAttachCallback($doc);
-			}
-		}
-
-		// Merge with previously added scripts
-		$doc->_scripts = array_replace($doc->_scripts, $jsBackup);
-
-		return $this;
-	}
-
-	/**
 	 * Calculate weight of active Assets, by its Dependencies
 	 *
 	 * @param   string  $type  The asset type, script or style
@@ -686,8 +606,22 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		foreach ($assets as $asset)
 		{
 			$name = $asset->getName();
-			$graphOutgoing[$name] = array_combine($asset->getDependencies(), $asset->getDependencies());
 
+			// Outgoing nodes
+			$graphOutgoing[$name] = [];
+
+			foreach ($asset->getDependencies() as $depName)
+			{
+				// Skip cross-dependency "depname#type" case, the dependencies calculated per type, separately
+				if (strrpos($depName, '#'))
+				{
+					continue;
+				}
+
+				$graphOutgoing[$name][$depName] = $depName;
+			}
+
+			// Incoming nodes
 			if (!array_key_exists($name, $graphIncoming))
 			{
 				$graphIncoming[$name] = [];
@@ -695,6 +629,12 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 
 			foreach ($asset->getDependencies() as $depName)
 			{
+				// Skip cross-dependency "depname#type" case, the dependencies calculated per type, separately
+				if (strrpos($depName, '#'))
+				{
+					continue;
+				}
+
 				$graphIncoming[$depName][$name] = $name;
 			}
 		}
@@ -728,7 +668,7 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		{
 			$depType = $type;
 
-			// Check for "depname#type" case
+			// Check for cross-dependency "depname#type" case
 			if ($pos = strrpos($depName, '#'))
 			{
 				$depType = substr($depName, $pos + 1);
@@ -778,30 +718,5 @@ class WebAssetManager implements WebAssetManagerInterface, DispatcherAwareInterf
 		$this->useVersioning = $useVersioning;
 
 		return $this;
-	}
-
-	/**
-	 * Dump available assets to simple array, with some basic info
-	 *
-	 * @return  array
-	 *
-	 * @since   4.0.0
-	 */
-	public function debugAssets(): array
-	{
-		// Get all active assets in final order
-		$assets = $this->getAssets(true);
-		$result = [];
-
-		foreach ($assets as $asset)
-		{
-			$result[$asset->getName()] = [
-				'name'   => $asset->getName(),
-				'deps'   => implode(', ', $asset->getDependencies()),
-				'state'  => $this->getAssetState($asset->getName()),
-			];
-		}
-
-		return $result;
 	}
 }
