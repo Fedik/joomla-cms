@@ -553,6 +553,47 @@ class WebAssetManager implements WebAssetManagerInterface
 	}
 
 	/**
+	 * Add a new inline content asset.
+	 * Allow to register WebAssetItem instance in the registry, by call addInline($type, $assetInstance)
+	 * Or create an asset on fly (from name and Uri) and register in the registry, by call addInline($type, $content, $options ....)
+	 *
+	 * @param   string               $type          The asset type, script or style
+	 * @param   WebAssetItem|string  $content       The content to of inline asset
+	 * @param   array                $options       Additional options for the asset
+	 * @param   array                $attributes    Attributes for the asset
+	 * @param   array                $dependencies  Asset dependencies
+	 *
+	 * @return  self
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function addInline(string $type, string $content, array $options = [], array $attributes = [], array $dependencies = []): self
+	{
+		if ($content instanceof WebAssetItemInterface)
+		{
+			$assetInstance = $content;
+		}
+		else
+		{
+			$name          = $options['name'] ?? ('inline.' . md5($content));
+			$assetInstance = $this->registry->createAsset($name, '', $options, $attributes, $dependencies);
+		}
+
+		// Set required options
+		$assetInstance->setOption('type', $type);
+		$assetInstance->setOption('inline', true);
+		$assetInstance->setOption('content', $content);
+
+		// Add to registry
+		$this->registry->add($type, $assetInstance);
+
+		// And make active
+		$this->useAsset($type, $assetInstance->getName());
+
+		return $this;
+	}
+
+	/**
 	 * Lock the manager to prevent further modifications
 	 *
 	 * @return self

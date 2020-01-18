@@ -548,16 +548,19 @@ class Document
 	 */
 	public function addScriptDeclaration($content, $type = 'text/javascript')
 	{
-		$type = strtolower($type);
-
-		if (empty($this->_script[$type]))
-		{
-			$this->_script[$type] = array();
-		}
-
-		$this->_script[$type][md5($content)] = $content;
+		$this->getWebAssetManager()->addInline('script', $content, [], ['type' => $type]);
 
 		return $this;
+//		$type = strtolower($type);
+//
+//		if (empty($this->_script[$type]))
+//		{
+//			$this->_script[$type] = array();
+//		}
+//
+//		$this->_script[$type][md5($content)] = $content;
+//
+//		return $this;
 	}
 
 	/**
