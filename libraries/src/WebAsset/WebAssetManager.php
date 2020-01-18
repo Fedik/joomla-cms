@@ -84,6 +84,16 @@ class WebAssetManager implements WebAssetManagerInterface
 	protected $activeAssets = [];
 
 	/**
+	 * Array with positions of inline asset.
+	 * How "inline" asset should be positioned for its parent "non inline" asset
+	 *
+	 * @var    array
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	protected $inlinePositions = [];
+
+	/**
 	 * Internal marker to check the manager state,
 	 * to prevent use of the manager after an assets are rendered
 	 *
@@ -577,6 +587,16 @@ class WebAssetManager implements WebAssetManagerInterface
 		{
 			$name          = $options['name'] ?? ('inline.' . md5($content));
 			$assetInstance = $this->registry->createAsset($name, '', $options, $attributes, $dependencies);
+		}
+
+		// Check whether position are requested
+		$handle = $assetInstance->getOption('handle');
+
+		if ($handle)
+		{
+			$position = $assetInstance->getOption('position') === 'before' ? 'before' : 'after';
+
+			$this->inlinePositions[$type][$handle][$position][$assetInstance->getName()] = $assetInstance->getName();
 		}
 
 		// Set required options
