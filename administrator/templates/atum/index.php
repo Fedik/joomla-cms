@@ -82,6 +82,14 @@ $monochrome = (bool) $this->params->get('monochrome');
 HTMLHelper::getServiceRegistry()->register('atum', 'JHtmlAtum');
 HTMLHelper::_('atum.rootcolors', $this->params);
 
+// For testing
+$this->getWebAssetManager()
+	->addInline('script', 'console.log("before, exec last")', ['position' => 'before'], ['type' => 'module'], ['core'])
+	->addInline('script', 'console.log("after, exec first")', ['position' => 'after'], [], ['core'])
+	->addInline('script', 'console.log("regular1")', [], [], ['core'])
+	->addInline('script', 'console.log("regular2")', [], [], ['core'])
+;
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>"<?php echo $a11y_font ? ' class="a11y_font"' : ''; ?>>

@@ -43,6 +43,7 @@ class ScriptsRenderer extends DocumentRenderer
 		$assets       = $wam->getAssets('script', true);
 		$assets       = array_merge(array_values($assets), $this->_doc->_scripts);
 		$renderedUrls = [];
+		$inlineAssets = [];
 
 		$defaultJsMimes         = array('text/javascript', 'application/javascript', 'text/x-javascript', 'application/x-javascript');
 		$html5NoValueAttributes = array('defer', 'async');
@@ -63,6 +64,12 @@ class ScriptsRenderer extends DocumentRenderer
 
 				if (!$src)
 				{
+					// Delay Inline assets rendering
+					if ($asset->getOption('inline'))
+					{
+						$inlineAssets[] = $asset;
+					}
+
 					continue;
 				}
 
@@ -159,8 +166,11 @@ class ScriptsRenderer extends DocumentRenderer
 			$buffer .= $lnEnd;
 		}
 
+		// Merge inline assets with existing declarations
+		$inlineAssets = array_merge([$inlineAssets], $this->_doc->_script);
+
 		// Generate script declarations
-		foreach ($this->_doc->_script as $type => $contents)
+		foreach ($inlineAssets as $type => $contents)
 		{
 			// Test for B.C. in case someone still store script declarations as single string
 			if (\is_string($contents))
@@ -170,11 +180,20 @@ class ScriptsRenderer extends DocumentRenderer
 
 			foreach ($contents as $content)
 			{
+				$itemType   = $type;
+				$contentStr = $content;
+
+				if ($content instanceof WebAssetItemInterface)
+				{
+					$itemType   = $content->getAttribute('type');
+					$contentStr = $content->getOption('content');
+				}
+
 				$buffer .= $tab . '<script';
 
-				if (!\is_null($type) && (!$this->_doc->isHtml5() || !\in_array($type, $defaultJsMimes)))
+				if (!\is_null($itemType) && (!$this->_doc->isHtml5() || !\in_array($itemType, $defaultJsMimes)))
 				{
-					$buffer .= ' type="' . $type . '"';
+					$buffer .= ' type="' . $itemType . '"';
 				}
 
 				if ($this->_doc->cspNonce)
@@ -190,7 +209,7 @@ class ScriptsRenderer extends DocumentRenderer
 					$buffer .= $tab . $tab . '//<![CDATA[' . $lnEnd;
 				}
 
-				$buffer .= $content . $lnEnd;
+				$buffer .= $contentStr . $lnEnd;
 
 				// See above note
 				if ($this->_doc->_mime != 'text/html')

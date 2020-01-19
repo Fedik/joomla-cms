@@ -85,13 +85,13 @@ class WebAssetManager implements WebAssetManagerInterface
 
 	/**
 	 * Array with positions of inline asset.
-	 * How "inline" asset should be positioned for its parent "non inline" asset
+	 * How "inline" asset should be positioned for its parent "non inline" asset (handle)
 	 *
 	 * @var    array
 	 *
 	 * @since  __DEPLOY_VERSION__
 	 */
-	protected $inlinePositions = [];
+	protected $inlinePositionRelation = [];
 
 	/**
 	 * Internal marker to check the manager state,
@@ -583,20 +583,30 @@ class WebAssetManager implements WebAssetManagerInterface
 		{
 			$assetInstance = $content;
 		}
-		else
+		elseif (is_string($content))
 		{
 			$name          = $options['name'] ?? ('inline.' . md5($content));
 			$assetInstance = $this->registry->createAsset($name, '', $options, $attributes, $dependencies);
 		}
-
-		// Check whether position are requested
-		$handle = $assetInstance->getOption('handle');
-
-		if ($handle)
+		else
 		{
-			$position = $assetInstance->getOption('position') === 'before' ? 'before' : 'after';
+			throw new \BadMethodCallException('The $content variable should be either WebAssetItemInterface or a string');
+		}
 
-			$this->inlinePositions[$type][$handle][$position][$assetInstance->getName()] = $assetInstance->getName();
+		// Get the name
+		$asset = $assetInstance->getName();
+
+		// Check whether position are requested with dependencies
+		$position = $assetInstance->getOption('position');
+		$position = $position === 'before' || $position === 'after' ? $position : null;
+		$deps     = $assetInstance->getDependencies();
+
+		if ($position && $deps)
+		{
+			// If we have multiple dependencies, then use First for position "before"
+			// And Last for position "after"
+			$handle = $position === 'before' ? reset($deps) : end($deps);
+			$this->inlinePositionRelation[$type][$handle][$position][$asset] = $asset;
 		}
 
 		// Set required options
@@ -608,7 +618,7 @@ class WebAssetManager implements WebAssetManagerInterface
 		$this->registry->add($type, $assetInstance);
 
 		// And make active
-		$this->useAsset($type, $assetInstance->getName());
+		$this->useAsset($type, $asset);
 
 		return $this;
 	}
