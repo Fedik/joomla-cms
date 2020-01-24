@@ -596,18 +596,18 @@ class WebAssetManager implements WebAssetManagerInterface
 		// Get the name
 		$asset = $assetInstance->getName();
 
-		// Check whether position are requested with dependencies
-		$position = $assetInstance->getOption('position');
-		$position = $position === 'before' || $position === 'after' ? $position : null;
-		$deps     = $assetInstance->getDependencies();
-
-		if ($position && $deps)
-		{
-			// If we have multiple dependencies, then use First for position "before"
-			// And Last for position "after"
-			$handle = $position === 'before' ? reset($deps) : end($deps);
-			$this->inlinePositionRelation[$type][$handle][$position][$asset] = $asset;
-		}
+//		// Check whether position are requested with dependencies
+//		$position = $assetInstance->getOption('position');
+//		$position = $position === 'before' || $position === 'after' ? $position : null;
+//		$deps     = $assetInstance->getDependencies();
+//
+//		if ($position && $deps)
+//		{
+//			// If we have multiple dependencies, then use First for position "before"
+//			// And Last for position "after"
+//			$handle = $position === 'before' ? reset($deps) : end($deps);
+//			$this->inlinePositionRelation[$type][$handle][$position][$asset] = $asset;
+//		}
 
 		// Set required options
 		$assetInstance->setOption('type', $type);
