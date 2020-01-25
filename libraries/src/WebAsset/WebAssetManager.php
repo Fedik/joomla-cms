@@ -22,11 +22,13 @@ use Joomla\CMS\WebAsset\Exception\UnsatisfiedDependencyException;
  * @method WebAssetManager registerAndUseStyle(WebAssetItem|string $asset, string $uri = '', $options = [], $attributes = [], $dependencies = [])
  * @method WebAssetManager useStyle($name)
  * @method WebAssetManager disableStyle($name)
+ * @method WebAssetManager addInlineStyle(WebAssetItem|string $content, $options = [], $attributes = [], $dependencies = [])
  *
  * @method WebAssetManager registerScript(WebAssetItem|string $asset, string $uri = '', $options = [], $attributes = [], $dependencies = [])
  * @method WebAssetManager registerAndUseScript(WebAssetItem|string $asset, string $uri = '', $options = [], $attributes = [], $dependencies = [])
  * @method WebAssetManager useScript($name)
  * @method WebAssetManager disableScript($name)
+ * @method WebAssetManager addInlineScript(WebAssetItem|string $content, $options = [], $attributes = [], $dependencies = [])
  *
  * @method WebAssetManager registerPreset(WebAssetItem|string $asset, string $uri = '', $options = [], $attributes = [], $dependencies = [])
  * @method WebAssetManager registerAndUsePreset(WebAssetItem|string $asset, string $uri = '', $options = [], $attributes = [], $dependencies = [])
@@ -175,9 +177,11 @@ class WebAssetManager implements WebAssetManagerInterface
 	 */
 	public function __call($method, $arguments)
 	{
+		$method = strtolower($method);
+
 		if (0 === strpos($method, 'use'))
 		{
-			$type = strtolower(substr($method, 3));
+			$type = substr($method, 3);
 
 			if (empty($arguments[0]))
 			{
@@ -187,9 +191,21 @@ class WebAssetManager implements WebAssetManagerInterface
 			return $this->useAsset($type, $arguments[0]);
 		}
 
+		if (0 === strpos($method, 'addinline'))
+		{
+			$type = substr($method, 9);
+
+			if (empty($arguments[0]))
+			{
+				throw new \BadMethodCallException('A content are required');
+			}
+
+			return $this->addInline($type, ...$arguments);
+		}
+
 		if (0 === strpos($method, 'disable'))
 		{
-			$type = strtolower(substr($method, 7));
+			$type = substr($method, 7);
 
 			if (empty($arguments[0]))
 			{
@@ -202,10 +218,10 @@ class WebAssetManager implements WebAssetManagerInterface
 		if (0 === strpos($method, 'register'))
 		{
 			// Check for registerAndUse<Type>
-			$andUse = strtolower(substr($method, 8, 6)) === 'anduse';
+			$andUse = substr($method, 8, 6) === 'anduse';
 
 			// Extract the type
-			$type = $andUse ? strtolower(substr($method, 14)) : strtolower(substr($method, 8));
+			$type = $andUse ? substr($method, 14) : substr($method, 8);
 
 			if (empty($arguments[0]))
 			{
