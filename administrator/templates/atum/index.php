@@ -63,7 +63,9 @@ $wa->registerStyle('template.active', '', [], [], ['template.atum.' . ($this->di
 $this->setMetaData('viewport', 'width=device-width, initial-scale=1');
 // @TODO sync with _variables.scss
 $this->setMetaData('theme-color', '#1c3d5c');
-$this->addScriptDeclaration('cssVars();');
+//$this->addScriptDeclaration('cssVars();');
+$this->getWebAssetManager()
+	->addInlineScript('cssVars();', ['position' => 'after'], ['type' => 'module'], ['css-vars-ponyfill']);
 
 // Opacity must be set before displaying the DOM, so don't move to a CSS file
 $css = '
@@ -76,6 +78,8 @@ $css = '
 ';
 
 $this->addStyleDeclaration($css);
+$this->getWebAssetManager()
+	->addInlineStyle($css);
 
 $monochrome = (bool) $this->params->get('monochrome');
 
@@ -84,11 +88,16 @@ HTMLHelper::_('atum.rootcolors', $this->params);
 
 // For testing
 $this->getWebAssetManager()
-	->addInline('script', 'console.log("before, exec last")', ['position' => 'before'], ['type' => 'module'], ['core'])
-	->addInline('script', 'console.log("after, exec first")', ['position' => 'after'], [], ['core'])
-	->addInline('script', 'console.log("regular1")', [], [], ['core'])
-	->addInline('script', 'console.log("regular2")', [], [], ['core'])
+	->addInlineScript('console.log("before, exec last")', ['position' => 'before'], ['type' => 'module'], ['core'])
+	->addInlineScript('console.log("after, exec first")', ['position' => 'after'], [], ['core'])
+	->addInlineScript('console.log("regular1")', [], [], ['core'])
+	->addInlineScript('console.log("regular2")', [], [], ['core'])
+	->addInlineStyle('.card-header{background:green;}')
+	->addInlineStyle('/* random style AFTER fontawesome */', ['position' => 'after'], [], ['fontawesome'])
+	->addInlineStyle('/* random style BEFORE fontawesome */', ['position' => 'before'], [], ['fontawesome'])
 ;
+
+$this->addStyleSheet('site/style.css');
 
 ?>
 <!DOCTYPE html>

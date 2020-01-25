@@ -53,7 +53,7 @@ class ScriptsRenderer extends DocumentRenderer
 		$inlineAssets   = [];
 		$inlineRelation = [];
 
-		// Take out inline and their relations to non inline
+		// Take out inline assets and their relations to non inline
 		foreach ($assets as $k => $asset)
 		{
 			if (!$asset->getOption('inline'))
@@ -197,7 +197,7 @@ class ScriptsRenderer extends DocumentRenderer
 			$conditional = !empty($attribs['options']['conditional']) ? $attribs['options']['conditional'] : null;
 		}
 
-		// For prevent double rendering
+		// To prevent double rendering
 		$this->renderedSrc[$src] = true;
 
 		// Check if script uses media version.
