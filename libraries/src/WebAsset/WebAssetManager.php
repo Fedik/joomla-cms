@@ -499,6 +499,23 @@ class WebAssetManager implements WebAssetManagerInterface
 	}
 
 	/**
+	 * Helper method to get the asset from the registry.
+	 *
+	 * @param   string  $type  Asset type, script or style
+	 * @param   string  $name  Asset name
+	 *
+	 * @return  WebAssetItemInterface
+	 *
+	 * @throws  UnknownAssetException  When Asset cannot be found
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getAsset(string $type, string $name): WebAssetItemInterface
+	{
+		return $this->registry->get($type, $name);
+	}
+
+	/**
 	 * Register a new asset.
 	 * Allow to register WebAssetItem instance in the registry, by call registerAsset($type, $assetInstance)
 	 * Or create an asset on fly (from name and Uri) and register in the registry, by call registerAsset($type, $assetName, $uri, $options ....)
