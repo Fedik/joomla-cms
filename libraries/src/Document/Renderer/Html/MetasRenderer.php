@@ -80,8 +80,7 @@ class MetasRenderer extends DocumentRenderer
 			$jsonOptions = json_encode($scriptOptions, $prettyPrint);
 			$jsonOptions = $jsonOptions ? $jsonOptions : '{}';
 
-			$wa->addInline(
-				'script',
+			$wa->addInlineScript(
 				$jsonOptions,
 				['name' => 'joomla.script.options', 'position' => 'before'],
 				['type' => 'application/json', 'class' => 'joomla-script-options new'],

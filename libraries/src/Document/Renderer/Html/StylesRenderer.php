@@ -48,36 +48,9 @@ class StylesRenderer extends DocumentRenderer
 		$wam          = $this->_doc->getWebAssetManager();
 		$assets       = $wam->getAssets('style', true);
 
-		$inlineAssets   = [];
-		$inlineRelation = [];
-
-		// Take out inline assets and their relations to non inline
-		foreach ($assets as $k => $asset)
-		{
-			if (!$asset->getOption('inline'))
-			{
-				continue;
-			}
-
-			// Remove from assets list
-			unset($assets[$k]);
-
-			// Add to list of inline assets
-			$inlineAssets[$asset->getName()] = $asset;
-
-			// Check whether position are requested with dependencies
-			$position = $asset->getOption('position');
-			$position = $position === 'before' || $position === 'after' ? $position : null;
-			$deps     = $asset->getDependencies();
-
-			if ($position && $deps)
-			{
-				// If we have multiple dependencies, then use First for position "before"
-				// And Last for position "after"
-				$handle = $position === 'before' ? reset($deps) : end($deps);
-				$inlineRelation[$handle][$position][$asset->getName()] = $asset;
-			}
-		}
+		// Get a list of inline assets and their relation with regular assets
+		$inlineAssets   = $wam->filterOutInlineAssets($assets);
+		$inlineRelation = $wam->getInlineRelation($inlineAssets);
 
 		// Merge with existing styleSheets, for rendering
 		$assets = array_merge(array_values($assets), $this->_doc->_styleSheets);

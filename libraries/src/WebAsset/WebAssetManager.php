@@ -484,7 +484,7 @@ class WebAssetManager implements WebAssetManagerInterface
 	}
 
 	/**
-	 * Check whether the asset exists in the registry.
+	 * Helper method to check whether the asset exists in the registry.
 	 *
 	 * @param   string  $type  Asset type, script or style
 	 * @param   string  $name  Asset name
@@ -496,23 +496,6 @@ class WebAssetManager implements WebAssetManagerInterface
 	public function assetExists(string $type, string $name): bool
 	{
 		return $this->registry->exists($type, $name);
-	}
-
-	/**
-	 * Helper method to get the asset from the registry.
-	 *
-	 * @param   string  $type  Asset type, script or style
-	 * @param   string  $name  Asset name
-	 *
-	 * @return  WebAssetItemInterface
-	 *
-	 * @throws  UnknownAssetException  When Asset cannot be found
-	 *
-	 * @since   __DEPLOY_VERSION__
-	 */
-	public function getAsset(string $type, string $name): WebAssetItemInterface
-	{
-		return $this->registry->get($type, $name);
 	}
 
 	/**
@@ -552,7 +535,24 @@ class WebAssetManager implements WebAssetManagerInterface
 	}
 
 	/**
-	 * Get all active assets
+	 * Helper method to get the asset from the registry.
+	 *
+	 * @param   string  $type  Asset type, script or style
+	 * @param   string  $name  Asset name
+	 *
+	 * @return  WebAssetItemInterface
+	 *
+	 * @throws  UnknownAssetException  When Asset cannot be found
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getAsset(string $type, string $name): WebAssetItemInterface
+	{
+		return $this->registry->get($type, $name);
+	}
+
+	/**
+	 * Get all active assets, optionally sort them to follow the dependency Graph
 	 *
 	 * @param   string  $type  The asset type, script or style
 	 * @param   bool    $sort  Whether need to sort the assets to follow the dependency Graph
@@ -596,6 +596,79 @@ class WebAssetManager implements WebAssetManagerInterface
 	}
 
 	/**
+	 * Helper method to calculate inline to non inline relation (before/after positions).
+	 * Return associated array, which contain dependency (handle) name as key, and list of inline items for each position.
+	 * Example: ['handle.name' => ['before' => ['inline1', 'inline2'], 'after' => ['inline3', 'inline4']]]
+	 *
+	 * Note: If inline asset have a multiple dependencies, then will be used last one from the list for positioning
+	 *
+	 * @param   WebAssetItem[]  $assets  The assets list
+	 *
+	 * @return  array
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function getInlineRelation(array $assets): array
+	{
+		$inlineRelation = [];
+
+		// Find an inline assets and their relations to non inline
+		foreach ($assets as $k => $asset)
+		{
+			if (!$asset->getOption('inline'))
+			{
+				continue;
+			}
+
+			// Add to list of inline assets
+			$inlineAssets[$asset->getName()] = $asset;
+
+			// Check whether position are requested with dependencies
+			$position = $asset->getOption('position');
+			$position = $position === 'before' || $position === 'after' ? $position : null;
+			$deps     = $asset->getDependencies();
+
+			if ($position && $deps)
+			{
+				// If inline asset have a multiple dependencies, then use last one from the list for positioning
+				$handle = end($deps);
+				$inlineRelation[$handle][$position][$asset->getName()] = $asset;
+			}
+		}
+
+		return $inlineRelation;
+	}
+
+	/**
+	 * Helper method to filter an inline assets
+	 *
+	 * @param   WebAssetItem[]  $assets  Reference to a full list of active assets
+	 *
+	 * @return  WebAssetItem[]  Array of inline assets
+	 *
+	 * @since  __DEPLOY_VERSION__
+	 */
+	public function filterOutInlineAssets(array &$assets): array
+	{
+		$inlineAssets = [];
+
+		foreach ($assets as $k => $asset)
+		{
+			if (!$asset->getOption('inline'))
+			{
+				continue;
+			}
+
+			// Remove inline assets from assets list, and add to list of inline
+			unset($assets[$k]);
+
+			$inlineAssets[$asset->getName()] = $asset;
+		}
+
+		return $inlineAssets;
+	}
+
+	/**
 	 * Add a new inline content asset.
 	 * Allow to register WebAssetItem instance in the registry, by call addInline($type, $assetInstance)
 	 * Or create an asset on fly (from name and Uri) and register in the registry, by call addInline($type, $content, $options ....)
@@ -628,19 +701,6 @@ class WebAssetManager implements WebAssetManagerInterface
 
 		// Get the name
 		$asset = $assetInstance->getName();
-
-//		// Check whether position are requested with dependencies
-//		$position = $assetInstance->getOption('position');
-//		$position = $position === 'before' || $position === 'after' ? $position : null;
-//		$deps     = $assetInstance->getDependencies();
-//
-//		if ($position && $deps)
-//		{
-//			// If we have multiple dependencies, then use First for position "before"
-//			// And Last for position "after"
-//			$handle = $position === 'before' ? reset($deps) : end($deps);
-//			$this->inlinePositionRelation[$type][$handle][$position][$asset] = $asset;
-//		}
 
 		// Set required options
 		$assetInstance->setOption('type', $type);
