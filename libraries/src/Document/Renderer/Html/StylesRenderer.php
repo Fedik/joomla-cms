@@ -153,6 +153,17 @@ class StylesRenderer extends DocumentRenderer
 			$attribs     = $asset->getAttributes();
 			$version     = $asset->getVersion();
 			$conditional = $asset->getOption('conditional');
+
+			// Add an asset info for debugging
+			if (JDEBUG)
+			{
+				$attribs['data-asset-name'] = $asset->getName();
+
+				if ($asset->getDependencies())
+				{
+					$attribs['data-asset-dependencies'] = implode(',', $asset->getDependencies());
+				}
+			}
 		}
 		else
 		{
@@ -178,7 +189,11 @@ class StylesRenderer extends DocumentRenderer
 			$buffer .= '<!--[if ' . $conditional . ']>';
 		}
 
-		$buffer .= '<link href="' . $src . '" rel="stylesheet"';
+		// Avoid double rel="", StyleSheet can have only rel="stylesheet"
+		unset($attribs['rel']);
+
+		// Render the element with attributes
+		$buffer .= '<link href="' . htmlspecialchars($src) . '" rel="stylesheet"';
 		$buffer .= $this->renderAttributes($attribs);
 		$buffer .= ' />';
 

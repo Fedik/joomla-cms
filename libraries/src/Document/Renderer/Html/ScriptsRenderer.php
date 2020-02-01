@@ -162,6 +162,17 @@ class ScriptsRenderer extends DocumentRenderer
 			$attribs     = $asset->getAttributes();
 			$version     = $asset->getVersion();
 			$conditional = $asset->getOption('conditional');
+
+			// Add an asset info for debugging
+			if (JDEBUG)
+			{
+				$attribs['data-asset-name'] = $asset->getName();
+
+				if ($asset->getDependencies())
+				{
+					$attribs['data-asset-dependencies'] = implode(',', $asset->getDependencies());
+				}
+			}
 		}
 		else
 		{
@@ -187,8 +198,8 @@ class ScriptsRenderer extends DocumentRenderer
 			$buffer .= '<!--[if ' . $conditional . ']>';
 		}
 
-		// Render script with attributes
-		$buffer .= '<script src="' . $src . '"';
+		// Render the element with attributes
+		$buffer .= '<script src="' . htmlspecialchars($src) . '"';
 		$buffer .= $this->renderAttributes($attribs);
 		$buffer .= '></script>';
 
