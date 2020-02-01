@@ -90,7 +90,7 @@ $this->getWebAssetManager()
 	->addInlineScript('console.log("after, exec first")', ['position' => 'after'], [], ['core'])
 	->addInlineScript('console.log("regular1")', [], [], ['core'])
 	->addInlineScript('console.log("regular2")', [], [], ['core'])
-	->addInlineStyle('.card-header{background:green;}')
+	->addInlineStyle('#content .card-header{background:green;color:white;}')
 	->addInlineStyle('/* random style AFTER fontawesome */', ['position' => 'after'], [], ['fontawesome'])
 	->addInlineStyle('/* random style BEFORE fontawesome */', ['position' => 'before'], [], ['fontawesome'])
 ;
