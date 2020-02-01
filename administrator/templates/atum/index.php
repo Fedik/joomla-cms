@@ -84,19 +84,6 @@ $monochrome = (bool) $this->params->get('monochrome');
 HTMLHelper::getServiceRegistry()->register('atum', 'JHtmlAtum');
 HTMLHelper::_('atum.rootcolors', $this->params);
 
-// For testing
-$this->getWebAssetManager()
-	->addInlineScript('console.log("before, exec last")', ['position' => 'before'], ['type' => 'module'], ['core'])
-	->addInlineScript('console.log("after, exec first")', ['position' => 'after'], [], ['core'])
-	->addInlineScript('console.log("regular1")', [], [], ['core'])
-	->addInlineScript('console.log("regular2")', [], [], ['core'])
-	->addInlineStyle('#content .card-header{background:green;color:white;}')
-	->addInlineStyle('/* random style AFTER fontawesome */', ['position' => 'after'], [], ['fontawesome'])
-	->addInlineStyle('/* random style BEFORE fontawesome */', ['position' => 'before'], [], ['fontawesome'])
-;
-
-$this->addStyleSheet('site/style.css');
-
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>"<?php echo $a11y_font ? ' class="a11y_font"' : ''; ?>>
