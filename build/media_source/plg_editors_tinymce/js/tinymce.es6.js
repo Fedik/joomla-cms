@@ -118,6 +118,19 @@
         };
       }
 
+      // Check upload handler option string, and replace it to a real function
+      // if (options.images_upload_handler === 'Joomla.JoomlaTinyMCE.uploadHandler') {
+      //   options.images_upload_handler = Joomla.JoomlaTinyMCE.uploadHandler.bind(null, options);
+      // } else if (options.images_upload_handler
+      //   && typeof(options.images_upload_handler) === 'string' && window[options.images_upload_handler]) {
+      //   options.images_upload_handler = window[options.images_upload_handler].bind(null, options);
+      // }
+
+      // Create a new instance
+      // eslint-disable-next-line no-undef
+
+      console.log(options);
+
       // Create a new instance
       // eslint-disable-next-line no-undef
       const ed = new tinyMCE.Editor(element.id, options, tinymce.EditorManager);
@@ -142,6 +155,56 @@
       document.getElementById(ed.id).form.addEventListener('submit', () => Joomla.editors.instances[ed.targetElm.id].onSave());
     },
 
+  };
+
+  /**
+   * Use custom Upload handler, to make upload compatible with com_media API
+   *
+   * @param options
+   * @param blobInfo
+   * @param success
+   * @param failure
+   * @param progress
+   */
+  Joomla.JoomlaTinyMCE.uploadHandler = function (options, blobInfo, success, failure, progress) {
+
+    // Prepare a data payload to submit
+    const data = {
+      name: blobInfo.filename(),
+      content: blobInfo.base64()
+    };
+
+    let url = options.images_upload_url;
+    let path = options.com_media_upload_path || '';
+
+    // Make sure the path contain adapter, to be compatible with com_media API
+    if (path.indexOf(':') === -1) {
+      path = `local-0:${path}`;
+    }
+
+    url += '&path=' + encodeURIComponent(path);
+
+    Joomla.request({
+      url: url,
+      method: 'POST',
+      data: JSON.stringify(data),
+      headers: {'Content-Type': 'application/json'},
+      onSuccess: (response) => {
+        const json = JSON.parse(response);
+        let file = json.path;
+
+
+        console.log(response, json);
+      },
+      onError: (xhr) => {
+        console.log(xhr);
+
+        failure('HTTP Error: ' + xhr.statusText);
+      }
+    });
+
+    console.log(options, data);
+    //console.log(blobInfo.filename(), blobInfo.base64());
   };
 
   /**
