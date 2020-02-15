@@ -505,7 +505,7 @@ class PlgEditorTinymce extends CMSPlugin
 
 		if ($dragdrop && $user->authorise('core.create', 'com_media'))
 		{
-			$externalPlugins['jdragndrop'] = Uri::root() . 'media/plg_editors_tinymce/js/plugins/dragdrop/plugin.min.js';
+			//$externalPlugins['jdragndrop'] = Uri::root() . 'media/plg_editors_tinymce/js/plugins/dragdrop/plugin.min.js';
 
 			$allowImgPaste = true;
 			$isSubDir      = '';
@@ -531,6 +531,13 @@ class PlgEditorTinymce extends CMSPlugin
 			$scriptOptions['setCustomDir']    = $isSubDir;
 			$scriptOptions['mediaUploadPath'] = $levelParams->get('path', '');
 			$scriptOptions['uploadUri']       = $uploadUrl;
+
+
+			$scriptOptions['images_reuse_filename'] = true;
+			$scriptOptions['images_upload_base_path'] = Uri::root();
+			$scriptOptions['images_upload_handler'] = 'Joomla.JoomlaTinyMCE.uploadHandler';
+			$scriptOptions['images_upload_url'] = Uri::base() . 'index.php?option=com_media&task=api.files&format=json';
+			$scriptOptions['com_media_upload_path'] = $levelParams->get('path', '');
 		}
 
 		// Convert pt to px in dropdown
