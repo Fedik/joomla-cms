@@ -508,29 +508,29 @@ class PlgEditorTinymce extends CMSPlugin
 			//$externalPlugins['jdragndrop'] = Uri::root() . 'media/plg_editors_tinymce/js/plugins/dragdrop/plugin.min.js';
 
 			$allowImgPaste = true;
-			$isSubDir      = '';
-			$session       = $this->app->getSession();
-			$uploadUrl     = Uri::base() . 'index.php?option=com_media&task=file.upload&tmpl=component&'
-				. $session->getName() . '=' . $session->getId()
-				. '&' . Session::getFormToken() . '=1'
-				. '&asset=image&format=json';
-
-			if ($app->isClient('site'))
-			{
-				$uploadUrl = htmlentities($uploadUrl, null, 'UTF-8', null);
-			}
-
-			// Is Joomla installed in subdirectory
-			if (Uri::root(true) !== '/')
-			{
-				$isSubDir = Uri::root(true);
-			}
-
-			Text::script('PLG_TINY_ERR_UNSUPPORTEDBROWSER');
-
-			$scriptOptions['setCustomDir']    = $isSubDir;
-			$scriptOptions['mediaUploadPath'] = $levelParams->get('path', '');
-			$scriptOptions['uploadUri']       = $uploadUrl;
+//			$isSubDir      = '';
+//			$session       = $this->app->getSession();
+//			$uploadUrl     = Uri::base() . 'index.php?option=com_media&task=file.upload&tmpl=component&'
+//				. $session->getName() . '=' . $session->getId()
+//				. '&' . Session::getFormToken() . '=1'
+//				. '&asset=image&format=json';
+//
+//			if ($app->isClient('site'))
+//			{
+//				$uploadUrl = htmlentities($uploadUrl, null, 'UTF-8', null);
+//			}
+//
+//			// Is Joomla installed in subdirectory
+//			if (Uri::root(true) !== '/')
+//			{
+//				$isSubDir = Uri::root(true);
+//			}
+//
+//			Text::script('PLG_TINY_ERR_UNSUPPORTEDBROWSER');
+//
+//			$scriptOptions['setCustomDir']    = $isSubDir;
+//			$scriptOptions['mediaUploadPath'] = $levelParams->get('path', '');
+//			$scriptOptions['uploadUri']       = $uploadUrl;
 
 
 			$scriptOptions['images_reuse_filename'] = true;
