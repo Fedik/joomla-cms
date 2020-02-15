@@ -532,12 +532,17 @@ class PlgEditorTinymce extends CMSPlugin
 //			$scriptOptions['mediaUploadPath'] = $levelParams->get('path', '');
 //			$scriptOptions['uploadUri']       = $uploadUrl;
 
+			$uploadUrl = new Uri('index.php?option=com_ajax&plugin=tinymce&group=editors&format=raw');
+			$uploadUrl->setVar('path', urlencode($levelParams->get('path', '')));
+			$uploadUrl->setVar(Session::getFormToken(), 1);
 
 			$scriptOptions['images_reuse_filename'] = true;
 			$scriptOptions['images_upload_base_path'] = Uri::root();
-			$scriptOptions['images_upload_handler'] = 'Joomla.JoomlaTinyMCE.uploadHandler';
-			$scriptOptions['images_upload_url'] = Uri::base() . 'index.php?option=com_media&task=api.files&format=json';
-			$scriptOptions['com_media_upload_path'] = $levelParams->get('path', '');
+			//$scriptOptions['images_upload_handler'] = 'Joomla.JoomlaTinyMCE.uploadHandler';
+			//$scriptOptions['images_upload_url'] = Uri::base() . 'index.php?option=com_media&task=api.files&format=json';
+			//$scriptOptions['com_media_upload_path'] = $levelParams->get('path', '');
+
+			$scriptOptions['images_upload_url'] = Uri::base(true) . '/' . $uploadUrl->toString();
 		}
 
 		// Convert pt to px in dropdown
@@ -657,6 +662,28 @@ class PlgEditorTinymce extends CMSPlugin
 		$doc->addScriptOptions('plg_editor_tinymce', $options);
 
 		return $editor;
+	}
+
+	/**
+	 * AJAX handler
+	 *
+	 * @return  string
+	 *
+	 * @since  4.0.0
+	 */
+	public function onAjaxTinymce()
+	{
+		print_r($_REQUEST);
+
+		// User has to be authorised
+		if (!Session::checkToken('request'))
+		{
+			return '111';
+		}
+
+
+
+		return '222';
 	}
 
 	/**
