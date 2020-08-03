@@ -1098,16 +1098,16 @@
 	</fieldset>
 
 	<fieldset
-		name="system"
-		label="CONFIG_SYSTEM_SETTINGS_LABEL">
+		name="logging"
+		label="CONFIG_LOGGING_SETTINGS_LABEL">
 
 		<field
-			name="log_path"
-			type="text"
-			label="COM_CONFIG_FIELD_LOG_PATH_LABEL"
-			required="true"
-			filter="string"
-			size="50"
+				name="log_path"
+				type="text"
+				label="COM_CONFIG_FIELD_LOG_PATH_LABEL"
+				required="true"
+				filter="string"
+				size="50"
 		/>
 
 	</fieldset>
