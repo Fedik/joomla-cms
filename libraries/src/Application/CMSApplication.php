@@ -22,6 +22,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Input\Input;
 use Joomla\CMS\Language\Language;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Menu\AbstractMenu;
 use Joomla\CMS\Pathway\Pathway;
 use Joomla\CMS\Plugin\PluginHelper;
@@ -225,6 +226,7 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 	{
 		try
 		{
+			$this->setupLogging();
 			$this->createExtensionNamespaceMap();
 
 			// Perform application routines.
@@ -1308,5 +1310,53 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 		$this->getSession()->set('has2fa', 1);
 
 		return true;
+	}
+
+	/**
+	 * Setup logging functionality.
+	 *
+	 * @return void
+	 *
+	 * @since 4.0.0
+	 */
+	private function setupLogging(): void
+	{
+		// Log the deprecated API.
+		if ($this->get('log_deprecated'))
+		{
+			Log::addLogger(['text_file' => 'deprecated.php'], Log::ALL, ['deprecated']);
+		}
+
+		// Log everything (except deprecated APIs, these are logged separately with the option above).
+		if ($this->get('log_everything'))
+		{
+			Log::addLogger(['text_file' => 'everything.php'], Log::ALL, ['deprecated', 'databasequery'], true);
+		}
+
+		if ($this->get('log_categories'))
+		{
+			$priority = 0;
+
+			foreach ($this->get('log_priorities', ['all']) as $p)
+			{
+				$const = '\\Joomla\\CMS\\Log\\Log::' . strtoupper($p);
+
+				if (defined($const))
+				{
+					$priority |= constant($const);
+				}
+			}
+
+			// Split into an array at any character other than alphabet, numbers, _, ., or -
+			$categories = preg_split('/[^\w.-]+/', $this->get('log_categories', ''), -1, PREG_SPLIT_NO_EMPTY);
+			$mode       = (bool) $this->get('log_category_mode', false);
+
+			if (!$categories)
+			{
+				return;
+			}
+
+			Log::addLogger(['text_file' => 'custom-logging.php'], $priority, $categories, $mode);
+		}
 	}
 }

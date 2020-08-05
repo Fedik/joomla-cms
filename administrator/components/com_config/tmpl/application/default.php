@@ -64,6 +64,7 @@ Text::script('MESSAGE');
 
 				<?php echo HTMLHelper::_('uitab.addTab', 'configTabs', 'page-logging', Text::_('COM_CONFIG_LOGGING')); ?>
 					<?php echo $this->loadTemplate('logging'); ?>
+					<?php echo $this->loadTemplate('logging_custom'); ?>
 				<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
 				<?php echo HTMLHelper::_('uitab.addTab', 'configTabs', 'page-filters', Text::_('COM_CONFIG_TEXT_FILTERS')); ?>

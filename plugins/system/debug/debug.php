@@ -360,6 +360,8 @@ class PlgSystemDebug extends CMSPlugin
 	 */
 	private function setupLogging(): self
 	{
+		return $this;
+
 		// Log the deprecated API.
 		if ($this->params->get('log-deprecated'))
 		{
