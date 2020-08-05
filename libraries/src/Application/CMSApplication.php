@@ -1330,7 +1330,7 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 		// Log everything (except deprecated APIs, these are logged separately with the option above).
 		if ($this->get('log_everything'))
 		{
-			Log::addLogger(['text_file' => 'everything.php'], Log::ALL, ['deprecated', 'databasequery'], true);
+			Log::addLogger(['text_file' => 'everything.php'], Log::ALL, ['deprecated', 'deprecation-notes', 'databasequery'], true);
 		}
 
 		if ($this->get('log_categories'))
