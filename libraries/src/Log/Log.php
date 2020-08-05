@@ -8,9 +8,6 @@
 
 namespace Joomla\CMS\Log;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Log\Event\EntryEvent;
-
 \defined('JPATH_PLATFORM') or die;
 
 /**
