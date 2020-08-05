@@ -8,6 +8,9 @@
 
 namespace Joomla\CMS\Log;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Event\EntryEvent;
+
 \defined('JPATH_PLATFORM') or die;
 
 /**
@@ -134,6 +137,16 @@ class Log
 	 * @since  4.0.0
 	 */
 	protected $loggerRegistry;
+
+	/**
+	 * List of log entries collected at runtime.
+	 * For Debug purposes only!
+	 * Available only if Debug enabled.
+	 *
+	 * @var    array
+	 * @since  4.0.0
+	 */
+	private static $logEntries = [];
 
 	/**
 	 * Constructor.
@@ -318,6 +331,19 @@ class Log
 	}
 
 	/**
+	 * Returns a list of collected at runtime entries.
+	 * The list available only if Debug enabled.
+	 *
+	 * @return  array
+	 *
+	 * @since   4.0.0
+	 */
+	public static function getCollectedEntries()
+	{
+		return static::$logEntries;
+	}
+
+	/**
 	 * Method to add an entry to the appropriate loggers.
 	 *
 	 * @param   LogEntry  $entry  The LogEntry object to send to the loggers.
@@ -365,6 +391,12 @@ class Log
 
 			// Add the entry to the logger.
 			$this->loggers[$signature]->addEntry(clone $entry);
+		}
+
+		// Collect log entry to allow extensions to read them easier. For Debug purposes only!
+		if (JDEBUG)
+		{
+			static::$logEntries[] = $entry;
 		}
 	}
 
