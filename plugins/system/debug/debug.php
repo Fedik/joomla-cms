@@ -532,12 +532,19 @@ class PlgSystemDebug extends CMSPlugin
 	 */
 	private function collectLogs(): self
 	{
-		if (!$this->logEntries && !Log::getCollectedEntries())
+		$loggerOptions = ['group' => 'default'];
+		$logger        = new Joomla\CMS\Log\Logger\InMemoryLogger($loggerOptions);
+		$logEntries    = $logger->getCollectedEntries();
+
+		if (!$this->logEntries && !$logEntries)
 		{
 			return $this;
 		}
 
-		$logEntries = array_merge(Log::getCollectedEntries(), $this->logEntries);
+		if ($this->logEntries)
+		{
+			$logEntries = array_merge($logEntries, $this->logEntries);
+		}
 
 		$logDeprecated = $this->app->get('log_deprecated', 0);
 		$logDeprecatedCore = $this->params->get('log-deprecated-core', 0);

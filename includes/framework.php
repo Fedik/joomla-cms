@@ -90,4 +90,10 @@ if (JDEBUG || $config->error_reporting === 'maximum')
 	);
 }
 
+if (JDEBUG)
+{
+	// Add InMemory logger that will collect all log entries to allow to display them later by extensions
+	Joomla\CMS\Log\Log::addLogger(['logger' => 'inmemory']);
+}
+
 unset($config);
