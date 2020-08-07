@@ -216,7 +216,7 @@ class PlgSystemDebug extends CMSPlugin
 		}
 
 		// Log deprecated class aliases
-		if ($this->showLogs)
+		if ($this->showLogs && $this->app->get('log_deprecated'))
 		{
 			foreach (JLoader::getDeprecatedAliases() as $deprecation)
 			{
