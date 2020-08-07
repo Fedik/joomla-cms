@@ -1321,6 +1321,12 @@ abstract class CMSApplication extends WebApplication implements ContainerAwareIn
 	 */
 	private function setupLogging(): void
 	{
+		// Add InMemory logger that will collect all log entries to allow to display them later by extensions
+		if ($this->get('debug'))
+		{
+			Log::addLogger(['logger' => 'inmemory']);
+		}
+
 		// Log the deprecated API.
 		if ($this->get('log_deprecated'))
 		{
