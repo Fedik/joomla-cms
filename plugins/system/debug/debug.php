@@ -31,6 +31,7 @@ use Joomla\Plugin\System\Debug\DataCollector\LanguageStringsCollector;
 use Joomla\Plugin\System\Debug\DataCollector\ProfileCollector;
 use Joomla\Plugin\System\Debug\DataCollector\QueryCollector;
 use Joomla\Plugin\System\Debug\DataCollector\SessionCollector;
+use Joomla\Plugin\System\Debug\DataCollector\WebAssetCollector;
 use Joomla\Plugin\System\Debug\JavascriptRenderer;
 use Joomla\Plugin\System\Debug\Storage\FileStorage;
 
@@ -288,6 +289,8 @@ class PlgSystemDebug extends CMSPlugin
 				$this->db->disconnect();
 				$this->debugBar->addCollector(new QueryCollector($this->params, $this->queryMonitor, $this->sqlShowProfileEach, $this->explains));
 			}
+
+			$this->debugBar->addCollector(new WebAssetCollector($this->params, $this->app->getDocument()->getWebAssetManager()));
 
 			if ($this->showLogs)
 			{
