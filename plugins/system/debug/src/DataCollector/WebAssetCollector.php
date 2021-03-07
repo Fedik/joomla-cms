@@ -161,9 +161,10 @@ class WebAssetCollector extends AbstractDataCollector implements AssetProvider
 		}
 
 		return [
-			'active' => $activeAssets,
-			'available' => $availableAssets,
-			'registryFiles' => $state['registryFiles'],
+			'registryFiles' => $wr->getRegistryFiles(),
+			'types'         => array_keys($availableAssets),
+			'available'     => $availableAssets,
+			'active'        => $activeAssets,
 		];
 	}
 
