@@ -1080,12 +1080,7 @@ abstract class AdminModel extends FormModel
 			// Check for a table object error.
 			if ($return === false)
 			{
-				// If there was no underlying error, then the false means there simply was not a row in the db for this $pk.
-				if (!$table->getError())
-				{
-					$this->setError(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
-				}
-				else
+				if ($table->getError())
 				{
 					$this->setError($table->getError());
 				}
