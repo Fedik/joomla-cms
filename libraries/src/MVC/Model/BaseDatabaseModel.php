@@ -48,7 +48,9 @@ abstract class BaseDatabaseModel extends BaseModel implements
     CurrentUserInterface,
     CacheControllerFactoryAwareInterface
 {
-    use DatabaseAwareTrait;
+    use DatabaseAwareTrait {
+        setDatabase as private setDatabaseTrait;
+    }
     use MVCFactoryAwareTrait;
     use DispatcherAwareTrait;
     use CurrentUserTrait;
@@ -69,6 +71,16 @@ abstract class BaseDatabaseModel extends BaseModel implements
      * @since  3.0
      */
     protected $event_clean_cache = null;
+
+    /**
+     * The database driver.
+     *
+     * @var    DatabaseInterface
+     * @since  __DEPLOY_VERSION__
+     *
+     * @deprecated  5.0 Use getDatabase() instead of directly accessing _db
+     */
+    protected $_db;
 
     /**
      * Constructor
@@ -385,30 +397,18 @@ abstract class BaseDatabaseModel extends BaseModel implements
     }
 
     /**
-     * Proxy for _db variable.
+     * Set the database.
      *
-     * @param   string  $name  The name of the element
+     * @param   DatabaseInterface  $db  The database.
      *
-     * @return  mixed  The value of the element if set, null otherwise
+     * @return  void
      *
-     * @since   4.2.0
-     *
-     * @deprecated  5.0 Use getDatabase() instead of directly accessing _db
+     * @since   __DEPLOY_VERSION__
      */
-    public function __get($name)
+    public function setDatabase(DatabaseInterface $db): void
     {
-        if ($name === '_db') {
-            @trigger_error('The _db variable should not be used anymore, use getDatabase() instead.', E_USER_DEPRECATED);
-
-            return $this->getDatabase();
-        }
-
-        // Access to protected/private property not allowed
-        if (property_exists($this, $name))
-        {
-            throw new \InvalidArgumentException(sprintf('Cannot access protected property %s::%s', __CLASS__, $name));
-        }
-
-        return null;
+        // Workaround for backward compatibility
+        $this->_db = $db;
+        $this->setDatabaseTrait($db);
     }
 }
