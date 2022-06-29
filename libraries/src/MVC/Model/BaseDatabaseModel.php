@@ -353,6 +353,8 @@ abstract class BaseDatabaseModel extends BaseModel implements
      */
     public function getDbo()
     {
+        @trigger_error('Method getDbo() is deprecated, use getDatabase() instead.', E_USER_DEPRECATED);
+
         try {
             return $this->getDatabase();
         } catch (DatabaseNotFoundException $e) {
@@ -373,6 +375,8 @@ abstract class BaseDatabaseModel extends BaseModel implements
      */
     public function setDbo(DatabaseInterface $db = null)
     {
+        @trigger_error('Method setDbo() is deprecated, use setDatabase() instead.', E_USER_DEPRECATED);
+
         if ($db === null) {
             return;
         }
@@ -394,14 +398,17 @@ abstract class BaseDatabaseModel extends BaseModel implements
     public function __get($name)
     {
         if ($name === '_db') {
+            @trigger_error('The _db variable should not be used anymore, use getDatabase() instead.', E_USER_DEPRECATED);
+
             return $this->getDatabase();
         }
 
-        // Default the variable
-        if (!isset($this->$name)) {
-            $this->$name = null;
+        // Access to protected/private property not allowed
+        if (property_exists($this, $name))
+        {
+            throw new \InvalidArgumentException(sprintf('Cannot access protected property %s::%s', __CLASS__, $name));
         }
 
-        return $this->$name;
+        return null;
     }
 }
