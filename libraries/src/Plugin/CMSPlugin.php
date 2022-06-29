@@ -416,11 +416,12 @@ abstract class CMSPlugin implements DispatcherAwareInterface, PluginInterface
             return $this->getApplication() ?? Factory::getApplication();
         }
 
-        // Default the variable
-        if (!isset($this->$name)) {
-            $this->$name = null;
+        // Access to protected/private property not allowed
+        if (property_exists($this, $name))
+        {
+            throw new \InvalidArgumentException(sprintf('Cannot access protected property %s::%s', __CLASS__, $name));
         }
 
-        return $this->$name;
+        return null;
     }
 }
