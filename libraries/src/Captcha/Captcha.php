@@ -9,6 +9,7 @@
 
 namespace Joomla\CMS\Captcha;
 
+use Joomla\CMS\Event\Captcha\CaptchaSetupEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Language\Text;
@@ -32,7 +33,7 @@ class Captcha implements DispatcherAwareInterface
     /**
      * Captcha Plugin object
      *
-     * @var    CMSPlugin
+     * @var    CMSPlugin|CaptchaItemInterface
      * @since  2.5
      */
     private $captcha;
@@ -51,7 +52,15 @@ class Captcha implements DispatcherAwareInterface
      * @var    Captcha[]
      * @since  2.5
      */
-    private static $instances = array();
+    private static $instances = [];
+
+    /**
+     * List of registered Captcha
+     *
+     * @var    array
+     * @since   __DEPLOY_VERSION__
+     */
+    private static $registry = [];
 
     /**
      * Class constructor.
@@ -72,7 +81,15 @@ class Captcha implements DispatcherAwareInterface
             $this->setDispatcher(Factory::getApplication()->getDispatcher());
         }
 
-        $this->_load($options);
+        // Get registered items
+        $items = $this->getRegistry();
+
+        if (!empty($items[$this->name])) {
+            $this->captcha = $items[$this->name];
+        } else {
+            // Try to load a legacy one
+            $this->_load($options);
+        }
     }
 
     /**
@@ -99,6 +116,40 @@ class Captcha implements DispatcherAwareInterface
     }
 
     /**
+     * Return list of registered Captcha
+     *
+     * @return array
+     * @since   __DEPLOY_VERSION__
+     */
+    public function getRegistry() : array
+    {
+        // Initial setup of captcha(s)
+        if (empty(self::$registry['initialised'])) {
+            PluginHelper::importPlugin('captcha');
+
+            $event = new CaptchaSetupEvent('onCaptchaSetup', ['subject' => $this]);
+            $this->getDispatcher()->dispatch($event->getName(), $event);
+
+            self::$registry['initialised'] = true;
+        }
+
+        return self::$registry;
+    }
+
+    /**
+     * Register Captcha element
+     *
+     * @param CaptchaItemInterface $captcha
+     *
+     * @return void
+     * @since   __DEPLOY_VERSION__
+     */
+    public function registerCaptcha(CaptchaItemInterface $captcha)
+    {
+        self::$registry[$captcha->getName()] = $captcha;
+    }
+
+    /**
      * Fire the onInit event to initialise the captcha plugin.
      *
      * @param   string  $id  The id of the field.
@@ -107,6 +158,7 @@ class Captcha implements DispatcherAwareInterface
      *
      * @since   2.5
      * @throws  \RuntimeException
+     * @deprecated  Without replacement
      */
     public function initialise($id)
     {
@@ -134,6 +186,13 @@ class Captcha implements DispatcherAwareInterface
         // Check if captcha is already loaded.
         if ($this->captcha === null) {
             return '';
+        }
+
+        if ($this->captcha instanceof CaptchaItemInterface) {
+            return $this->captcha->display($name, [
+                'id'    => $id ?: $name,
+                'class' => $class,
+            ]);
         }
 
         // Initialise the Captcha.
@@ -169,6 +228,10 @@ class Captcha implements DispatcherAwareInterface
             return false;
         }
 
+        if ($this->captcha instanceof CaptchaItemInterface) {
+            return $this->captcha->checkAnswer($code);
+        }
+
         $arg = ['code'  => $code];
 
         $result = $this->update('onCheckAnswer', $arg);
@@ -188,6 +251,11 @@ class Captcha implements DispatcherAwareInterface
     public function setupField(\Joomla\CMS\Form\Field\CaptchaField $field, \SimpleXMLElement $element)
     {
         if ($this->captcha === null) {
+            return;
+        }
+
+        if ($this->captcha instanceof CaptchaItemInterface) {
+            $this->captcha->setupField($field, $element);
             return;
         }
 

@@ -12,10 +12,15 @@
  * @phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
  */
 
+use Joomla\CMS\Captcha\Captcha;
+use Joomla\CMS\Captcha\CaptchaItemInterface;
 use Joomla\CMS\Captcha\Google\HttpBridgePostRequestMethod;
+use Joomla\CMS\Event\Captcha\CaptchaSetupEvent;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Event\SubscriberInterface;
 use Joomla\Utilities\IpHelper;
 
 /**
@@ -23,7 +28,7 @@ use Joomla\Utilities\IpHelper;
  *
  * @since  3.9.0
  */
-class PlgCaptchaRecaptcha_Invisible extends CMSPlugin
+class PlgCaptchaRecaptcha_Invisible extends CMSPlugin implements SubscriberInterface, CaptchaItemInterface
 {
     /**
      * Load the language file on instantiation.
@@ -40,6 +45,47 @@ class PlgCaptchaRecaptcha_Invisible extends CMSPlugin
      * @since  4.0.0
      */
     protected $app;
+
+    /**
+     * Returns an array of events this subscriber will listen to.
+     *
+     * @return  array
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            'onCaptchaSetup' => 'onCaptchaSetup',
+            'onPrivacyCollectAdminCapabilities' => 'onPrivacyCollectAdminCapabilities',
+        ];
+    }
+
+    /**
+     * Register Captcha instance
+     *
+     * @param CaptchaSetupEvent $event
+     *
+     * @return void
+     * @since   __DEPLOY_VERSION__
+     */
+    public function onCaptchaSetup(CaptchaSetupEvent $event)
+    {
+        /** @var Captcha $subject */
+        $subject = $event['subject'];
+        $subject->registerCaptcha($this);
+    }
+
+    /**
+     * Return Captcha name
+     *
+     * @return string
+     * @since   __DEPLOY_VERSION__
+     */
+    public function getName(): string
+    {
+        return 'recaptcha_invisible';
+    }
 
     /**
      * Reports the privacy related capabilities for this plugin to site administrators.
@@ -60,16 +106,12 @@ class PlgCaptchaRecaptcha_Invisible extends CMSPlugin
     }
 
     /**
-     * Initialise the captcha
+     * Load captcha assets
      *
-     * @param   string  $id  The id of the field.
-     *
-     * @return  boolean True on success, false otherwise
-     *
-     * @since   3.9.0
-     * @throws  \RuntimeException
+     * @return void
+     * @since   __DEPLOY_VERSION__
      */
-    public function onInit($id = 'dynamic_recaptcha_invisible_1')
+    private function loadAssets()
     {
         $pubkey = $this->params->get('public_key', '');
 
@@ -78,34 +120,38 @@ class PlgCaptchaRecaptcha_Invisible extends CMSPlugin
         }
 
         $apiSrc = 'https://www.google.com/recaptcha/api.js?onload=JoomlainitReCaptchaInvisible&render=explicit&hl='
-            . Factory::getLanguage()->getTag();
+            . $this->app->getLanguage()->getTag();
 
         // Load assets, the callback should be first
         $this->app->getDocument()->getWebAssetManager()
             ->registerAndUseScript('plg_captcha_recaptchainvisible', 'plg_captcha_recaptcha_invisible/recaptcha.min.js', [], ['defer' => true])
             ->registerAndUseScript('plg_captcha_recaptchainvisible.api', $apiSrc, [], ['defer' => true], ['plg_captcha_recaptchainvisible'])
             ->registerAndUseStyle('plg_captcha_recaptchainvisible', 'plg_captcha_recaptcha_invisible/recaptcha_invisible.css');
-
-        return true;
     }
 
     /**
      * Gets the challenge HTML
      *
-     * @param   string  $name   The name of the field. Not Used.
-     * @param   string  $id     The id of the field.
-     * @param   string  $class  The class of the field.
+     * @param   string  $name        Input name
+     * @param   array   $attributes  The class of the field
      *
-     * @return  string  The HTML to be embedded in the form.
+     * @return  string  The HTML to be embedded in the form
      *
-     * @since  3.9.0
+     * @since   __DEPLOY_VERSION__
+     *
+     * @throws  \RuntimeException
      */
-    public function onDisplay($name = null, $id = 'dynamic_recaptcha_invisible_1', $class = '')
+    public function display(string $name = '', array $attributes = []): string
     {
+        $this->loadAssets();
+
+        $id    = $attributes['id'] ?? '';
+        $class = $attributes['class'] ?? '';
+
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $ele = $dom->createElement('div');
         $ele->setAttribute('id', $id);
-        $ele->setAttribute('class', ((trim($class) == '') ? 'g-recaptcha' : ($class . ' g-recaptcha')));
+        $ele->setAttribute('class', (!$class ? 'g-recaptcha' : ($class . ' g-recaptcha')));
         $ele->setAttribute('data-sitekey', $this->params->get('public_key', ''));
         $ele->setAttribute('data-badge', $this->params->get('badge', 'bottomright'));
         $ele->setAttribute('data-size', 'invisible');
@@ -119,22 +165,23 @@ class PlgCaptchaRecaptcha_Invisible extends CMSPlugin
     }
 
     /**
-     * Calls an HTTP POST function to verify if the user's guess was correct
+     * Calls an HTTP POST function to verify if the user's guess was correct.
      *
-     * @param   string  $code  Answer provided by user. Not needed for the Recaptcha implementation
+     * @param   string  $code  Answer provided by user
      *
-     * @return  boolean  True if the answer is correct, false otherwise
+     * @return  bool    If the answer is correct, false otherwise
      *
-     * @since   3.9.0
+     * @since   __DEPLOY_VERSION__
+     *
      * @throws  \RuntimeException
      */
-    public function onCheckAnswer($code = null)
+    public function checkAnswer(string $code = null): bool
     {
         $input      = Factory::getApplication()->input;
         $privatekey = $this->params->get('private_key');
         $remoteip   = IpHelper::getIp();
 
-        $response  = $input->get('g-recaptcha-response', '', 'string');
+        $response  = $code ?: $input->get('g-recaptcha-response', '', 'string');
 
         // Check for Private Key
         if (empty($privatekey)) {
@@ -158,18 +205,21 @@ class PlgCaptchaRecaptcha_Invisible extends CMSPlugin
      * Method to react on the setup of a captcha field. Gives the possibility
      * to change the field and/or the XML element for the field.
      *
-     * @param   \Joomla\CMS\Form\Field\CaptchaField  $field    Captcha field instance
-     * @param   \SimpleXMLElement                    $element  XML form definition
+     * @param   FormField         $field    Captcha field instance
+     * @param   SimpleXMLElement  $element  XML form definition
      *
      * @return void
      *
-     * @since 3.9.0
+     * @since  __DEPLOY_VERSION__
+     *
+     * @throws  \RuntimeException
      */
-    public function onSetupField(\Joomla\CMS\Form\Field\CaptchaField $field, \SimpleXMLElement $element)
+    public function setupField(FormField $field, SimpleXMLElement $element): void
     {
         // Hide the label for the invisible recaptcha type
         $element['hiddenLabel'] = 'true';
     }
+
 
     /**
      * Get the reCaptcha response.
@@ -197,5 +247,76 @@ class PlgCaptchaRecaptcha_Invisible extends CMSPlugin
         }
 
         return true;
+    }
+
+    /**
+     * Initialise the captcha
+     *
+     * @param   string  $id  The id of the field.
+     *
+     * @return  boolean True on success, false otherwise
+     *
+     * @since   3.9.0
+     * @throws  \RuntimeException
+     * @deprecated
+     */
+    public function onInit($id = 'dynamic_recaptcha_invisible_1')
+    {
+        $this->loadAssets();
+
+        return true;
+    }
+
+    /**
+     * Gets the challenge HTML
+     *
+     * @param   string  $name   The name of the field. Not Used.
+     * @param   string  $id     The id of the field.
+     * @param   string  $class  The class of the field.
+     *
+     * @return  string  The HTML to be embedded in the form.
+     *
+     * @since  3.9.0
+     * @deprecated
+     */
+    public function onDisplay($name = null, $id = 'dynamic_recaptcha_invisible_1', $class = '')
+    {
+        return $this->display($name, [
+            'id'    => $id,
+            'class' => $class,
+        ]);
+    }
+
+    /**
+     * Calls an HTTP POST function to verify if the user's guess was correct
+     *
+     * @param   string  $code  Answer provided by user. Not needed for the Recaptcha implementation
+     *
+     * @return  boolean  True if the answer is correct, false otherwise
+     *
+     * @since   3.9.0
+     * @throws  \RuntimeException
+     * @deprecated
+     */
+    public function onCheckAnswer($code = null)
+    {
+        return $this->checkAnswer($code);
+    }
+
+    /**
+     * Method to react on the setup of a captcha field. Gives the possibility
+     * to change the field and/or the XML element for the field.
+     *
+     * @param   \Joomla\CMS\Form\Field\CaptchaField  $field    Captcha field instance
+     * @param   \SimpleXMLElement                    $element  XML form definition
+     *
+     * @return void
+     *
+     * @since 3.9.0
+     * @deprecated
+     */
+    public function onSetupField(\Joomla\CMS\Form\Field\CaptchaField $field, \SimpleXMLElement $element)
+    {
+        $this->setupField($field, $element);
     }
 }
