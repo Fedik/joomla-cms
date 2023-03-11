@@ -97,6 +97,14 @@ class JoomlaPopup extends HTMLElement {
   close() {
     this.dialog.close();
   }
+
+  static alert(message){
+
+  }
+
+  static confirm(message, onAccept, onReject){
+
+  }
 }
 
 window.JoomlaPopup = JoomlaPopup;
