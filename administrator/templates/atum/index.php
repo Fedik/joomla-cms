@@ -86,6 +86,8 @@ Text::script('TPL_ATUM_MORE_ELEMENTS');
 
 // @see administrator/templates/atum/html/layouts/status.php
 $statusModules = LayoutHelper::render('status', ['modules' => 'status']);
+
+$wa->useScript('webcomponent.popup');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>"<?php echo $a11y_font ? ' class="a11y_font"' : ''; ?>>
