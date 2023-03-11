@@ -595,6 +595,17 @@
       ]
     },
     {
+      "name": "webcomponent.popup",
+      "type": "script",
+      "uri": "system/joomla-popup.min.js",
+      "attributes": {
+        "type": "module"
+      },
+      "dependencies": [
+        "wcpolyfill"
+      ]
+    },
+    {
       "name": "list-view",
       "type": "script",
       "uri": "system/list-view.min.js",
