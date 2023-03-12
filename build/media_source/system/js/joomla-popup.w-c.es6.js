@@ -18,31 +18,31 @@ class JoomlaPopup extends HTMLElement {
    * The popup type, supported: inline, iframe, image, ajax.
    * @type {string}
    */
-  popupType = 'inline';
+  // popupType = 'inline';
 
   /**
    * An optional text for header.
    * @type {string}
    */
-  textHeader = '';
+  // textHeader = '';
 
   /**
    * An optional text for close button. Applied when no Buttons provided.
    * @type {string}
    */
-  textClose = 'Close';
+  // textClose = 'Close';
 
   /**
    * Content string (html) for inline type popup.
    * @type {string}
    */
-  popupContent = '';
+  // popupContent = '';
 
   /**
    * Source path for iframe, image, ajax.
    * @type {string}
    */
-  src = '';
+  // src = '';
 
   /**
    * An optional list of buttons, to be rendered in footer, or bottom of the popup body.
@@ -51,25 +51,25 @@ class JoomlaPopup extends HTMLElement {
    *   {label: 'No', onClick: () => popup.close(), className: 'btn btn-danger'}]
    * @type {[]}
    */
-  popupButtons = [];
+  // popupButtons = [];
 
   /**
    * An optional limit for the popup width, any valid CSS value.
    * @type {string}
    */
-  width = '';
+  // width = '';
 
   /**
    * An optional height for the popup, any valid CSS value.
    * @type {string}
    */
-  height = '';
+  // height = '';
 
   /**
    * A template for the popup
    * @type {string|HTMLTemplateElement}
    */
-  popupTemplate = popupTemplate;
+  // popupTemplate = popupTemplate;
 
   /**
    * Class constructor
@@ -78,15 +78,26 @@ class JoomlaPopup extends HTMLElement {
   constructor(config) {
     super();
 
+    // Define default params (doing it here because browser support of public props)
+    this.popupType = 'inline';
+    this.textHeader = '';
+    this.textClose = 'Close';
+    this.popupContent = '';
+    this.src = '';
+    this.popupButtons = [];
+    this.width = '';
+    this.height = '';
+    this.popupTemplate = popupTemplate;
+
     if (!config) return;
 
     // Check configurable properties
     ['popupType', 'textHeader', 'textClose', 'popupContent', 'src',
       'popupButtons', 'width', 'height', 'popupTemplate'].forEach((key) => {
-      if (config.hasOwnProperty(key)) {
+      if (config[key]) {
         this[key] = config[key];
       }
-    })
+    });
   }
 
   connectedCallback() {
@@ -103,7 +114,7 @@ class JoomlaPopup extends HTMLElement {
     // On close callback
     const onClose = () => {
       this.dispatchEvent(new CustomEvent('joomla-popup:close'));
-    }
+    };
 
     // Check for existing layout
     if (this.firstElementChild && this.firstElementChild.nodeName === 'DIALOG') {
@@ -214,20 +225,21 @@ class JoomlaPopup extends HTMLElement {
       this.classList.remove('loading');
       this.popupContentElement.removeEventListener('load', onLoad);
       this.dispatchEvent(new CustomEvent('joomla-popup:load'));
-    }
+    };
 
     this.classList.add('loading');
 
     switch (this.popupType) {
       // Create an Inline content
-      case 'inline':
+      case 'inline': {
         this.popupTmplB.insertAdjacentHTML('afterbegin', this.popupContent);
         this.popupContentElement = this.popupTmplB;
         onLoad();
         break;
+      }
 
       // Create an IFrame content
-      case 'iframe':
+      case 'iframe': {
         const frame = document.createElement('iframe');
         frame.addEventListener('load', onLoad);
         frame.src = this.src;
@@ -236,18 +248,20 @@ class JoomlaPopup extends HTMLElement {
         this.popupContentElement = frame;
         this.popupTmplB.appendChild(frame);
         break;
+      }
 
       // Create an Image content
-      case 'image':
+      case 'image': {
         const img = document.createElement('img');
         img.addEventListener('load', onLoad);
         img.src = this.src;
         this.popupContentElement = img;
         this.popupTmplB.appendChild(img);
         break;
+      }
 
       // Create an AJAX content
-      case 'ajax':
+      case 'ajax': {
         fetch(this.src)
           .then((response) => {
             if (response.status !== 200) {
@@ -255,16 +269,18 @@ class JoomlaPopup extends HTMLElement {
             }
             return response.text();
           }).then((text) => {
-          this.popupTmplB.insertAdjacentHTML('afterbegin', text);
-          this.popupContentElement = this.popupTmplB;
-          onLoad();
-        }).catch((error) => {
-          throw error;
-        });
+            this.popupTmplB.insertAdjacentHTML('afterbegin', text);
+            this.popupContentElement = this.popupTmplB;
+            onLoad();
+          }).catch((error) => {
+            throw error;
+          });
         break;
+      }
 
-      default:
+      default: {
         throw new Error('Unknown popup type requested');
+      }
     }
 
     return this;
@@ -296,7 +312,7 @@ class JoomlaPopup extends HTMLElement {
    *
    * @returns {JoomlaPopup}
    */
-  show(){
+  show() {
     if (!this.parentElement) {
       document.body.appendChild(this);
     }
@@ -343,11 +359,11 @@ class JoomlaPopup extends HTMLElement {
    * @param {String} message
    * @returns {JoomlaPopup}
    */
-  static alert(message){
-    const popup = new this;
+  static alert(message) {
+    const popup = new this();
     popup.popupType = 'inline';
     popup.popupContent = message;
-    popup.popupButtons = [{label: 'Okay', onClick: () => popup.close()}]
+    popup.popupButtons = [{ label: 'Okay', onClick: () => popup.close() }];
     popup.classList.add('joomla-popup-alert');
     popup.show();
 
@@ -362,18 +378,25 @@ class JoomlaPopup extends HTMLElement {
    */
   static confirm(message) {
     return new Promise((resolve) => {
-      const popup = new this;
+      const popup = new this();
       popup.popupType = 'inline';
       popup.popupContent = message;
       popup.popupButtons = [
-        {label: 'Yes', onClick: () => {
+        {
+          label: 'Yes',
+          onClick: () => {
             popup.close();
             resolve(true);
-          }},
-        {label: 'No', onClick: () => {
+          },
+        },
+        {
+          label: 'No',
+          onClick: () => {
             popup.close();
             resolve(false);
-          }, className: 'button btn btn-outline-primary'},
+          },
+          className: 'button btn btn-outline-primary',
+        },
       ];
       popup.classList.add('joomla-popup-confirm');
       popup.show();
@@ -413,7 +436,7 @@ document.addEventListener('click', (event) => {
   popup.addEventListener('joomla-popup:close', () => popup.destroy());
 });
 
-export { JoomlaPopup };
+export default JoomlaPopup;
 
 
 // ================= testing ======================= //
