@@ -99,11 +99,32 @@ class JoomlaPopup extends HTMLElement {
   }
 
   static alert(message){
+    const popup = new this;
+    popup.popupType = 'inline';
+    popup.popupContent = message;
+    popup.popupButtons = [{label: 'Okay', onClick: () => popup.close()}]
+    popup.show();
 
+    return popup;
   }
 
   static confirm(message, onAccept, onReject){
+    const popup = new this;
+    popup.popupType = 'inline';
+    popup.popupContent = message;
+    popup.popupButtons = [
+      {label: 'Yes', onClick: () => {
+          popup.close();
+          onAccept && onAccept();
+        }},
+      {label: 'No', onClick: () => {
+          popup.close();
+          onReject && onReject();
+        }, className: 'button btn btn-outline-primary ms-2'},
+    ];
+    popup.show();
 
+    return popup;
   }
 }
 
@@ -124,5 +145,7 @@ popup.popupButtons = [
 ]
 
 console.log([popup]);
+//console.log(JoomlaPopup.alert('message'))
+//console.log(JoomlaPopup.confirm('message?', () => {console.log(this)}))
 
-popup.show();
+//popup.show();
