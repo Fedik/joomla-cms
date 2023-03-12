@@ -366,7 +366,7 @@ class JoomlaPopup extends HTMLElement {
       popup.popupContent = message;
       popup.popupButtons = [{
         label: Joomla.Text._('JOK', 'Okay'),
-        onClick: () => popup.close(),
+        onClick: () => popup.destroy(),
       }];
       popup.classList.add('joomla-popup-alert');
       popup.addEventListener('joomla-popup:close', () => resolve());
@@ -391,14 +391,14 @@ class JoomlaPopup extends HTMLElement {
           label: Joomla.Text._('JYES', 'Yes'),
           onClick: () => {
             result = true;
-            popup.close();
+            popup.destroy();
           },
         },
         {
           label: Joomla.Text._('JNO', 'No'),
           onClick: () => {
             result = false;
-            popup.close();
+            popup.destroy();
           },
           className: 'button btn btn-outline-primary',
         },
