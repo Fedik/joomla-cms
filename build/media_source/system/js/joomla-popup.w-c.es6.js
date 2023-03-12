@@ -357,17 +357,23 @@ class JoomlaPopup extends HTMLElement {
   /**
    * Helper method to show an Alert.
    * @param {String} message
-   * @returns {JoomlaPopup}
+   * @returns {Promise}
    */
   static alert(message) {
-    const popup = new this();
-    popup.popupType = 'inline';
-    popup.popupContent = message;
-    popup.popupButtons = [{ label: 'Okay', onClick: () => popup.close() }];
-    popup.classList.add('joomla-popup-alert');
-    popup.show();
-
-    return popup;
+    return new Promise((resolve) => {
+      const popup = new this();
+      popup.popupType = 'inline';
+      popup.popupContent = message;
+      popup.popupButtons = [{
+        label: 'Okay',
+        onClick: () => {
+          popup.close();
+          resolve();
+        },
+      }];
+      popup.classList.add('joomla-popup-alert');
+      popup.show();
+    });
   }
 
   /**
