@@ -209,6 +209,15 @@ class JoomlaPopup extends HTMLElement {
       this.dialog.style.height = this.height;
     }
 
+    // Remove empty elements
+    // if (this.popupTmplH && !this.popupTmplH.children.length) {
+    //   this.popupTmplH.parentElement.removeChild(this.popupTmplH);
+    // }
+    //
+    // if (this.popupTmplF && !this.popupTmplF.children.length) {
+    //   this.popupTmplF.parentElement.removeChild(this.popupTmplF);
+    // }
+
     return this;
   }
 
