@@ -86,8 +86,6 @@ Text::script('TPL_ATUM_MORE_ELEMENTS');
 
 // @see administrator/templates/atum/html/layouts/status.php
 $statusModules = LayoutHelper::render('status', ['modules' => 'status']);
-
-$wa->useScript('webcomponent.popup');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $this->language; ?>" dir="<?php echo $this->direction; ?>"<?php echo $a11y_font ? ' class="a11y_font"' : ''; ?>>
@@ -174,16 +172,6 @@ $wa->useScript('webcomponent.popup');
             <div class="row">
                 <div class="col-md-12">
                     <main>
-						<button class="btn btn-primary" type="button"
-							data-joomla-popup='{"popupType": "iframe", "width":"80vw", "height": "80vh", "src":"index.php?option=com_content&view=articles&tmpl=component&layout=modal"}'>Click</button>
-
-						<button class="btn btn-primary" type="button"
-								data-joomla-popup='{"popupType": "inline", "popupContent":"#popupText"}'>Click</button>
-
-						<template id="popupText">
-							<p>Popup content text</p>
-						</template>
-
                         <jdoc:include type="message" />
                         <jdoc:include type="component" />
                     </main>
