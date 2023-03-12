@@ -357,29 +357,27 @@ class JoomlaPopup extends HTMLElement {
   /**
    * Helper method to show a Confirmation popup.
    *
-   * @param {String}   message
-   * @param {Callback} onAccept
-   * @param {Callback} onReject
-   * @returns {JoomlaPopup}
+   * @param {String} message
+   * @returns {Promise}
    */
-  static confirm(message, onAccept, onReject){
-    const popup = new this;
-    popup.popupType = 'inline';
-    popup.popupContent = message;
-    popup.popupButtons = [
-      {label: 'Yes', onClick: () => {
-          popup.close();
-          onAccept && onAccept();
-        }},
-      {label: 'No', onClick: () => {
-          popup.close();
-          onReject && onReject();
-        }, className: 'button btn btn-outline-primary ms-2'},
-    ];
-    popup.classList.add('joomla-popup-confirm');
-    popup.show();
-
-    return popup;
+  static confirm(message) {
+    return new Promise((resolve) => {
+      const popup = new this;
+      popup.popupType = 'inline';
+      popup.popupContent = message;
+      popup.popupButtons = [
+        {label: 'Yes', onClick: () => {
+            popup.close();
+            resolve(true);
+          }},
+        {label: 'No', onClick: () => {
+            popup.close();
+            resolve(false);
+          }, className: 'button btn btn-outline-primary'},
+      ];
+      popup.classList.add('joomla-popup-confirm');
+      popup.show();
+    });
   }
 }
 
