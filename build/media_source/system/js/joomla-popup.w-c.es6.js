@@ -365,7 +365,7 @@ class JoomlaPopup extends HTMLElement {
       popup.popupType = 'inline';
       popup.popupContent = message;
       popup.popupButtons = [{
-        label: 'Okay',
+        label: Joomla.Text._('JOK', 'Okay'),
         onClick: () => popup.close(),
       }];
       popup.classList.add('joomla-popup-alert');
@@ -388,14 +388,14 @@ class JoomlaPopup extends HTMLElement {
       popup.popupContent = message;
       popup.popupButtons = [
         {
-          label: 'Yes',
+          label: Joomla.Text._('JYES', 'Yes'),
           onClick: () => {
             result = true;
             popup.close();
           },
         },
         {
-          label: 'No',
+          label: Joomla.Text._('JNO', 'No'),
           onClick: () => {
             result = false;
             popup.close();
@@ -429,12 +429,18 @@ document.addEventListener('click', (event) => {
     config.popupContent = content ? content.innerHTML.trim() : config.popupContent;
   }
 
+  if (config.popupContent) {
+    config.popupContent = Joomla.sanitizeHtml(config.popupContent);
+  }
+
   // Check for template selector
   if (config.popupTemplate && (config.popupTemplate[0] === '.' || config.popupTemplate[0] === '#')) {
     const template = document.querySelector(config.popupTemplate);
     if (template && template.nodeName === 'TEMPLATE') {
       config.popupTemplate = template;
     }
+  } else if (config.popupTemplate) {
+    config.popupTemplate = Joomla.sanitizeHtml(config.popupTemplate);
   }
 
   const popup = new JoomlaPopup(config);
