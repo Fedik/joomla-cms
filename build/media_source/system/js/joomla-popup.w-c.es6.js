@@ -13,6 +13,7 @@ class JoomlaPopup extends HTMLElement {
   popupType = 'inline';
   popupHeader = '';
   popupContent = '';
+  src = '';
   popupTemplate = popupTemplate;
   popupButtons = [];
   width = '';
@@ -34,11 +35,17 @@ class JoomlaPopup extends HTMLElement {
     }
 
     // Render a template
-    const template = document.createElement('template');
-    template.innerHTML = this.popupTemplate;
+    let templateContent;
+    if (this.popupTemplate.tagName && this.popupTemplate.tagName === 'TEMPLATE') {
+      templateContent = this.popupTemplate.content.cloneNode(true);
+    } else {
+      const template = document.createElement('template');
+      template.innerHTML = this.popupTemplate;
+      templateContent = template.content;
+    }
 
     this.dialog = document.createElement('dialog');
-    this.dialog.appendChild(template.content);
+    this.dialog.appendChild(templateContent);
     this.appendChild(this.dialog);
 
     // Get template parts
@@ -65,6 +72,20 @@ class JoomlaPopup extends HTMLElement {
         this.popupContentElement = this.popupTmplB;
         break;
       case 'iframe':
+        const frame = document.createElement('iframe');
+        const onLoad = () => {
+          this.classList.add('loaded');
+          this.classList.remove('loading');
+          frame.removeEventListener('load', onLoad);
+        }
+        frame.addEventListener('load', onLoad);
+        this.classList.add('loading');
+        frame.src = this.src;
+        frame.style.width = '100%';
+        frame.style.height = '100%';
+        this.popupContentElement = frame;
+        this.popupTmplB.appendChild(frame);
+        break;
       case 'image':
       case 'ajax':
       default:
@@ -80,7 +101,7 @@ class JoomlaPopup extends HTMLElement {
       this.popupButtons.forEach((btnData) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.insertAdjacentHTML('afterbegin', btnData.label);
+        btn.textContent = btnData.label;
 
         if (btnData.className) {
           btn.classList.add(...btnData.className.split(' '));
@@ -204,14 +225,16 @@ export { JoomlaPopup };
 
 // ================= testing ======================= //
 const popup = new JoomlaPopup;
-popup.popupType = 'inline';
+popup.popupType = 'iframe';
 popup.popupHeader = 'The header';
 popup.popupContent = '<strong>blabla very strong text</strong>';
+popup.src = 'index.php?option=com_content&view=articles&tmpl=component&layout=modal';
 popup.popupButtons1 = [
   {label: 'Yes', onClick: () => popup.close()},
   {label: 'No', onClick: () => popup.close(), className: 'btn btn-outline-danger ms-2'}
 ]
-popup.width = '30vw';
+popup.width = '80vw';
+popup.height = '80vh';
 
 console.log([popup]);
 //console.log(JoomlaPopup.alert('message'))
