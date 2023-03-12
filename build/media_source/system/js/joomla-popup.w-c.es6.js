@@ -100,9 +100,15 @@ class JoomlaPopup extends HTMLElement {
   renderLayout() {
     if (this.dialog) return this;
 
+    // On close callback
+    const onClose = () => {
+      this.dispatchEvent(new CustomEvent('joomla-popup:close'));
+    }
+
     // Check for existing layout
     if (this.firstElementChild && this.firstElementChild.nodeName === 'DIALOG') {
       this.dialog = this.firstElementChild;
+      this.dialog.addEventListener('close', onClose);
       this.popupTmplB = this.querySelector('.joomla-popup-body') || this.dialog;
       this.popupContentElement = this.popupTmplB;
       return this;
@@ -120,6 +126,7 @@ class JoomlaPopup extends HTMLElement {
 
     this.dialog = document.createElement('dialog');
     this.dialog.appendChild(templateContent);
+    this.dialog.addEventListener('close', onClose);
     this.appendChild(this.dialog);
 
     // Get template parts
@@ -206,6 +213,7 @@ class JoomlaPopup extends HTMLElement {
       this.classList.add('loaded');
       this.classList.remove('loading');
       this.popupContentElement.removeEventListener('load', onLoad);
+      this.dispatchEvent(new CustomEvent('joomla-popup:load'));
     }
 
     this.classList.add('loading');
@@ -258,7 +266,7 @@ class JoomlaPopup extends HTMLElement {
       default:
         throw new Error('Unknown popup type requested');
     }
-    console.log(this.popupType)
+
     return this;
   }
 
@@ -294,6 +302,7 @@ class JoomlaPopup extends HTMLElement {
     }
 
     this.dialog.showModal();
+    this.dispatchEvent(new CustomEvent('joomla-popup:open'));
     return this;
   }
 
@@ -315,9 +324,11 @@ class JoomlaPopup extends HTMLElement {
    * Destroys the popup.
    */
   destroy() {
-    if (this.dialog) {
-      this.dialog.close();
+    if (!this.dialog) {
+      return;
     }
+
+    this.dialog.close();
     this.removeChild(this.dialog);
     this.parentElement.removeChild(this);
     this.dialog = null;
@@ -388,7 +399,7 @@ document.addEventListener('click', (event) => {
   // Check for content selector
   if (config.popupContent && (config.popupContent[0] === '.' || config.popupContent[0] === '#')) {
     const content = document.querySelector(config.popupContent);
-    config.popupContent = content ? content.innerHTML : config.popupContent;
+    config.popupContent = content ? content.innerHTML.trim() : config.popupContent;
   }
 
   // Check for template selector
@@ -401,9 +412,8 @@ document.addEventListener('click', (event) => {
 
   const popup = new JoomlaPopup(config);
   popup.show();
-
-  console.log(triggerEl, config);
-})
+  popup.addEventListener('joomla-popup:close', () => popup.destroy());
+});
 
 export { JoomlaPopup };
 
