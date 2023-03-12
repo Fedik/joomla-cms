@@ -269,12 +269,12 @@ class JoomlaPopup extends HTMLElement {
             }
             return response.text();
           }).then((text) => {
-            this.popupTmplB.insertAdjacentHTML('afterbegin', text);
-            this.popupContentElement = this.popupTmplB;
-            onLoad();
-          }).catch((error) => {
-            throw error;
-          });
+          this.popupTmplB.insertAdjacentHTML('afterbegin', text);
+          this.popupContentElement = this.popupTmplB;
+          onLoad();
+        }).catch((error) => {
+          throw error;
+        });
         break;
       }
 
@@ -368,10 +368,10 @@ class JoomlaPopup extends HTMLElement {
         label: 'Okay',
         onClick: () => {
           popup.close();
-          resolve();
         },
       }];
       popup.classList.add('joomla-popup-alert');
+      popup.addEventListener('joomla-popup:close', () => resolve());
       popup.show();
     });
   }
@@ -384,6 +384,7 @@ class JoomlaPopup extends HTMLElement {
    */
   static confirm(message) {
     return new Promise((resolve) => {
+      let result = false;
       const popup = new this();
       popup.popupType = 'inline';
       popup.popupContent = message;
@@ -391,20 +392,21 @@ class JoomlaPopup extends HTMLElement {
         {
           label: 'Yes',
           onClick: () => {
+            result = true;
             popup.close();
-            resolve(true);
           },
         },
         {
           label: 'No',
           onClick: () => {
+            result = false
             popup.close();
-            resolve(false);
           },
           className: 'button btn btn-outline-primary',
         },
       ];
       popup.classList.add('joomla-popup-confirm');
+      popup.addEventListener('joomla-popup:close', () => resolve(result));
       popup.show();
     });
   }
