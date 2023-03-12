@@ -73,12 +73,12 @@ class JoomlaPopup extends HTMLElement {
         break;
       case 'iframe':
         const frame = document.createElement('iframe');
-        const onLoad = () => {
+        const onFrameLoad = () => {
           this.classList.add('loaded');
           this.classList.remove('loading');
-          frame.removeEventListener('load', onLoad);
+          frame.removeEventListener('load', onFrameLoad);
         }
-        frame.addEventListener('load', onLoad);
+        frame.addEventListener('load', onFrameLoad);
         this.classList.add('loading');
         frame.src = this.src;
         frame.style.width = '100%';
@@ -87,7 +87,37 @@ class JoomlaPopup extends HTMLElement {
         this.popupTmplB.appendChild(frame);
         break;
       case 'image':
+        const img = document.createElement('img');
+        const onImgLoad = () => {
+          this.classList.add('loaded');
+          this.classList.remove('loading');
+          img.removeEventListener('load', onImgLoad);
+        }
+        img.addEventListener('load', onImgLoad);
+        this.classList.add('loading');
+        img.src = this.src;
+        this.popupContentElement = img;
+        this.popupTmplB.appendChild(img);
+        break;
       case 'ajax':
+        this.classList.add('loading');
+        fetch(this.src)
+          .then((response) => {
+            if (response.status !== 200) {
+              throw new Error(response.statusText);
+            }
+            return response.text();
+          }).then((text) => {
+          this.popupTmplB.insertAdjacentHTML('afterbegin', text);
+          this.popupContentElement = this.popupTmplB;
+          this.classList.add('loaded');
+          this.classList.remove('loading');
+        }).catch((error) => {
+          this.classList.add('loaded');
+          this.classList.remove('loading');
+          throw error;
+        });
+        break;
       default:
         throw new Error('Unknown popup type requested');
     }
@@ -225,11 +255,19 @@ export { JoomlaPopup };
 
 // ================= testing ======================= //
 const popup = new JoomlaPopup;
-popup.popupType = 'iframe';
 popup.popupHeader = 'The header';
 popup.popupContent = '<strong>blabla very strong text</strong>';
-popup.src = 'index.php?option=com_content&view=articles&tmpl=component&layout=modal';
-popup.popupButtons1 = [
+
+// popup.popupType = 'iframe';
+// popup.src = 'index.php?option=com_content&view=articles&tmpl=component&layout=modal';
+
+// popup.popupType = 'image';
+// popup.src = '../images/headers/walden-pond.jpg';
+
+// popup.popupType = 'ajax';
+// popup.src = 'index.php?option=com_content&view=articles&tmpl=component&layout=modal';
+
+popup.popupButtons = [
   {label: 'Yes', onClick: () => popup.close()},
   {label: 'No', onClick: () => popup.close(), className: 'btn btn-outline-danger ms-2'}
 ]
