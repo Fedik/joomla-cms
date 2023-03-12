@@ -174,6 +174,16 @@ $wa->useScript('webcomponent.popup');
             <div class="row">
                 <div class="col-md-12">
                     <main>
+						<button class="btn btn-primary" type="button"
+							data-joomla-popup='{"popupType": "iframe", "src":"index.php?option=com_content&view=articles&tmpl=component&layout=modal"}'>Click</button>
+
+						<button class="btn btn-primary" type="button"
+								data-joomla-popup='{"popupType": "inline", "popupContent":"#popupText"}'>Click</button>
+
+						<template id="popupText">
+							<p>Popup content text</p>
+						</template>
+
                         <jdoc:include type="message" />
                         <jdoc:include type="component" />
                     </main>

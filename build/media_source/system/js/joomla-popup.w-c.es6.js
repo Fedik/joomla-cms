@@ -71,6 +71,24 @@ class JoomlaPopup extends HTMLElement {
    */
   popupTemplate = popupTemplate;
 
+  /**
+   * Class constructor
+   * @param {Object} config
+   */
+  constructor(config) {
+    super();
+
+    if (!config) return;
+
+    // Check configurable properties
+    ['popupType', 'textHeader', 'textClose', 'popupContent', 'src',
+      'popupButtons', 'width', 'height', 'popupTemplate'].forEach((key) => {
+      if (config.hasOwnProperty(key)) {
+        this[key] = config[key];
+      }
+    })
+  }
+
   connectedCallback() {
     this.renderLayout();
   }
@@ -236,10 +254,11 @@ class JoomlaPopup extends HTMLElement {
           throw error;
         });
         break;
+
       default:
         throw new Error('Unknown popup type requested');
     }
-
+    console.log(this.popupType)
     return this;
   }
 
@@ -356,6 +375,36 @@ class JoomlaPopup extends HTMLElement {
 window.JoomlaPopup = JoomlaPopup;
 customElements.define('joomla-popup', JoomlaPopup);
 
+// Auto create on click
+const delegateSelector = '[data-joomla-popup]';
+const configAttribute = 'joomlaPopup';
+
+document.addEventListener('click', (event) => {
+  const triggerEl = event.target.closest(delegateSelector);
+  if (!triggerEl || !triggerEl.dataset[configAttribute]) return;
+  event.preventDefault();
+  const config = JSON.parse(triggerEl.dataset[configAttribute]);
+
+  // Check for content selector
+  if (config.popupContent && (config.popupContent[0] === '.' || config.popupContent[0] === '#')) {
+    const content = document.querySelector(config.popupContent);
+    config.popupContent = content ? content.innerHTML : config.popupContent;
+  }
+
+  // Check for template selector
+  if (config.popupTemplate && (config.popupTemplate[0] === '.' || config.popupTemplate[0] === '#')) {
+    const template = document.querySelector(config.popupTemplate);
+    if (template && template.nodeName === 'TEMPLATE') {
+      config.popupTemplate = template;
+    }
+  }
+
+  const popup = new JoomlaPopup(config);
+  popup.show();
+
+  console.log(triggerEl, config);
+})
+
 export { JoomlaPopup };
 
 
@@ -384,4 +433,4 @@ console.log([popup]);
 //console.log(JoomlaPopup.alert('message'))
 //console.log(JoomlaPopup.confirm('message?', () => {console.log(this)}))
 
-popup.show();
+//popup.show();
