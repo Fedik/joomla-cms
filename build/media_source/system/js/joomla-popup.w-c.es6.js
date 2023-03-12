@@ -15,6 +15,9 @@ class JoomlaPopup extends HTMLElement {
   popupContent = '';
   popupTemplate = popupTemplate;
   popupButtons = [];
+  width = '';
+  height = '';
+  textClose = 'Close';
 
   connectedCallback() {
     this.renderLayout();
@@ -91,6 +94,29 @@ class JoomlaPopup extends HTMLElement {
 
         buttonsLocation.appendChild(btn);
       });
+    } else {
+      // Add at least one button to close the popup
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.ariaLabel = this.textClose;
+      btn.classList.add('button-close', 'btn-close');
+      btn.addEventListener('click', () => this.close());
+
+      if (this.popupTmplH) {
+        this.popupTmplH.insertAdjacentElement('beforeend', btn);
+      } else {
+        this.popupTmplB.insertAdjacentHTML('afterbegin', btn);
+      }
+    }
+
+    // Adjust the sizes if requested
+    if (this.width) {
+      this.dialog.style.width = '100%';
+      this.dialog.style.maxWidth = this.width;
+    }
+
+    if (this.height) {
+      this.dialog.style.height = this.height;
     }
 
     console.log(this)
@@ -181,10 +207,11 @@ const popup = new JoomlaPopup;
 popup.popupType = 'inline';
 popup.popupHeader = 'The header';
 popup.popupContent = '<strong>blabla very strong text</strong>';
-popup.popupButtons = [
+popup.popupButtons1 = [
   {label: 'Yes', onClick: () => popup.close()},
   {label: 'No', onClick: () => popup.close(), className: 'btn btn-outline-danger ms-2'}
 ]
+popup.width = '30vw';
 
 console.log([popup]);
 //console.log(JoomlaPopup.alert('message'))
