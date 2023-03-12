@@ -16,12 +16,19 @@ class JoomlaPopup extends HTMLElement {
   popupTemplate = popupTemplate;
   popupButtons = [];
 
-  constructor() {
-    super();
+  connectedCallback() {
+    this.renderLayout();
   }
 
-  connectedCallback() {
-    if (this.children.length) return;
+  renderLayout() {
+    if (this.dialog) return this;
+
+    // Check for existing layout
+    if (this.firstElementChild && this.firstElementChild.nodeName === 'DIALOG') {
+      this.dialog = this.firstElementChild;
+      this.popupTmplB = this.querySelector('.joomla-popup-body');
+      return this;
+    }
 
     // Render a template
     const template = document.createElement('template');
@@ -32,9 +39,10 @@ class JoomlaPopup extends HTMLElement {
     this.appendChild(this.dialog);
 
     // Get template parts
-    this.popupTmplH = this.querySelector('header');
-    this.popupTmplB = this.querySelector('section');
-    this.popupTmplF = this.querySelector('footer');
+    this.popupTmplH = this.querySelector('.joomla-popup-header');
+    this.popupTmplB = this.querySelector('.joomla-popup-body');
+    this.popupTmplF = this.querySelector('.joomla-popup-footer');
+    this.popupContentElement = null;
 
     if (!this.popupTmplB) {
       throw new Error('The popup body not found in the template.');
@@ -51,10 +59,16 @@ class JoomlaPopup extends HTMLElement {
     switch (this.popupType) {
       case 'inline':
         this.popupTmplB.insertAdjacentHTML('afterbegin', this.popupContent);
+        this.popupContentElement = this.popupTmplB;
         break;
+      case 'iframe':
+      case 'image':
+      case 'ajax':
       default:
         throw new Error('Unknown popup type requested');
     }
+
+    this.setAttribute('type', this.popupType);
 
     // Create buttons if any
     if (this.popupButtons.length) {
@@ -80,10 +94,19 @@ class JoomlaPopup extends HTMLElement {
     }
 
     console.log(this)
+    return this;
   }
 
   getBody() {
+    this.renderLayout();
+
     return this.popupTmplB;
+  }
+
+  getBodyContent() {
+    this.renderLayout();
+
+    return this.popupContentElement || this.popupTmplB;
   }
 
   show(){
@@ -95,7 +118,24 @@ class JoomlaPopup extends HTMLElement {
   }
 
   close() {
+    if (!this.dialog) {
+      throw new Error('Calling close for non opened dialog is discouraged.');
+    }
+
     this.dialog.close();
+  }
+
+  destroy() {
+    if (this.dialog) {
+      this.dialog.close();
+    }
+    this.removeChild(this.dialog);
+    this.parentElement.removeChild(this);
+    this.dialog = null;
+    this.popupTmplH = null;
+    this.popupTmplB = null;
+    this.popupTmplF = null;
+    this.popupContentElement = null;
   }
 
   static alert(message){
@@ -103,6 +143,7 @@ class JoomlaPopup extends HTMLElement {
     popup.popupType = 'inline';
     popup.popupContent = message;
     popup.popupButtons = [{label: 'Okay', onClick: () => popup.close()}]
+    popup.classList.add('joomla-popup-alert');
     popup.show();
 
     return popup;
@@ -122,6 +163,7 @@ class JoomlaPopup extends HTMLElement {
           onReject && onReject();
         }, className: 'button btn btn-outline-primary ms-2'},
     ];
+    popup.classList.add('joomla-popup-confirm');
     popup.show();
 
     return popup;
@@ -148,4 +190,4 @@ console.log([popup]);
 //console.log(JoomlaPopup.alert('message'))
 //console.log(JoomlaPopup.confirm('message?', () => {console.log(this)}))
 
-//popup.show();
+popup.show();
