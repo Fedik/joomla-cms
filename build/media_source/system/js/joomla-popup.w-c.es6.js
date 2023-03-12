@@ -444,9 +444,8 @@ document.addEventListener('click', (event) => {
 
 export default JoomlaPopup;
 
-
 // ================= testing ======================= //
-const popup = new JoomlaPopup;
+const popup = new JoomlaPopup();
 popup.textHeader = 'The header';
 popup.popupContent = '<strong>blabla very strong text</strong>';
 
@@ -460,14 +459,14 @@ popup.popupContent = '<strong>blabla very strong text</strong>';
 // popup.src = 'index.php?option=com_content&view=articles&tmpl=component&layout=modal';
 
 popup.popupButtons = [
-  {label: 'Yes', onClick: () => popup.close()},
-  {label: 'No', onClick: () => popup.close(), className: 'btn btn-outline-danger ms-2'}
-]
+  { label: 'Yes', onClick: () => popup.close() },
+  { label: 'No', onClick: () => popup.close(), className: 'btn btn-outline-danger ms-2' },
+];
 // popup.width = '80vw';
 // popup.height = '80vh';
 
-console.log([popup]);
-//console.log(JoomlaPopup.alert('message'))
-//console.log(JoomlaPopup.confirm('message?', () => {console.log(this)}))
+// console.log([popup]);
+// console.log(JoomlaPopup.alert('message'))
+// console.log(JoomlaPopup.confirm('message?', () => {console.log(this)}))
 
-//popup.show();
+// popup.show();
