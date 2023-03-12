@@ -105,9 +105,9 @@ class JoomlaPopup extends HTMLElement {
     this.appendChild(this.dialog);
 
     // Get template parts
-    this.popupTmplH = this.querySelector('.joomla-popup-header');
-    this.popupTmplB = this.querySelector('.joomla-popup-body');
-    this.popupTmplF = this.querySelector('.joomla-popup-footer');
+    this.popupTmplH = this.dialog.querySelector('.joomla-popup-header');
+    this.popupTmplB = this.dialog.querySelector('.joomla-popup-body');
+    this.popupTmplF = this.dialog.querySelector('.joomla-popup-footer');
     this.popupContentElement = null;
 
     if (!this.popupTmplB) {
@@ -127,7 +127,9 @@ class JoomlaPopup extends HTMLElement {
 
     // Create buttons if any
     if (this.popupButtons.length) {
-      const buttonsLocation = this.popupTmplF || this.popupTmplB;
+      const buttonsHolder = document.createElement('div');
+      buttonsHolder.classList.add('buttons-holder');
+      (this.popupTmplF || this.popupTmplB).appendChild(buttonsHolder);
 
       this.popupButtons.forEach((btnData) => {
         const btn = document.createElement('button');
@@ -144,7 +146,7 @@ class JoomlaPopup extends HTMLElement {
           btn.addEventListener('click', btnData.onClick);
         }
 
-        buttonsLocation.appendChild(btn);
+        buttonsHolder.appendChild(btn);
       });
     } else {
       // Add at least one button to close the popup
@@ -375,8 +377,8 @@ popup.popupButtons = [
   {label: 'Yes', onClick: () => popup.close()},
   {label: 'No', onClick: () => popup.close(), className: 'btn btn-outline-danger ms-2'}
 ]
-popup.width = '80vw';
-popup.height = '80vh';
+// popup.width = '80vw';
+// popup.height = '80vh';
 
 console.log([popup]);
 //console.log(JoomlaPopup.alert('message'))
