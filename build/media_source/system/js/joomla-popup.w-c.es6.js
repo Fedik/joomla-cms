@@ -269,12 +269,12 @@ class JoomlaPopup extends HTMLElement {
             }
             return response.text();
           }).then((text) => {
-          this.popupTmplB.insertAdjacentHTML('afterbegin', text);
-          this.popupContentElement = this.popupTmplB;
-          onLoad();
-        }).catch((error) => {
-          throw error;
-        });
+            this.popupTmplB.insertAdjacentHTML('afterbegin', text);
+            this.popupContentElement = this.popupTmplB;
+            onLoad();
+          }).catch((error) => {
+            throw error;
+          });
         break;
       }
 
@@ -366,9 +366,7 @@ class JoomlaPopup extends HTMLElement {
       popup.popupContent = message;
       popup.popupButtons = [{
         label: 'Okay',
-        onClick: () => {
-          popup.close();
-        },
+        onClick: () => popup.close(),
       }];
       popup.classList.add('joomla-popup-alert');
       popup.addEventListener('joomla-popup:close', () => resolve());
@@ -399,7 +397,7 @@ class JoomlaPopup extends HTMLElement {
         {
           label: 'No',
           onClick: () => {
-            result = false
+            result = false;
             popup.close();
           },
           className: 'button btn btn-outline-primary',
