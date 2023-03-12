@@ -175,7 +175,7 @@ $wa->useScript('webcomponent.popup');
                 <div class="col-md-12">
                     <main>
 						<button class="btn btn-primary" type="button"
-							data-joomla-popup='{"popupType": "iframe", "src":"index.php?option=com_content&view=articles&tmpl=component&layout=modal"}'>Click</button>
+							data-joomla-popup='{"popupType": "iframe", "width":"80vw", "height": "80vh", "src":"index.php?option=com_content&view=articles&tmpl=component&layout=modal"}'>Click</button>
 
 						<button class="btn btn-primary" type="button"
 								data-joomla-popup='{"popupType": "inline", "popupContent":"#popupText"}'>Click</button>
