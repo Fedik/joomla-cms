@@ -73,6 +73,13 @@ class JoomlaPopup extends HTMLElement {
   // height = '';
 
   /**
+   * An optional Class names for header icon.
+   *
+   * @type {string}
+   */
+  // iconClassHeader = '';
+
+  /**
    * A template for the popup
    * @type {string|HTMLTemplateElement}
    */
@@ -88,6 +95,7 @@ class JoomlaPopup extends HTMLElement {
     // Define default params (doing it here because browser support of public props)
     this.popupType = 'inline';
     this.textHeader = '';
+    this.iconClassHeader = '';
     this.textClose = 'Close';
     this.popupContent = '';
     this.src = '';
@@ -101,7 +109,7 @@ class JoomlaPopup extends HTMLElement {
 
     // Check configurable properties
     ['popupType', 'textHeader', 'textClose', 'popupContent', 'src',
-      'popupButtons', 'canCancel', 'width', 'height', 'popupTemplate'].forEach((key) => {
+      'popupButtons', 'canCancel', 'width', 'height', 'popupTemplate', 'iconClassHeader'].forEach((key) => {
       if (config[key] !== undefined) {
         this[key] = config[key];
       }
@@ -170,6 +178,14 @@ class JoomlaPopup extends HTMLElement {
       const h = document.createElement('h3');
       h.insertAdjacentHTML('afterbegin', this.textHeader);
       this.popupTmplH.insertAdjacentElement('afterbegin', h);
+
+      if (this.iconClassHeader) {
+        const i = document.createElement('span');
+        i.ariaHidden = true;
+        i.classList.add('header-icon');
+        i.classList.add(...this.iconClassHeader.split(' '));
+        this.popupTmplH.insertAdjacentElement('afterbegin', i);
+      }
     }
 
     // Set the body
