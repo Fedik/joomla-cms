@@ -595,7 +595,7 @@
       ]
     },
     {
-      "name": "webcomponent.popup",
+      "name": "popup",
       "type": "script",
       "uri": "system/joomla-popup.min.js",
       "attributes": {
