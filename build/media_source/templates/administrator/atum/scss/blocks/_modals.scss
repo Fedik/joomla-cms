@@ -185,9 +185,27 @@ joomla-popup{
     }
   }
 
-  &[type="iframe"]{
+  &[type="iframe"] {
     dialog {
       overflow: hidden;
+    }
+  }
+
+  // Extra loading animation for iframe and ajax types
+  &[type="iframe"],
+  &[type="ajax"]{
+    &.loading{
+      dialog:after{
+        content: '';
+        display: block;
+        position: absolute;
+        width: 66px;
+        height: 66px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: url(../../../../system/images/ajax-loader.gif) no-repeat center;
+      }
     }
   }
 
@@ -229,6 +247,13 @@ joomla-popup{
     top: 1rem;
   }
 
+  // Apply overflow for potentially large content
+  joomla-popup[type="inline"],
+  joomla-popup[type="ajax"] &{
+    overflow: auto;
+  }
+
+  // Content basic loading animation
   joomla-popup.loading &{
     opacity: 0;
   }

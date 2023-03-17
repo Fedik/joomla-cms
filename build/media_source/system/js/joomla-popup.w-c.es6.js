@@ -207,10 +207,10 @@ class JoomlaPopup extends HTMLElement {
       btn.classList.add('button-close', 'btn-close');
       btn.addEventListener('click', () => this.close());
 
-      if (this.popupTmplH) {
+      if (this.popupTmplH && this.popupType !== 'image') {
         this.popupTmplH.insertAdjacentElement('beforeend', btn);
       } else {
-        this.popupTmplB.insertAdjacentHTML('afterbegin', btn);
+        this.popupTmplB.insertAdjacentElement('afterbegin', btn);
       }
     }
 
