@@ -54,6 +54,13 @@ class JoomlaPopup extends HTMLElement {
   // popupButtons = [];
 
   /**
+   * Whether popup can be closed by Esc button.
+   *
+   * @type {boolean}
+   */
+  // canCancel = true;
+
+  /**
    * An optional limit for the popup width, any valid CSS value.
    * @type {string}
    */
@@ -85,6 +92,7 @@ class JoomlaPopup extends HTMLElement {
     this.popupContent = '';
     this.src = '';
     this.popupButtons = [];
+    this.canCancel = true;
     this.width = '';
     this.height = '';
     this.popupTemplate = popupTemplate;
@@ -93,8 +101,8 @@ class JoomlaPopup extends HTMLElement {
 
     // Check configurable properties
     ['popupType', 'textHeader', 'textClose', 'popupContent', 'src',
-      'popupButtons', 'width', 'height', 'popupTemplate'].forEach((key) => {
-      if (config[key]) {
+      'popupButtons', 'canCancel', 'width', 'height', 'popupTemplate'].forEach((key) => {
+      if (config[key] !== undefined) {
         this[key] = config[key];
       }
     });
@@ -115,10 +123,16 @@ class JoomlaPopup extends HTMLElement {
     const onClose = () => {
       this.dispatchEvent(new CustomEvent('joomla-popup:close'));
     };
+    const onCancel = (event) => {
+      if (!this.canCancel) {
+        event.preventDefault();
+      }
+    };
 
     // Check for existing layout
     if (this.firstElementChild && this.firstElementChild.nodeName === 'DIALOG') {
       this.dialog = this.firstElementChild;
+      this.dialog.addEventListener('cancel', onCancel);
       this.dialog.addEventListener('close', onClose);
       this.popupTmplB = this.querySelector('.joomla-popup-body') || this.dialog;
       this.popupContentElement = this.popupTmplB;
@@ -137,6 +151,7 @@ class JoomlaPopup extends HTMLElement {
 
     this.dialog = document.createElement('dialog');
     this.dialog.appendChild(templateContent);
+    this.dialog.addEventListener('cancel', onCancel);
     this.dialog.addEventListener('close', onClose);
     this.appendChild(this.dialog);
 
@@ -377,6 +392,7 @@ class JoomlaPopup extends HTMLElement {
         label: Joomla.Text._('JOK', 'Okay'),
         onClick: () => popup.destroy(),
       }];
+      popup.canCancel = false;
       popup.classList.add('joomla-popup-alert');
       popup.addEventListener('joomla-popup:close', () => resolve());
       popup.show();
@@ -412,6 +428,7 @@ class JoomlaPopup extends HTMLElement {
           className: 'button btn btn-outline-primary',
         },
       ];
+      popup.canCancel = false;
       popup.classList.add('joomla-popup-confirm');
       popup.addEventListener('joomla-popup:close', () => resolve(result));
       popup.show();
