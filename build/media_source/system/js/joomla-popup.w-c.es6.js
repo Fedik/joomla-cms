@@ -224,14 +224,14 @@ class JoomlaPopup extends HTMLElement {
       this.dialog.style.height = this.height;
     }
 
-    // Remove empty elements
-    // if (this.popupTmplH && !this.popupTmplH.children.length) {
-    //   this.popupTmplH.parentElement.removeChild(this.popupTmplH);
-    // }
-    //
-    // if (this.popupTmplF && !this.popupTmplF.children.length) {
-    //   this.popupTmplF.parentElement.removeChild(this.popupTmplF);
-    // }
+    // Mark an empty template elements
+    if (this.popupTmplH && !this.popupTmplH.children.length) {
+      this.popupTmplH.classList.add('empty');
+    }
+
+    if (this.popupTmplF && !this.popupTmplF.children.length) {
+      this.popupTmplF.classList.add('empty');
+    }
 
     return this;
   }
@@ -380,14 +380,17 @@ class JoomlaPopup extends HTMLElement {
 
   /**
    * Helper method to show an Alert.
+   *
    * @param {String} message
+   * @param {String} title
    * @returns {Promise}
    */
-  static alert(message) {
+  static alert(message, title) {
     return new Promise((resolve) => {
       const popup = new this();
       popup.popupType = 'inline';
       popup.popupContent = message;
+      popup.textHeader = title || Joomla.Text._('INFO', 'Info');
       popup.popupButtons = [{
         label: Joomla.Text._('JOK', 'Okay'),
         onClick: () => popup.destroy(),
@@ -403,14 +406,16 @@ class JoomlaPopup extends HTMLElement {
    * Helper method to show a Confirmation popup.
    *
    * @param {String} message
+   * @param {String} title
    * @returns {Promise}
    */
-  static confirm(message) {
+  static confirm(message, title) {
     return new Promise((resolve) => {
       let result = false;
       const popup = new this();
       popup.popupType = 'inline';
       popup.popupContent = message;
+      popup.textHeader = title || Joomla.Text._('INFO', 'Info');
       popup.popupButtons = [
         {
           label: Joomla.Text._('JYES', 'Yes'),
@@ -425,7 +430,7 @@ class JoomlaPopup extends HTMLElement {
             result = false;
             popup.destroy();
           },
-          className: 'button btn btn-outline-primary',
+          className: 'button btn btn-outline-secondary',
         },
       ];
       popup.canCancel = false;

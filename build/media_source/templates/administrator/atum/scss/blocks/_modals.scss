@@ -178,14 +178,18 @@ joomla-popup{
     height: 80vh;
   }
 
-  &[type="image"],
-  .joomla-popup-alert,
-  .joomla-popup-confirm
-  {
-    width: auto;
-    height: auto;
+  &[type="image"]{
+    dialog {
+      width: fit-content;
+      height: fit-content;
+    }
   }
 
+  &[type="iframe"]{
+    dialog {
+      overflow: hidden;
+    }
+  }
 
 }
 .joomla-popup-container{
@@ -202,8 +206,16 @@ joomla-popup{
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
 
+  h3{
+    margin: 0;
+  }
+
   .button-close{
     margin-inline-start: auto;
+  }
+
+  &.empty{
+    display: none;
   }
 }
 .joomla-popup-body{
@@ -229,4 +241,32 @@ joomla-popup{
   position: relative;
   padding: 1rem;
   border-top: 1px solid var(--border-color);
+
+  .buttons-holder{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    button{
+      margin-inline: 0.375rem;
+      padding-inline: 22px;
+    }
+  }
+
+  &.empty{
+    display: none;
+  }
+}
+
+.joomla-popup-alert,
+.joomla-popup-confirm{
+  dialog {
+    width: 600px;
+    max-width: 80vw;
+    height: fit-content;
+  }
+
+  .joomla-popup-body{
+    padding: 1rem;
+  }
 }
