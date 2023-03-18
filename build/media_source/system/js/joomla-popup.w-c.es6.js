@@ -11,7 +11,8 @@ const popupTemplate = `<div class="joomla-popup-container">
 </div>`;
 
 /**
- * JoomlaPopup class implementation for <joomla-popup> element
+ * JoomlaPopup class for Joomla Dialog implementation.
+ * With use of <joomla-popup> custom element as dialog holder.
  */
 class JoomlaPopup extends HTMLElement {
   /**
@@ -327,6 +328,16 @@ class JoomlaPopup extends HTMLElement {
   }
 
   /**
+   * Return the popup header element.
+   * @returns {HTMLElement|boolean}
+   */
+  getHeader() {
+    this.renderLayout();
+
+    return this.popupTmplH || false;
+  }
+
+  /**
    * Return the popup body element.
    * @returns {HTMLElement}
    */
@@ -347,6 +358,16 @@ class JoomlaPopup extends HTMLElement {
   }
 
   /**
+   * Return the popup footer element.
+   * @returns {HTMLElement|boolean}
+   */
+  getFooter() {
+    this.renderLayout();
+
+    return this.popupTmplB || false;
+  }
+
+  /**
    * Open the popup as modal window.
    * Will append the element to Document body if not appended before.
    *
@@ -363,6 +384,14 @@ class JoomlaPopup extends HTMLElement {
   }
 
   /**
+   * Alias for show() method.
+   * @returns {JoomlaPopup}
+   */
+  open() {
+    return this.show();
+  }
+
+  /**
    * Closes the popup
    *
    * @returns {JoomlaPopup}
@@ -374,6 +403,14 @@ class JoomlaPopup extends HTMLElement {
 
     this.dialog.close();
     return this;
+  }
+
+  /**
+   * Alias for close() method.
+   * @returns {JoomlaPopup}
+   */
+  hide() {
+    return this.close();
   }
 
   /**
@@ -460,7 +497,13 @@ class JoomlaPopup extends HTMLElement {
 window.JoomlaPopup = JoomlaPopup;
 customElements.define('joomla-popup', JoomlaPopup);
 
-// Auto create on click
+/**
+ * Auto create a popup dynamically on click, eg:
+ *
+ * <button type="button" data-joomla-popup='{"popupType": "iframe", "src": "content/url.html"}'>Click</button>
+ * <button type="button" data-joomla-popup='{"popupType": "inline", "popupContent": "#id-of-content-element"}'>Click</button>
+ * <a href="content/url.html" data-joomla-popup>Click</a>
+ */
 const delegateSelector = '[data-joomla-popup]';
 const configAttribute = 'joomlaPopup';
 
