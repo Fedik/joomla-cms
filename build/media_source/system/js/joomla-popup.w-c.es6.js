@@ -505,13 +505,30 @@ customElements.define('joomla-popup', JoomlaPopup);
  * <a href="content/url.html" data-joomla-popup>Click</a>
  */
 const delegateSelector = '[data-joomla-popup]';
-const configAttribute = 'joomlaPopup';
+const configDataAttr = 'joomlaPopup';
+const configCacheFlag = 'joomlaPopupCache';
 
 document.addEventListener('click', (event) => {
   const triggerEl = event.target.closest(delegateSelector);
-  if (!triggerEl || !triggerEl.dataset[configAttribute]) return;
+  if (!triggerEl) return;
   event.preventDefault();
-  const config = JSON.parse(triggerEl.dataset[configAttribute]);
+  if (triggerEl.JoomlaPopupInstance && triggerEl.dataset[configCacheFlag]) {
+    triggerEl.JoomlaPopupInstance.show();
+    return;
+  }
+  const config = triggerEl.dataset[configDataAttr] ? JSON.parse(triggerEl.dataset[configDataAttr]) : {};
+
+  // Check click on anchor
+  if (triggerEl.nodeName === 'A') {
+    if (!config.popupType) {
+      config.popupType = triggerEl.hash ? 'inline' : 'iframe';
+    }
+    if (!config.src && config.popupType === 'iframe') {
+      config.src = triggerEl.href;
+    } else if (!config.popupContent && config.popupType === 'inline') {
+      config.popupContent = triggerEl.hash;
+    }
+  }
 
   // Check for content selector
   if (config.popupContent && (config.popupContent[0] === '.' || config.popupContent[0] === '#')) {
@@ -534,8 +551,13 @@ document.addEventListener('click', (event) => {
   }
 
   const popup = new JoomlaPopup(config);
+  if (triggerEl.dataset[configCacheFlag]) {
+    triggerEl.JoomlaPopupInstance = popup;
+  } else {
+    popup.addEventListener('joomla-popup:close', () => popup.destroy());
+  }
   popup.show();
-  popup.addEventListener('joomla-popup:close', () => popup.destroy());
+
 });
 
 export default JoomlaPopup;
