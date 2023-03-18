@@ -516,6 +516,7 @@ document.addEventListener('click', (event) => {
   // Check for cached instance
   const cacheable = !!triggerEl.dataset[configCacheFlag];
   if (cacheable && triggerEl.JoomlaPopupInstance) {
+    Joomla.Modal.setCurrent(triggerEl.JoomlaPopupInstance);
     triggerEl.JoomlaPopupInstance.show();
     return;
   }
@@ -568,7 +569,6 @@ document.addEventListener('click', (event) => {
 
   Joomla.Modal.setCurrent(popup);
   popup.show();
-
 });
 
 export default JoomlaPopup;
