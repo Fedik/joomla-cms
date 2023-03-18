@@ -110,11 +110,15 @@ class JoomlaPopup extends HTMLElement {
 
     // Check configurable properties
     ['popupType', 'textHeader', 'textClose', 'popupContent', 'src',
-      'popupButtons', 'cancelable', 'width', 'height', 'popupTemplate', 'iconHeader'].forEach((key) => {
+      'popupButtons', 'cancelable', 'width', 'height', 'popupTemplate', 'iconHeader', 'id'].forEach((key) => {
       if (config[key] !== undefined) {
         this[key] = config[key];
       }
     });
+
+    if (config.className) {
+      this.classList.add(...config.className.split(' '));
+    }
   }
 
   connectedCallback() {
@@ -194,41 +198,60 @@ class JoomlaPopup extends HTMLElement {
     this.setAttribute('type', this.popupType);
 
     // Create buttons if any
-    if (this.popupButtons.length) {
-      const buttonsHolder = document.createElement('div');
-      buttonsHolder.classList.add('buttons-holder');
-      (this.popupTmplF || this.popupTmplB).appendChild(buttonsHolder);
+    const buttons = this.popupButtons || [];
 
-      this.popupButtons.forEach((btnData) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = btnData.label;
+    // Add at least one button to close the popup
+    if (!buttons.length) {
+      buttons.push({
+        label: '',
+        ariaLabel: this.textClose,
+        className: 'button-close btn-close',
+        onClick: () => this.close(),
+        location: 'header',
+      })
+    }
 
-        if (btnData.className) {
-          btn.classList.add(...btnData.className.split(' '));
-        } else {
-          btn.classList.add('button', 'button-primary', 'btn', 'btn-primary');
-        }
+    // Buttons holders
+    const btnHHolder = document.createElement('div');
+    const btnFHolder = document.createElement('div');
+    btnHHolder.classList.add('buttons-holder');
+    btnFHolder.classList.add('buttons-holder');
 
-        if (btnData.onClick) {
-          btn.addEventListener('click', btnData.onClick);
-        }
-
-        buttonsHolder.appendChild(btn);
-      });
-    } else {
-      // Add at least one button to close the popup
+    this.popupButtons.forEach((btnData) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.ariaLabel = this.textClose;
-      btn.classList.add('button-close', 'btn-close');
-      btn.addEventListener('click', () => this.close());
+      btn.textContent = btnData.label || '';
+      btn.ariaLabel = btnData.ariaLabel || '';
 
-      if (this.popupTmplH && this.popupType !== 'image') {
-        this.popupTmplH.insertAdjacentElement('beforeend', btn);
+      if (btnData.className) {
+        btn.classList.add(...btnData.className.split(' '));
       } else {
-        this.popupTmplB.insertAdjacentElement('afterbegin', btn);
+        btn.classList.add('button', 'button-primary', 'btn', 'btn-primary');
       }
+
+      if (btnData.onClick) {
+        btn.addEventListener('click', btnData.onClick);
+      }
+
+      if (btnData.location === 'header') {
+        btnHHolder.appendChild(btn);
+      } else {
+        btnFHolder.appendChild(btn);
+      }
+    });
+
+    if (btnHHolder.children.length) {
+      if (this.popupType === 'image' && !this.textHeader) {
+        this.popupTmplB.insertAdjacentElement('afterbegin', btnHHolder);
+      } else if (this.popupTmplH) {
+        this.popupTmplH.insertAdjacentElement('beforeend', btnHHolder);
+      } else {
+        this.popupTmplB.insertAdjacentElement('afterbegin', btnHHolder);
+      }
+    }
+
+    if (btnFHolder.children.length) {
+      (this.popupTmplF || this.popupTmplB).insertAdjacentElement('beforeend', btnFHolder);
     }
 
     // Adjust the sizes if requested

@@ -216,6 +216,17 @@ joomla-popup{
   display: flex;
   flex-flow: column;
   height: 100%;
+
+  .buttons-holder{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-inline-start: auto;
+
+    button{
+      margin-inline: 0.375rem;
+    }
+  }
 }
 .joomla-popup-header{
   position: relative;
@@ -227,10 +238,6 @@ joomla-popup{
 
   h3{
     margin: 0;
-  }
-
-  .button-close{
-    margin-inline-start: auto;
   }
 
   .header-icon{
@@ -247,7 +254,7 @@ joomla-popup{
   box-sizing: border-box;
   flex: 1 1 auto;
 
-  .button-close{
+  .buttons-holder{
     position: absolute;
     right: 1rem;
     top: 1rem;
@@ -273,15 +280,8 @@ joomla-popup{
   padding: 1rem;
   border-top: 1px solid var(--border-color);
 
-  .buttons-holder{
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    button{
-      margin-inline: 0.375rem;
-      padding-inline: 22px;
-    }
+  .buttons-holder button{
+    padding-inline: 22px;
   }
 
   &.empty{
