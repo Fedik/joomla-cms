@@ -59,7 +59,7 @@ class JoomlaPopup extends HTMLElement {
    *
    * @type {boolean}
    */
-  // canCancel = true;
+  // cancelable = true;
 
   /**
    * An optional limit for the popup width, any valid CSS value.
@@ -101,7 +101,7 @@ class JoomlaPopup extends HTMLElement {
     this.popupContent = '';
     this.src = '';
     this.popupButtons = [];
-    this.canCancel = true;
+    this.cancelable = true;
     this.width = '';
     this.height = '';
     this.popupTemplate = popupTemplate;
@@ -110,7 +110,7 @@ class JoomlaPopup extends HTMLElement {
 
     // Check configurable properties
     ['popupType', 'textHeader', 'textClose', 'popupContent', 'src',
-      'popupButtons', 'canCancel', 'width', 'height', 'popupTemplate', 'iconHeader'].forEach((key) => {
+      'popupButtons', 'cancelable', 'width', 'height', 'popupTemplate', 'iconHeader'].forEach((key) => {
       if (config[key] !== undefined) {
         this[key] = config[key];
       }
@@ -133,7 +133,7 @@ class JoomlaPopup extends HTMLElement {
       this.dispatchEvent(new CustomEvent('joomla-popup:close'));
     };
     const onCancel = (event) => {
-      if (!this.canCancel) {
+      if (!this.cancelable) {
         event.preventDefault();
       }
     };
@@ -448,7 +448,7 @@ class JoomlaPopup extends HTMLElement {
         label: Joomla.Text._('JOK', 'Okay'),
         onClick: () => popup.destroy(),
       }];
-      popup.canCancel = false;
+      popup.cancelable = false;
       popup.classList.add('joomla-popup-alert');
       popup.addEventListener('joomla-popup:close', () => resolve());
       popup.show();
@@ -486,7 +486,7 @@ class JoomlaPopup extends HTMLElement {
           className: 'button btn btn-outline-secondary',
         },
       ];
-      popup.canCancel = false;
+      popup.cancelable = false;
       popup.classList.add('joomla-popup-confirm');
       popup.addEventListener('joomla-popup:close', () => resolve(result));
       popup.show();
@@ -512,10 +512,14 @@ document.addEventListener('click', (event) => {
   const triggerEl = event.target.closest(delegateSelector);
   if (!triggerEl) return;
   event.preventDefault();
-  if (triggerEl.JoomlaPopupInstance && triggerEl.dataset[configCacheFlag]) {
+
+  // Check for cached instance
+  const cacheable = !!triggerEl.dataset[configCacheFlag];
+  if (cacheable && triggerEl.JoomlaPopupInstance) {
     triggerEl.JoomlaPopupInstance.show();
     return;
   }
+  // Parse config
   const config = triggerEl.dataset[configDataAttr] ? JSON.parse(triggerEl.dataset[configDataAttr]) : {};
 
   // Check click on anchor
@@ -551,11 +555,18 @@ document.addEventListener('click', (event) => {
   }
 
   const popup = new JoomlaPopup(config);
-  if (triggerEl.dataset[configCacheFlag]) {
+  if (cacheable) {
     triggerEl.JoomlaPopupInstance = popup;
-  } else {
-    popup.addEventListener('joomla-popup:close', () => popup.destroy());
   }
+
+  popup.addEventListener('joomla-popup:close', () => {
+    Joomla.Modal.setCurrent(null);
+    if (!cacheable) {
+      popup.destroy();
+    }
+  });
+
+  Joomla.Modal.setCurrent(popup);
   popup.show();
 
 });
