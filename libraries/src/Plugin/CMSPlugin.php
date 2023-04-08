@@ -58,12 +58,10 @@ abstract class CMSPlugin implements DispatcherAwareInterface, PluginInterface
     protected $_type = null;
 
     /**
-     * Affects constructor behavior. If true, language files will be loaded automatically.
+     * If true, language files will be loaded automatically.
      *
      * @var    boolean
      * @since  3.1
-     *
-     * @deprecated
      */
     protected $autoloadLanguage = false;
 
@@ -119,21 +117,6 @@ abstract class CMSPlugin implements DispatcherAwareInterface, PluginInterface
         // Get the plugin type.
         if (isset($config['type'])) {
             $this->_type = $config['type'];
-        }
-
-        // Load the language files if needed.
-        if ($this->autoloadLanguage) {
-            // @TODO: Remove this in Joomla 6
-            @trigger_error(
-                sprintf(
-                    'Plugin Language autoload is deprecated, and will be disabled in 6.0. Use loadLanguage() method when translation is needed for plugin "%s/%s"',
-                    $this->_type,
-                    $this->_name
-                ),
-                E_USER_DEPRECATED
-            );
-
-            $this->loadLanguage();
         }
 
         if (property_exists($this, 'app')) {
@@ -233,6 +216,18 @@ abstract class CMSPlugin implements DispatcherAwareInterface, PluginInterface
      */
     public function registerListeners()
     {
+        // Handle language autoload
+        if ($this->autoloadLanguage) {
+            $app = $this->getApplication() ?: Factory::getApplication();
+            if (!$app->getLanguage()) {
+                $this->getDispatcher()->addListener('onAfterRoute', function () {
+                    $this->loadLanguage();
+                });
+            } else {
+                $this->loadLanguage();
+            }
+        }
+
         // Plugins which are SubscriberInterface implementations are handled without legacy layer support
         if ($this instanceof SubscriberInterface) {
             $this->getDispatcher()->addSubscriber($this);
