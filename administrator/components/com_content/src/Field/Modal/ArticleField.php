@@ -12,7 +12,6 @@ namespace Joomla\Component\Content\Administrator\Field\Modal;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
@@ -203,8 +202,7 @@ class ArticleField extends FormField
         if ($allowClear) {
             $html .= '<button type="button" class="btn btn-secondary"'
                 . ($value ? '' : ' hidden')
-                . ' data-dialog-field-action="clear"'
-                . ' onclick="window.processModalParent(\'' . $this->id . '\'); return false;">'
+                . ' data-dialog-field-action="clear">'
                 . '<span class="icon-times" aria-hidden="true"></span> ' . Text::_('JCLEAR')
                 . '</button>';
         }
