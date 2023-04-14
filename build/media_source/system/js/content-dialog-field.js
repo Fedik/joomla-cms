@@ -16,6 +16,7 @@
 const doSelect = (inputValue, inputTitle, dialogConfig) => {
   // Create and show the dialog
   const dialog = new JoomlaDialog(dialogConfig);
+  dialog.classList.add('joomla-content-dialog-field');
   dialog.show();
   Joomla.Modal.setCurrent(dialog);
 
@@ -112,9 +113,17 @@ document.addEventListener('click', (event) => {
   switch (action) {
     case 'select':
     case 'create':
-    case 'edit':
       handle = doSelect(inputValue, inputTitle, dialogConfig);
       break;
+    case 'edit': {
+      // Update current value in the URL
+      const url = dialogConfig.src.indexOf('http') === 0 ? new URL(dialogConfig.src) : new URL(dialogConfig.src, window.location.origin);
+      url.searchParams.set('id', inputValue.value);
+      dialogConfig.src = url.toString();
+
+      handle = doSelect(inputValue, inputTitle, dialogConfig);
+      break;
+    }
     case 'clear':
       handle = doClear(inputValue, inputTitle);
       break;

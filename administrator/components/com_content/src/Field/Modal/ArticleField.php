@@ -95,7 +95,7 @@ class ArticleField extends FormField
         }
 
         // Setup variables for display.
-        $linkArticles = (new Uri())->setPath('index.php');
+        $linkArticles = (new Uri())->setPath(Uri::base(true) . '/index.php');
         $linkArticles->setQuery([
             'option' => 'com_content',
             'view'   => 'articles',
