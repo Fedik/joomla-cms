@@ -286,7 +286,9 @@
       ],
       "attributes": {
         "defer": true
-      }
+      },
+      "deprecated": true,
+      "deprecatedMsg": "Use [content-dialog-field] asset instead. To be removed in Joomla 6."
     },
     {
       "name": "joomla.batch-copymove",
@@ -604,6 +606,29 @@
       "dependencies": [
         "core"
       ]
+    },
+    {
+      "type": "script",
+      "name": "content-dialog",
+      "dependencies": [
+        "core"
+      ],
+      "uri": "system/content-dialog.min.js",
+      "attributes": {
+        "type": "module"
+      }
+    },
+    {
+      "type": "script",
+      "name": "content-dialog-field",
+      "dependencies": [
+        "core",
+        "dialog"
+      ],
+      "uri": "system/content-dialog-field.min.js",
+      "attributes": {
+        "type": "module"
+      }
     }
   ]
 }

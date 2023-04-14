@@ -16,6 +16,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Database\ParameterType;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -59,6 +60,7 @@ class ArticleField extends FormField
 
         // The active article id field.
         $value = (int) $this->value ?: '';
+        $title = '';
 
         // Create the modal id.
         $modalId = 'Article_' . $this->id;
@@ -67,7 +69,7 @@ class ArticleField extends FormField
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
         // Add the modal field script to the document head.
-        $wa->useScript('field.modal-fields');
+        $wa->useScript('field.modal-fields')->useScript('content-dialog-field');
 
         // Script to proxy the select modal function to the modal-fields.js file.
         if ($allowSelect) {
@@ -94,20 +96,31 @@ class ArticleField extends FormField
         }
 
         // Setup variables for display.
-        $linkArticles = 'index.php?option=com_content&amp;view=articles&amp;layout=modal&amp;tmpl=component&amp;' . Session::getFormToken() . '=1';
-        $linkArticle  = 'index.php?option=com_content&amp;view=article&amp;layout=modal&amp;tmpl=component&amp;' . Session::getFormToken() . '=1';
+        $linkArticles = (new Uri())->setPath('index.php');
+        $linkArticles->setQuery([
+            'option' => 'com_content',
+            'view'   => 'articles',
+            'layout' => 'modal',
+            'tmpl'   => 'component',
+            Session::getFormToken() => 1,
+        ]);
+        $linkArticle = clone $linkArticles;
+        $linkArticle->setVar('view', 'article');
 
         if (isset($this->element['language'])) {
-            $linkArticles .= '&amp;forcedLanguage=' . $this->element['language'];
-            $linkArticle .= '&amp;forcedLanguage=' . $this->element['language'];
-            $modalTitle    = Text::_('COM_CONTENT_SELECT_AN_ARTICLE') . ' &#8212; ' . $this->element['label'];
+            $linkArticles->setVar('forcedLanguage', $this->element['language']);
+            $linkArticle->setVar('forcedLanguage', $this->element['language']);
+
+            $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE') . ' &#8212; ' . $this->element['label'];
         } else {
-            $modalTitle    = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
+            $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
         }
 
-        $urlSelect = $linkArticles . '&amp;function=jSelectArticle_' . $this->id;
-        $urlEdit   = $linkArticle . '&amp;task=article.edit&amp;id=\' + document.getElementById(&quot;' . $this->id . '_id&quot;).value + \'';
-        $urlNew    = $linkArticle . '&amp;task=article.add';
+        $urlSelect = $linkArticles; // . '&function=jSelectArticle_' . $this->id;
+        $urlEdit   = clone $linkArticle;
+        $urlEdit->setVar('task', 'article.edit'); // . '&task=article.edit&id=\' + document.getElementById(&quot;' . $this->id . '_id&quot;).value + \'';
+        $urlNew    = clone $linkArticle;
+        $urlNew->setVar('task', 'article.add'); // . '&task=article.add';
 
         if ($value) {
             $db    = $this->getDatabase();
@@ -120,67 +133,77 @@ class ArticleField extends FormField
 
             try {
                 $title = $db->loadResult();
+                $title = $title ? htmlspecialchars($title) : '';
             } catch (\RuntimeException $e) {
                 Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
             }
-            if (empty($title)) {
+            if (!$title) {
                 $value = '';
             }
         }
 
-        $title = empty($title) ? Text::_('COM_CONTENT_SELECT_AN_ARTICLE') : htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-
         // The current article display field.
-        $html  = '';
+        $html  = '<div class="js-content-dialog-field">';
 
         if ($allowSelect || $allowNew || $allowEdit || $allowClear) {
             $html .= '<span class="input-group">';
         }
 
-        $html .= '<input class="form-control" id="' . $this->id . '_name" type="text" value="' . $title . '" readonly size="35">';
+        $html .= '<input class="form-control js-input-title" type="text" value="' . $title . '"'
+            . ' id="' . $this->id . '_name" name="' . $this->name . '[name]" disabled'
+            . ' placeholder="' . htmlspecialchars(Text::_('COM_CONTENT_SELECT_AN_ARTICLE')) . '">';
 
         // Select article button
         if ($allowSelect) {
-            $html .= '<button'
-                . ' class="btn btn-primary' . ($value ? ' hidden' : '') . '"'
-                . ' id="' . $this->id . '_select"'
-                . ' data-bs-toggle="modal"'
-                . ' type="button"'
-                . ' data-bs-target="#ModalSelect' . $modalId . '">'
+            $optionsSelect = [
+                'popupType'  => 'iframe',
+                'src'        => (string) $urlSelect,
+                'textHeader' => $modalTitle,
+            ];
+            $html .= '<button type="button" class="btn btn-primary"'
+                . ($value ? ' hidden' : '')
+                . ' data-dialog-field-action="select"'
+                . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsSelect)) . '">'
                 . '<span class="icon-file" aria-hidden="true"></span> ' . Text::_('JSELECT')
                 . '</button>';
         }
 
         // New article button
         if ($allowNew) {
-            $html .= '<button'
-                . ' class="btn btn-secondary' . ($value ? ' hidden' : '') . '"'
-                . ' id="' . $this->id . '_new"'
-                . ' data-bs-toggle="modal"'
-                . ' type="button"'
-                . ' data-bs-target="#ModalNew' . $modalId . '">'
+            $optionsNew = [
+                'popupType'  => 'iframe',
+                'src'        => (string) $urlNew,
+                'textHeader' => Text::_('COM_CONTENT_NEW_ARTICLE'),
+            ];
+
+            $html .= '<button type="button" class="btn btn-secondary"'
+                . ($value ? ' hidden' : '')
+                . ' data-dialog-field-action="create"'
+                . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsNew)) . '">'
                 . '<span class="icon-plus" aria-hidden="true"></span> ' . Text::_('JACTION_CREATE')
                 . '</button>';
         }
 
         // Edit article button
         if ($allowEdit) {
-            $html .= '<button'
-                . ' class="btn btn-primary' . ($value ? '' : ' hidden') . '"'
-                . ' id="' . $this->id . '_edit"'
-                . ' data-bs-toggle="modal"'
-                . ' type="button"'
-                . ' data-bs-target="#ModalEdit' . $modalId . '">'
+            $optionsEdit = [
+                'popupType'  => 'iframe',
+                'src'        => (string) $urlEdit,
+                'textHeader' => Text::_('COM_CONTENT_EDIT_ARTICLE'),
+            ];
+            $html .= '<button type="button" class="btn btn-primary"'
+                . ($value ? '' : ' hidden')
+                . ' data-dialog-field-action="edit"'
+                . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsEdit)) . '">'
                 . '<span class="icon-pen-square" aria-hidden="true"></span> ' . Text::_('JACTION_EDIT')
                 . '</button>';
         }
 
         // Clear article button
         if ($allowClear) {
-            $html .= '<button'
-                . ' class="btn btn-secondary' . ($value ? '' : ' hidden') . '"'
-                . ' id="' . $this->id . '_clear"'
-                . ' type="button"'
+            $html .= '<button type="button" class="btn btn-secondary"'
+                . ($value ? '' : ' hidden')
+                . ' data-dialog-field-action="clear"'
                 . ' onclick="window.processModalParent(\'' . $this->id . '\'); return false;">'
                 . '<span class="icon-times" aria-hidden="true"></span> ' . Text::_('JCLEAR')
                 . '</button>';
@@ -206,7 +229,7 @@ class ArticleField extends FormField
             $html .= '</span>';
         }
 
-        // Select article modal
+        /*// Select article modal
         if ($allowSelect) {
             $html .= HTMLHelper::_(
                 'bootstrap.renderModal',
@@ -222,9 +245,9 @@ class ArticleField extends FormField
                                         . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>',
                 ]
             );
-        }
+        }*/
 
-        // New article modal
+        /*// New article modal
         if ($allowNew) {
             $html .= HTMLHelper::_(
                 'bootstrap.renderModal',
@@ -250,9 +273,9 @@ class ArticleField extends FormField
                             . Text::_('JAPPLY') . '</button>',
                 ]
             );
-        }
+        }*/
 
-        // Edit article modal
+        /*// Edit article modal
         if ($allowEdit) {
             $html .= HTMLHelper::_(
                 'bootstrap.renderModal',
@@ -278,13 +301,15 @@ class ArticleField extends FormField
                             . Text::_('JAPPLY') . '</button>',
                 ]
             );
-        }
+        }*/
 
         // Note: class='required' for client side validation.
-        $class = $this->required ? ' class="required modal-value"' : '';
+        $class  = $this->required ? 'required modal-value' : '';
+        $class .= ' js-input-value';
 
-        $html .= '<input type="hidden" id="' . $this->id . '_id" ' . $class . ' data-required="' . (int) $this->required . '" name="' . $this->name
-            . '" data-text="' . htmlspecialchars(Text::_('COM_CONTENT_SELECT_AN_ARTICLE'), ENT_COMPAT, 'UTF-8') . '" value="' . $value . '">';
+        $html .= '<input type="hidden" id="' . $this->id . '_id" class="' . $class . '" data-required="' . (int) $this->required . '" name="' . $this->name
+            . '" value="' . $value . '">';
+        $html .= '</div>';
 
         return $html;
     }
