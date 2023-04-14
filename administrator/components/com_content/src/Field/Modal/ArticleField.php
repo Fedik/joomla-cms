@@ -161,7 +161,7 @@ class ArticleField extends FormField
             ];
             $html .= '<button type="button" class="btn btn-primary"'
                 . ($value ? ' hidden' : '')
-                . ' data-dialog-field-action="select"'
+                . ' data-dialog-field-action="select" data-show-when-value=""'
                 . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsSelect)) . '">'
                 . '<span class="icon-file" aria-hidden="true"></span> ' . Text::_('JSELECT')
                 . '</button>';
@@ -177,7 +177,7 @@ class ArticleField extends FormField
 
             $html .= '<button type="button" class="btn btn-secondary"'
                 . ($value ? ' hidden' : '')
-                . ' data-dialog-field-action="create"'
+                . ' data-dialog-field-action="create" data-show-when-value=""'
                 . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsNew)) . '">'
                 . '<span class="icon-plus" aria-hidden="true"></span> ' . Text::_('JACTION_CREATE')
                 . '</button>';
@@ -192,7 +192,7 @@ class ArticleField extends FormField
             ];
             $html .= '<button type="button" class="btn btn-primary"'
                 . ($value ? '' : ' hidden')
-                . ' data-dialog-field-action="edit"'
+                . ' data-dialog-field-action="edit" data-show-when-value="1"'
                 . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsEdit)) . '">'
                 . '<span class="icon-pen-square" aria-hidden="true"></span> ' . Text::_('JACTION_EDIT')
                 . '</button>';
@@ -202,7 +202,7 @@ class ArticleField extends FormField
         if ($allowClear) {
             $html .= '<button type="button" class="btn btn-secondary"'
                 . ($value ? '' : ' hidden')
-                . ' data-dialog-field-action="clear">'
+                . ' data-dialog-field-action="clear" data-show-when-value="1">'
                 . '<span class="icon-times" aria-hidden="true"></span> ' . Text::_('JCLEAR')
                 . '</button>';
         }

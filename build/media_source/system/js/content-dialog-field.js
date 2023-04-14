@@ -74,30 +74,16 @@ const doClear = (inputValue, inputTitle) => {
  * @param {HTMLElement} container
  */
 const updateView = (inputValue, container) => {
-  const btnSel = container.querySelector('[data-dialog-field-action="select"]');
-  const btnNew = container.querySelector('[data-dialog-field-action="create"]');
-  const btnEdit = container.querySelector('[data-dialog-field-action="edit"]');
-  const btnClr = container.querySelector('[data-dialog-field-action="clear"]');
-
-  if (inputValue.value) {
-    // eslint-disable-next-line no-unused-expressions
-    btnSel && btnSel.setAttribute('hidden', '');
-    // eslint-disable-next-line no-unused-expressions
-    btnNew && btnNew.setAttribute('hidden', '');
-    // eslint-disable-next-line no-unused-expressions
-    btnEdit && btnEdit.removeAttribute('hidden');
-    // eslint-disable-next-line no-unused-expressions
-    btnClr && btnClr.removeAttribute('hidden');
-  } else {
-    // eslint-disable-next-line no-unused-expressions
-    btnSel && btnSel.removeAttribute('hidden');
-    // eslint-disable-next-line no-unused-expressions
-    btnNew && btnNew.removeAttribute('hidden');
-    // eslint-disable-next-line no-unused-expressions
-    btnEdit && btnEdit.setAttribute('hidden', '');
-    // eslint-disable-next-line no-unused-expressions
-    btnClr && btnClr.setAttribute('hidden', '');
-  }
+  const hasValue = !!inputValue.value;
+  container.querySelectorAll('[data-show-when-value]').forEach((el) => {
+    if (el.dataset.showWhenValue) {
+      // eslint-disable-next-line no-unused-expressions
+      hasValue ? el.removeAttribute('hidden') : el.setAttribute('hidden', '');
+    } else {
+      // eslint-disable-next-line no-unused-expressions
+      hasValue ? el.setAttribute('hidden', '') : el.removeAttribute('hidden');
+    }
+  });
 };
 
 const delegateSelector = '[data-dialog-field-action]';
