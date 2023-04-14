@@ -6,24 +6,6 @@
 /* global JoomlaDialog */
 
 /**
- * Create a dialog instance
- *
- * @param {Object} config
- * @returns {JoomlaDialog}
- */
-const createDialog = (config) => {
-  const dialog = new JoomlaDialog(config);
-  dialog.addEventListener('joomla-dialog:open', () => {
-    Joomla.Modal.setCurrent(dialog);
-  });
-  dialog.addEventListener('joomla-dialog:close', () => {
-    Joomla.Modal.setCurrent(null);
-    dialog.destroy();
-  });
-  return dialog;
-};
-
-/**
  * Show Select dialog
  *
  * @param {HTMLInputElement} inputValue
@@ -32,45 +14,38 @@ const createDialog = (config) => {
  * @returns {Promise}
  */
 const doSelect = (inputValue, inputTitle, dialogConfig) => {
-  const dialog = createDialog(dialogConfig);
+  // Create and show the dialog
+  const dialog = new JoomlaDialog(dialogConfig);
   dialog.show();
+  Joomla.Modal.setCurrent(dialog);
 
   return new Promise((resolve) => {
-    resolve();
-  });
-};
+    const msgListener = (event) => {
+      console.log(event);
+      // Avoid cross origins
+      if (event.origin !== window.location.origin) return;
+      // Check message type
+      if (event.data.messageType === 'joomla:content-select') {
+        inputValue.value = event.data.id || '';
+        if (inputTitle) {
+          inputTitle.value = event.data.title || inputValue.value;
+        }
+        dialog.close();
+      } else if (event.data.messageType === 'joomla:cancel') {
+        dialog.close();
+      }
+    };
 
-/**
- * Show Create dialog
- *
- * @param {HTMLInputElement} inputValue
- * @param {HTMLInputElement} inputTitle
- * @param {Object} dialogConfig
- * @returns {Promise}
- */
-const doCreate = (inputValue, inputTitle, dialogConfig) => {
-  const dialog = createDialog(dialogConfig);
-  dialog.show();
+    // Clear all when dialog is closed
+    dialog.addEventListener('joomla-dialog:close', () => {
+      window.removeEventListener('message', msgListener);
+      Joomla.Modal.setCurrent(null);
+      dialog.destroy();
+      resolve();
+    });
 
-  return new Promise((resolve) => {
-    resolve();
-  });
-};
-
-/**
- * Show Edit dialog
- *
- * @param {HTMLInputElement} inputValue
- * @param {HTMLInputElement} inputTitle
- * @param {Object} dialogConfig
- * @returns {Promise}
- */
-const doEdit = (inputValue, inputTitle, dialogConfig) => {
-  const dialog = createDialog(dialogConfig);
-  dialog.show();
-
-  return new Promise((resolve) => {
-    resolve();
+    // Wait for message
+    window.addEventListener('message', msgListener);
   });
 };
 
@@ -150,19 +125,15 @@ document.addEventListener('click', (event) => {
   let handle;
   switch (action) {
     case 'select':
-      handle = doSelect(inputValue, inputTitle, dialogConfig);
-      break;
     case 'create':
-      handle = doCreate(inputValue, inputTitle, dialogConfig);
-      break;
     case 'edit':
-      handle = doEdit(inputValue, inputTitle, dialogConfig);
+      handle = doSelect(inputValue, inputTitle, dialogConfig);
       break;
     case 'clear':
       handle = doClear(inputValue, inputTitle);
       break;
     default:
-      throw new Error(`Unknown action ${action}`);
+      throw new Error(`Unknown action ${action} for Content dialog field`);
   }
 
   handle.then(() => {
