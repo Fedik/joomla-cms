@@ -4,6 +4,17 @@
  */
 
 const delegateSelector = '[data-content-select]';
+const onLoadSelector = '[data-content-select-on-load]';
+
+/**
+ * A helper to Post a Message
+ * @param {Object} data
+ */
+const send = (data) => {
+  // Set the message type and send it
+  data.messageType = 'joomla:content-select';
+  window.parent.postMessage(data);
+};
 
 // Bind the buttons
 document.addEventListener('click', (event) => {
@@ -11,11 +22,19 @@ document.addEventListener('click', (event) => {
   if (!button) return;
   event.preventDefault();
 
-  // Extract the data
+  // Extract the data and send
   const data = { ...button.dataset };
   delete data.contentSelect;
+  send(data);
+});
 
-  // Set the message type and send it
-  data.messageType = 'joomla:content-select';
-  window.parent.postMessage(data);
+// Check for "select on load"
+window.addEventListener('load', () => {
+  const dataElement = document.querySelector(onLoadSelector);
+  if (dataElement) {
+    // Extract the data and send
+    const data = { ...dataElement.dataset };
+    delete data.contentSelectOnLoad;
+    send(data);
+  }
 });

@@ -93,6 +93,12 @@ class HtmlView extends BaseHtmlView
         $this->state = $this->get('State');
         $this->canDo = ContentHelper::getActions('com_content', 'article', $this->item->id);
 
+        if ($this->getLayout() === 'modalreturn') {
+            parent::display($tpl);
+
+            return;
+        }
+
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
@@ -115,6 +121,10 @@ class HtmlView extends BaseHtmlView
             $this->addToolbar();
         } else {
             $this->addModalToolbar();
+
+            $return = 'index.php?option=com_content&view=article&layout=modalreturn&tmpl=component'
+                . '&id=' . ($this->item ? $this->item->id : '');
+            Factory::getApplication()->getInput()->set('return', base64_encode($return));
         }
 
         parent::display($tpl);

@@ -123,7 +123,7 @@ if (!empty($editor)) {
                                 . ' data-id="' . $item->id . '"'
                                 . ' data-title="' . $this->escape($item->title) . '"'
                                 . ' data-cat-id="' . $this->escape($item->catid) . '"'
-                                . ' data-uri="' . $this->escape(RouteHelper::getArticleRoute($item->id, $item->catid, $item->language)) . '"'
+                                . ' data-uri="' . $this->escape($link) . '"'
                                 . ' data-language="' . $this->escape($lang) . '"'
                                 . ' data-html="' . $this->escape($itemHtml) . '"';
                             ?>
