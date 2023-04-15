@@ -68,7 +68,7 @@ class ArticleField extends FormField
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
         // Add the modal field script to the document head.
-        $wa->useScript('field.modal-fields')->useScript('content-dialog-field');
+        $wa->useScript('field.modal-fields')->useScript('content-select-field');
 
         // Script to proxy the select modal function to the modal-fields.js file.
         if ($allowSelect) {

@@ -121,7 +121,7 @@
         "type": "module"
       },
       "deprecated": true,
-      "deprecatedMsg": "Use [content-dialog] instead. To be removed in Joomla 6."
+      "deprecatedMsg": "Use [content-select] instead. To be removed in Joomla 6."
     },
     {
       "name": "com_content.form-edit.es5",
