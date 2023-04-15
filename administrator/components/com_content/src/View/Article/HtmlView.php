@@ -121,10 +121,6 @@ class HtmlView extends BaseHtmlView
             $this->addToolbar();
         } else {
             $this->addModalToolbar();
-
-            $return = 'index.php?option=com_content&view=article&layout=modalreturn&tmpl=component'
-                . '&id=' . ($this->item ? $this->item->id : '');
-            Factory::getApplication()->getInput()->set('return', base64_encode($return));
         }
 
         parent::display($tpl);
