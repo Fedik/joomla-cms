@@ -20,7 +20,7 @@ $wa->useScript('content-select');
 $icon     = 'icon-copy';
 $title    = $this->item ? $this->item->title : '';
 $content  = $this->item ? $this->item->alias : '';
-$dataAttr = 'data-content-type="article" ';
+$dataAttr = 'data-content-type="com_content.article" ';
 
 if ($this->item) {
     $link      = RouteHelper::getArticleRoute($this->item->id, $this->item->catid, $this->item->language);
