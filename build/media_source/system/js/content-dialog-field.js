@@ -18,11 +18,10 @@ const doSelect = (inputValue, inputTitle, dialogConfig) => {
   const dialog = new JoomlaDialog(dialogConfig);
   dialog.classList.add('joomla-content-dialog-field');
   dialog.show();
-  Joomla.Modal.setCurrent(dialog);
+  // Joomla.Modal.setCurrent(dialog);
 
   return new Promise((resolve) => {
     const msgListener = (event) => {
-      console.log(event);
       // Avoid cross origins
       if (event.origin !== window.location.origin) return;
       // Check message type
@@ -40,7 +39,7 @@ const doSelect = (inputValue, inputTitle, dialogConfig) => {
     // Clear all when dialog is closed
     dialog.addEventListener('joomla-dialog:close', () => {
       window.removeEventListener('message', msgListener);
-      Joomla.Modal.setCurrent(null);
+      // Joomla.Modal.setCurrent(null);
       dialog.destroy();
       resolve();
     });
