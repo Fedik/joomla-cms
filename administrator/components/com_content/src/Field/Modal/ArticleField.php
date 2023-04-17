@@ -218,14 +218,12 @@ class ArticleField extends FormField
             $tagLength            = (int) strlen((string) $this->element['language']);
             $callbackFunctionStem = substr("jSelectArticle_" . $this->id, 0, -$tagLength);
 
-            $html .= '<button'
-            . ' class="btn btn-primary' . ($value ? '' : ' hidden') . '"'
-            . ' type="button"'
-            . ' id="' . $this->id . '_propagate"'
-            . ' title="' . Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_TIP') . '"'
-            . ' onclick="Joomla.propagateAssociation(\'' . $this->id . '\', \'' . $callbackFunctionStem . '\');">'
-            . '<span class="icon-sync" aria-hidden="true"></span> ' . Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_BUTTON')
-            . '</button>';
+            $html .= '<button type="button" class="btn btn-primary"'
+                . ($value ? '' : ' hidden')
+                . ' title="' . htmlspecialchars(Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_TIP')) . '"'
+                . ' onclick="Joomla.propagateAssociation(\'' . $this->id . '\', \'' . $callbackFunctionStem . '\');">'
+                . '<span class="icon-sync" aria-hidden="true"></span> ' . Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_BUTTON')
+                . '</button>';
         }
 
         if ($allowSelect || $allowNew || $allowEdit || $allowClear) {
