@@ -33,6 +33,8 @@
 		url      = url || '';
 		language = language || '';
 
+		var isChanged = fieldId.value !== id;
+
 		if (id)
 		{
 			fieldId.value    = id;
@@ -84,6 +86,11 @@
 			{
 				document.getElementById(fieldPrefix + '_propagate').classList.add('hidden');
 			}
+		}
+
+		if (isChanged) {
+			fieldId.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
+			fieldTitle.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
 		}
 
 		if (fieldId.getAttribute('data-required') == '1')
