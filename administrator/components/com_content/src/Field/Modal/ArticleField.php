@@ -105,6 +105,13 @@ class ArticleField extends FormField
         ]);
         $linkArticle = clone $linkArticles;
         $linkArticle->setVar('view', 'article');
+        $linkCheckin = (new Uri())->setPath(Uri::base(true) . '/index.php');
+        $linkCheckin->setQuery([
+            'option' => 'com_content',
+            'task'   => 'articles.checkin',
+            'format' => 'json',
+            Session::getFormToken() => 1,
+        ]);
 
         if (isset($this->element['language'])) {
             $linkArticles->setVar('forcedLanguage', $this->element['language']);
@@ -189,6 +196,7 @@ class ArticleField extends FormField
                 'popupType'  => 'iframe',
                 'src'        => (string) $urlEdit,
                 'textHeader' => Text::_('COM_CONTENT_EDIT_ARTICLE'),
+                'checkinUrl' => (string) $linkCheckin,
             ];
             $html .= '<button type="button" class="btn btn-primary"'
                 . ($value ? '' : ' hidden')

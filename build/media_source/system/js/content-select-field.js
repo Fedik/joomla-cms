@@ -132,5 +132,22 @@ document.addEventListener('click', (event) => {
 
   handle.then(() => {
     updateView(inputValue, container);
+
+    // Perform checkin when needed
+    if (dialogConfig.checkinUrl) {
+      const url = dialogConfig.checkinUrl.indexOf('http') === 0
+        ? new URL(dialogConfig.checkinUrl) : new URL(dialogConfig.checkinUrl, window.location.origin);
+      // Add value to request
+      url.searchParams.set('id', inputValue.value);
+      url.searchParams.set('cid[]', inputValue.value);
+      // Also add value to POST, because Controller may expect it from there
+      const data = new FormData();
+      data.append('id', inputValue.value);
+      data.append('cid[]', inputValue.value);
+
+      Joomla.request({
+        url: url.toString(), method: 'POST', promise: true, data,
+      });
+    }
   });
 });
