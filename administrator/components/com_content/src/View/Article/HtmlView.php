@@ -271,6 +271,6 @@ class HtmlView extends BaseHtmlView
             $toolbar->save('article.save');
         }
 
-        $toolbar->cancel('article.cancel', 'JTOOLBAR_CANCEL');
+        $toolbar->cancel('article.cancel');
     }
 }
