@@ -221,6 +221,7 @@ class ArticleField extends FormField
             $html .= '<button type="button" class="btn btn-primary"'
                 . ($value ? '' : ' hidden')
                 . ' title="' . htmlspecialchars(Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_TIP')) . '"'
+                . ' data-show-when-value="1"'
                 . ' onclick="Joomla.propagateAssociation(\'' . $this->id . '\', \'' . $callbackFunctionStem . '\');">'
                 . '<span class="icon-sync" aria-hidden="true"></span> ' . Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_BUTTON')
                 . '</button>';
