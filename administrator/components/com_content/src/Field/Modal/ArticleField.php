@@ -47,10 +47,64 @@ class ArticleField extends ModalSelectField
      */
     protected function getInput()
     {
-        $this->hint      = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
-        $this->urlSelect = 'index.php?option=com_content&view=articles&layout=modal&tmpl=component';
+        if (empty($this->layout)) {
+            throw new \UnexpectedValueException(sprintf('%s has no layout assigned.', $this->name));
+        }
 
-        return parent::getInput();
+        $allowNew       = ((string) $this->element['new'] == 'true');
+        $allowEdit      = ((string) $this->element['edit'] == 'true');
+        $allowClear     = ((string) $this->element['clear'] != 'false');
+        $allowSelect    = ((string) $this->element['select'] != 'false');
+        $allowPropagate = ((string) $this->element['propagate'] == 'true');
+
+        $languages = LanguageHelper::getContentLanguages([0, 1], false);
+
+        // Load language
+        Factory::getApplication()->getLanguage()->load('com_content', JPATH_ADMINISTRATOR);
+
+        // Prepare links
+        $linkArticles = (new Uri())->setPath(Uri::base(true) . '/index.php');
+        $linkArticles->setQuery([
+            'option' => 'com_content',
+            'view'   => 'articles',
+            'layout' => 'modal',
+            'tmpl'   => 'component',
+            Session::getFormToken() => 1,
+        ]);
+        $linkArticle = clone $linkArticles;
+        $linkArticle->setVar('view', 'article');
+        $linkCheckin = (new Uri())->setPath(Uri::base(true) . '/index.php');
+        $linkCheckin->setQuery([
+            'option' => 'com_content',
+            'task'   => 'articles.checkin',
+            'format' => 'json',
+            Session::getFormToken() => 1,
+        ]);
+
+        if (isset($this->element['language'])) {
+            $linkArticles->setVar('forcedLanguage', (string) $this->element['language']);
+            $linkArticle->setVar('forcedLanguage', (string) $this->element['language']);
+
+            $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE') . ' &#8212; ' . $this->element['label'];
+        } else {
+            $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
+        }
+
+        $urlSelect = $linkArticles;
+        $urlEdit   = clone $linkArticle;
+        $urlEdit->setVar('task', 'article.edit');
+        $urlNew    = clone $linkArticle;
+        $urlNew->setVar('task', 'article.add');
+
+        $data               = $this->getLayoutData();
+        $data['hint']       = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
+        $data['urlSelect']  = $allowSelect ? (string) $urlSelect : '';
+        $data['urlEdit']    = $allowEdit ? (string) $urlEdit : '';
+        $data['urlNew']     = $allowNew ? (string) $urlNew : '';
+        $data['valueTitle'] = $this->getValueTitle();
+        $data['modalTitle'] = $modalTitle;
+
+        return $this->getRenderer($this->layout)->render($data);
     }
 
     /**
@@ -315,6 +369,7 @@ class ArticleField extends ModalSelectField
     {
         $layout = parent::getRenderer($layoutId);
         $layout->setComponent('com_content');
+        $layout->setClient(1);
 
         return $layout;
     }

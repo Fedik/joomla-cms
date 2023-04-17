@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 extract($displayData);
 
@@ -46,27 +47,34 @@ extract($displayData);
  * @var   string   $valueTitle
  */
 
-// Add the field script
 if (!$readonly && !$disabled) {
     /** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-    $wa->useScript('content-select-field')
-        // Script for backward compatibility
-        ->useScript('field.modal-fields');
+
+    // Scripts for backward compatibility
+    $wa->useScript('field.modal-fields');
+    $wa->addInlineScript('
+window.jSelectArticle_' . $id . ' = function (id, title, catid, object, url, language) {
+  window.processModalSelect("Article", "' . $id . '", id, title, catid, object, url, language);
+}',
+        [],
+        ['type' => 'module']
+    );
+
+    Text::script('JGLOBAL_ASSOCIATIONS_PROPAGATE_FAILED');
 }
 
-$fieldClass = $required ? 'required modal-value' : '';
+$optionsSelect = [
+    'popupType'  => 'iframe',
+    'src'        => $urlSelect,
+    'textHeader' => Text::_('JSELECT'),
+];
+
 ?>
-
-<div class="js-content-select-field <?php echo $class; ?>" <?php echo $dataAttribute; ?>>
-    <div class="input-group">
-        <input class="form-control js-input-title" type="text" value="<?php echo $this->escape($valueTitle ?? $value); ?>" readonly
-               id="<?php echo $id; ?>_name" name="<?php echo $name; ?>[name]"
-               placeholder="<?php echo $this->escape($hint); ?>"/>
-
-        <?php echo (!$readonly && !$disabled) ? $this->sublayout('buttons', $displayData) : ''; ?>
-    </div>
-
-    <input type="hidden" id="<?php echo $id; ?>_id" class="<?php echo $fieldClass; ?> js-input-value" data-required="<?php echo (int) $required; ?>"
-           name="<?php echo $name; ?>" value="<?php echo $this->escape($value); ?>">
-</div>
+<?php if ($urlSelect): ?>
+<button type="button" class="btn btn-primary"
+        data-content-select-field-action="select"
+        data-modal-config="<?php echo $this->escape(json_encode($optionsSelect)); ?>">
+    <span class="icon-file" aria-hidden="true"></span> <?php echo Text::_('JSELECT'); ?>
+</button>
+<?php endif; ?>
