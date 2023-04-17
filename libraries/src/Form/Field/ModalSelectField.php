@@ -90,6 +90,18 @@ class ModalSelectField extends FormField
     }
 
     /**
+     * Method to get the field label markup.
+     *
+     * @return  string  The field label markup.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function getLabel()
+    {
+        return str_replace($this->id, $this->id . '_name', parent::getLabel());
+    }
+
+    /**
      * Method to retrieve the title of selected item.
      *
      * @return string

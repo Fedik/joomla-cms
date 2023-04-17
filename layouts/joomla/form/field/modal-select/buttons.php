@@ -10,7 +10,7 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 extract($displayData);
 
@@ -46,23 +46,17 @@ extract($displayData);
  * @var   string   $valueTitle
  */
 
-// Add the field script
-/** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
-$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->useScript('field.modal-fields')->useScript('content-select-field');
+$optionsSelect = [
+    'popupType'  => 'iframe',
+    'src'        => $urlSelect,
+    'textHeader' => Text::_('JSELECT'),
+];
 
-$fieldClass = $required ? 'required modal-value' : '';
 ?>
-
-<div class="js-content-select-field <?php echo $class; ?>">
-    <div class="input-group">
-        <input class="form-control js-input-title" type="text" value="<?php echo $this->escape($valueTitle ?? $value); ?>" readonly
-               id="<?php echo $id; ?>_name" name="<?php echo $name; ?>[name]"
-               placeholder="<?php echo $this->escape($hint); ?>"/>
-
-        <?php echo $this->sublayout('buttons', $displayData); ?>
-    </div>
-
-    <input type="hidden" id="<?php echo $id; ?>_id" class="<?php echo $fieldClass; ?> js-input-value" data-required="<?php echo (int) $required; ?>"
-           name="<?php echo $name; ?>" value="<?php echo $this->escape($value); ?>">
-</div>
+<?php if ($urlSelect): ?>
+<button type="button" class="btn btn-primary"
+        data-content-select-field-action="select"
+        data-modal-config="<?php echo $this->escape(json_encode($optionsSelect)); ?>">
+    <span class="icon-file" aria-hidden="true"></span> <?php echo Text::_('JSELECT'); ?>
+</button>
+<?php endif; ?>

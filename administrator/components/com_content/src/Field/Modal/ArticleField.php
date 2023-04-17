@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Database\ParameterType;
@@ -263,9 +264,58 @@ class ArticleField extends ModalSelectField
      * @return  string  The field label markup.
      *
      * @since   3.4
-     */
+     * /
     protected function getLabel1()
     {
         return str_replace($this->id, $this->id . '_name', parent::getLabel());
+    }*/
+
+    /**
+     * Method to retrieve the title of selected item.
+     *
+     * @return string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function getValueTitle()
+    {
+        $value = (int) $this->value ?: '';
+        $title = '';
+
+        if ($value) {
+            $db    = $this->getDatabase();
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('title'))
+                ->from($db->quoteName('#__content'))
+                ->where($db->quoteName('id') . ' = :value')
+                ->bind(':value', $value, ParameterType::INTEGER);
+            $db->setQuery($query);
+
+            try {
+                $title = $db->loadResult();
+                $title = $title ? htmlspecialchars($title) : '';
+            } catch (\RuntimeException $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            }
+        }
+
+        return $title ?: $value;
+    }
+
+    /**
+     * Get the renderer
+     *
+     * @param   string  $layoutId  Id to load
+     *
+     * @return  FileLayout
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function getRenderer($layoutId = 'default')
+    {
+        $layout = parent::getRenderer($layoutId);
+        $layout->setComponent('com_content');
+
+        return $layout;
     }
 }
