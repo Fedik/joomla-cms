@@ -6,6 +6,28 @@
 /* global JoomlaDialog */
 
 /**
+ * Helper method to set values on the fields, and trigger "change" event
+ *
+ * @param {object} data
+ * @param {HTMLInputElement} inputValue
+ * @param {HTMLInputElement} inputTitle
+ */
+const setValues = (data, inputValue, inputTitle) => {
+  const value = `${data.id || ''}`;
+  const isChanged = inputValue.value !== value;
+  inputValue.value = value;
+  if (isChanged) {
+    inputValue.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
+  }
+  if (inputTitle) {
+    inputTitle.value = data.title || inputValue.value;
+    if (isChanged) {
+      inputTitle.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
+    }
+  }
+};
+
+/**
  * Show Select dialog
  *
  * @param {HTMLInputElement} inputValue
@@ -26,19 +48,7 @@ const doSelect = (inputValue, inputTitle, dialogConfig) => {
       if (event.origin !== window.location.origin) return;
       // Check message type
       if (event.data.messageType === 'joomla:content-select') {
-        const value = `${event.data.id || ''}`;
-        const isChanged = inputValue.value !== value;
-        inputValue.value = value;
-        if (isChanged) {
-          inputValue.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
-        }
-
-        if (inputTitle) {
-          inputTitle.value = event.data.title || inputValue.value;
-          if (isChanged) {
-            inputTitle.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
-          }
-        }
+        setValues(event.data, inputValue, inputTitle);
         dialog.close();
       } else if (event.data.messageType === 'joomla:cancel') {
         dialog.close();
@@ -55,31 +65,6 @@ const doSelect = (inputValue, inputTitle, dialogConfig) => {
 
     // Wait for message
     window.addEventListener('message', msgListener);
-  });
-};
-
-/**
- * Clear selected values
- *
- * @param {HTMLInputElement} inputValue
- * @param {HTMLInputElement} inputTitle
- * @returns {Promise}
- */
-const doClear = (inputValue, inputTitle) => {
-  const oldVal = inputValue.value;
-  inputValue.value = '';
-  if (oldVal) {
-    inputValue.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
-  }
-  if (inputTitle) {
-    inputTitle.value = '';
-    if (oldVal) {
-      inputTitle.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }));
-    }
-  }
-
-  return new Promise((resolve) => {
-    resolve();
   });
 };
 
@@ -120,13 +105,13 @@ const setupField = (container) => {
 
   // Bind the buttons
   container.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-dialog-field-action]');
+    const button = event.target.closest('[data-content-select-field-action]');
     if (!button) return;
     event.preventDefault();
 
     // Extract the data
-    const action = button.dataset.dialogFieldAction;
-    const dialogConfig = button.dataset.dialogField ? JSON.parse(button.dataset.dialogField) : {};
+    const action = button.dataset.contentSelectFieldAction;
+    const dialogConfig = button.dataset.modalConfig ? JSON.parse(button.dataset.modalConfig) : {};
 
     // Handle requested action
     let handle;
@@ -145,7 +130,7 @@ const setupField = (container) => {
         break;
       }
       case 'clear':
-        handle = doClear(inputValue, inputTitle);
+        handle = (async () => setValues({ id: '', title: '' }, inputValue, inputTitle))();
         break;
       default:
         throw new Error(`Unknown action ${action} for Content dialog field`);
@@ -153,9 +138,9 @@ const setupField = (container) => {
 
     handle.then(() => {
       // Perform checkin when needed
-      if (dialogConfig.checkinUrl) {
-        const url = dialogConfig.checkinUrl.indexOf('http') === 0
-          ? new URL(dialogConfig.checkinUrl) : new URL(dialogConfig.checkinUrl, window.location.origin);
+      if (button.dataset.checkinUrl) {
+        const chckUrl = button.dataset.checkinUrl;
+        const url = chckUrl.indexOf('http') === 0 ? new URL(chckUrl) : new URL(chckUrl, window.location.origin);
         // Add value to request
         url.searchParams.set('id', inputValue.value);
         url.searchParams.set('cid[]', inputValue.value);
@@ -173,7 +158,7 @@ const setupField = (container) => {
 };
 
 const setup = (container) => {
-  container.querySelectorAll('.js-content-dialog-field').forEach((el) => setupField(el));
+  container.querySelectorAll('.js-content-select-field').forEach((el) => setupField(el));
 };
 
 document.addEventListener('DOMContentLoaded', () => setup(document));

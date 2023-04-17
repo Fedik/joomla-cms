@@ -146,7 +146,7 @@ class ArticleField extends FormField
         }
 
         // The current article display field.
-        $html  = '<div class="js-content-dialog-field">';
+        $html  = '<div class="js-content-select-field">';
 
         if ($allowSelect || $allowNew || $allowEdit || $allowClear) {
             $html .= '<span class="input-group">';
@@ -165,8 +165,8 @@ class ArticleField extends FormField
             ];
             $html .= '<button type="button" class="btn btn-primary"'
                 . ($value ? ' hidden' : '')
-                . ' data-dialog-field-action="select" data-show-when-value=""'
-                . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsSelect)) . '">'
+                . ' data-content-select-field-action="select" data-show-when-value=""'
+                . ' data-modal-config="' . htmlspecialchars(json_encode($optionsSelect)) . '">'
                 . '<span class="icon-file" aria-hidden="true"></span> ' . Text::_('JSELECT')
                 . '</button>';
         }
@@ -181,8 +181,8 @@ class ArticleField extends FormField
 
             $html .= '<button type="button" class="btn btn-secondary"'
                 . ($value ? ' hidden' : '')
-                . ' data-dialog-field-action="create" data-show-when-value=""'
-                . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsNew)) . '">'
+                . ' data-content-select-field-action="create" data-show-when-value=""'
+                . ' data-modal-config="' . htmlspecialchars(json_encode($optionsNew)) . '">'
                 . '<span class="icon-plus" aria-hidden="true"></span> ' . Text::_('JACTION_CREATE')
                 . '</button>';
         }
@@ -193,12 +193,12 @@ class ArticleField extends FormField
                 'popupType'  => 'iframe',
                 'src'        => (string) $urlEdit,
                 'textHeader' => Text::_('COM_CONTENT_EDIT_ARTICLE'),
-                'checkinUrl' => (string) $linkCheckin,
             ];
             $html .= '<button type="button" class="btn btn-primary"'
                 . ($value ? '' : ' hidden')
-                . ' data-dialog-field-action="edit" data-show-when-value="1"'
-                . ' data-dialog-field="' . htmlspecialchars(json_encode($optionsEdit)) . '">'
+                . ' data-content-select-field-action="edit" data-show-when-value="1"'
+                . ' data-modal-config="' . htmlspecialchars(json_encode($optionsEdit)) . '"'
+                . ' data-checkin-url="' . htmlspecialchars((string) $linkCheckin) . '">'
                 . '<span class="icon-pen-square" aria-hidden="true"></span> ' . Text::_('JACTION_EDIT')
                 . '</button>';
         }
@@ -207,7 +207,7 @@ class ArticleField extends FormField
         if ($allowClear) {
             $html .= '<button type="button" class="btn btn-secondary"'
                 . ($value ? '' : ' hidden')
-                . ' data-dialog-field-action="clear" data-show-when-value="1">'
+                . ' data-content-select-field-action="clear" data-show-when-value="1">'
                 . '<span class="icon-times" aria-hidden="true"></span> ' . Text::_('JCLEAR')
                 . '</button>';
         }
