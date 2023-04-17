@@ -119,11 +119,11 @@ class ArticleField extends FormField
             $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
         }
 
-        $urlSelect = $linkArticles; // . '&function=jSelectArticle_' . $this->id;
+        $urlSelect = $linkArticles;
         $urlEdit   = clone $linkArticle;
-        $urlEdit->setVar('task', 'article.edit'); // . '&task=article.edit&id=\' + document.getElementById(&quot;' . $this->id . '_id&quot;).value + \'';
+        $urlEdit->setVar('task', 'article.edit');
         $urlNew    = clone $linkArticle;
-        $urlNew->setVar('task', 'article.add'); // . '&task=article.add';
+        $urlNew->setVar('task', 'article.add');
 
         if ($value) {
             $db    = $this->getDatabase();
@@ -230,80 +230,6 @@ class ArticleField extends FormField
         if ($allowSelect || $allowNew || $allowEdit || $allowClear) {
             $html .= '</span>';
         }
-
-        /*// Select article modal
-        if ($allowSelect) {
-            $html .= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'ModalSelect' . $modalId,
-                [
-                    'title'      => $modalTitle,
-                    'url'        => $urlSelect,
-                    'height'     => '400px',
-                    'width'      => '800px',
-                    'bodyHeight' => 70,
-                    'modalWidth' => 80,
-                    'footer'     => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-                                        . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>',
-                ]
-            );
-        }*/
-
-        /*// New article modal
-        if ($allowNew) {
-            $html .= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'ModalNew' . $modalId,
-                [
-                    'title'       => Text::_('COM_CONTENT_NEW_ARTICLE'),
-                    'backdrop'    => 'static',
-                    'keyboard'    => false,
-                    'closeButton' => false,
-                    'url'         => $urlNew,
-                    'height'      => '400px',
-                    'width'       => '800px',
-                    'bodyHeight'  => 70,
-                    'modalWidth'  => 80,
-                    'footer'      => '<button type="button" class="btn btn-secondary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'article\', \'cancel\', \'item-form\'); return false;">'
-                            . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>'
-                            . '<button type="button" class="btn btn-primary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'article\', \'save\', \'item-form\'); return false;">'
-                            . Text::_('JSAVE') . '</button>'
-                            . '<button type="button" class="btn btn-success"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'article\', \'apply\', \'item-form\'); return false;">'
-                            . Text::_('JAPPLY') . '</button>',
-                ]
-            );
-        }*/
-
-        /*// Edit article modal
-        if ($allowEdit) {
-            $html .= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'ModalEdit' . $modalId,
-                [
-                    'title'       => Text::_('COM_CONTENT_EDIT_ARTICLE'),
-                    'backdrop'    => 'static',
-                    'keyboard'    => false,
-                    'closeButton' => false,
-                    'url'         => $urlEdit,
-                    'height'      => '400px',
-                    'width'       => '800px',
-                    'bodyHeight'  => 70,
-                    'modalWidth'  => 80,
-                    'footer'      => '<button type="button" class="btn btn-secondary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'article\', \'cancel\', \'item-form\'); return false;">'
-                            . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>'
-                            . '<button type="button" class="btn btn-primary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'article\', \'save\', \'item-form\'); return false;">'
-                            . Text::_('JSAVE') . '</button>'
-                            . '<button type="button" class="btn btn-success"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'article\', \'apply\', \'item-form\'); return false;">'
-                            . Text::_('JAPPLY') . '</button>',
-                ]
-            );
-        }*/
 
         // Note: class='required' for client side validation.
         $class  = $this->required ? 'required modal-value' : '';
