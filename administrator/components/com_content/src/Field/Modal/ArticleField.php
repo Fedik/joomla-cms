@@ -61,9 +61,6 @@ class ArticleField extends FormField
         $value = (int) $this->value ?: '';
         $title = '';
 
-        // Create the modal id.
-        $modalId = 'Article_' . $this->id;
-
         /** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
@@ -114,8 +111,8 @@ class ArticleField extends FormField
         ]);
 
         if (isset($this->element['language'])) {
-            $linkArticles->setVar('forcedLanguage', $this->element['language']);
-            $linkArticle->setVar('forcedLanguage', $this->element['language']);
+            $linkArticles->setVar('forcedLanguage', (string) $this->element['language']);
+            $linkArticle->setVar('forcedLanguage', (string) $this->element['language']);
 
             $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE') . ' &#8212; ' . $this->element['label'];
         } else {
@@ -156,7 +153,7 @@ class ArticleField extends FormField
         }
 
         $html .= '<input class="form-control js-input-title" type="text" value="' . $title . '"'
-            . ' id="' . $this->id . '_name" name="' . $this->name . '[name]" disabled'
+            . ' id="' . $this->id . '_name" name="' . $this->name . '[name]" readonly'
             . ' placeholder="' . htmlspecialchars(Text::_('COM_CONTENT_SELECT_AN_ARTICLE')) . '">';
 
         // Select article button
@@ -218,7 +215,7 @@ class ArticleField extends FormField
         // Propagate article button
         if ($allowPropagate && count($languages) > 2) {
             // Strip off language tag at the end
-            $tagLength            = (int) strlen($this->element['language']);
+            $tagLength            = (int) strlen((string) $this->element['language']);
             $callbackFunctionStem = substr("jSelectArticle_" . $this->id, 0, -$tagLength);
 
             $html .= '<button'
