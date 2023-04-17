@@ -11,7 +11,7 @@
 namespace Joomla\Component\Content\Administrator\Field\Modal;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
@@ -27,7 +27,7 @@ use Joomla\Database\ParameterType;
  *
  * @since  1.6
  */
-class ArticleField extends FormField
+class ArticleField extends ModalSelectField
 {
     /**
      * The form field type.
@@ -45,6 +45,21 @@ class ArticleField extends FormField
      * @since   1.6
      */
     protected function getInput()
+    {
+        $this->hint      = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
+        $this->urlSelect = 'index.php?option=com_content&view=articles&layout=modal&tmpl=component';
+
+        return parent::getInput();
+    }
+
+    /**
+     * Method to get the field input markup.
+     *
+     * @return  string  The field input markup.
+     *
+     * @since   1.6
+     */
+    protected function getInput1()
     {
         $allowNew       = ((string) $this->element['new'] == 'true');
         $allowEdit      = ((string) $this->element['edit'] == 'true');
@@ -249,7 +264,7 @@ class ArticleField extends FormField
      *
      * @since   3.4
      */
-    protected function getLabel()
+    protected function getLabel1()
     {
         return str_replace($this->id, $this->id . '_name', parent::getLabel());
     }
