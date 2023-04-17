@@ -11,26 +11,26 @@
 defined('_JEXEC') or die;
 
 use Joomla\Component\Content\Site\Helper\RouteHelper;
-use Joomla\Utilities\ArrayHelper;
 
+$icon     = 'icon-check';
+$title    = $this->item ? $this->item->title : '';
+$content  = $this->item ? $this->item->alias : '';
+$data     = ['contentType' => 'com_content.article'];
+
+if ($this->item) {
+    $data['id']    = $this->item->id;
+    $data['title'] = $this->item->title;
+    $data['catId'] = $this->item->catid;
+    $data['uri']   = RouteHelper::getArticleRoute($this->item->id, $this->item->catid, $this->item->language);
+}
+
+// Add Content select script
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('content-select');
 
-$icon     = 'icon-copy';
-$title    = $this->item ? $this->item->title : '';
-$content  = $this->item ? $this->item->alias : '';
-$dataAttr = 'data-content-type="com_content.article" ';
-
-if ($this->item) {
-    $link      = RouteHelper::getArticleRoute($this->item->id, $this->item->catid, $this->item->language);
-    $dataAttr .= ArrayHelper::toString([
-        'data-id'     => $this->item->id,
-        'data-title'  => $this->escape($this->item->title),
-        'data-cat-id' => $this->item->catid,
-        'data-uri'    => $this->escape($link),
-    ]);
-}
+// The data for Content select script
+$this->document->addScriptOptions('content-select-on-load', $data, false);
 
 ?>
 
@@ -42,7 +42,4 @@ if ($this->item) {
             <?php echo $content; ?>
         </p>
     </div>
-
-    <!-- The data is used by Content select script -->
-    <div data-content-select-on-load <?php echo $dataAttr; ?>></div>
 </div>

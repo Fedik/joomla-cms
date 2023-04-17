@@ -3,9 +3,6 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-const delegateSelector = '[data-content-select]';
-const onLoadSelector = '[data-content-select-on-load]';
-
 /**
  * A helper to Post a Message
  * @param {Object} data
@@ -18,7 +15,7 @@ const send = (data) => {
 
 // Bind the buttons
 document.addEventListener('click', (event) => {
-  const button = event.target.closest(delegateSelector);
+  const button = event.target.closest('[data-content-select]');
   if (!button) return;
   event.preventDefault();
 
@@ -30,11 +27,8 @@ document.addEventListener('click', (event) => {
 
 // Check for "select on load"
 window.addEventListener('load', () => {
-  const dataElement = document.querySelector(onLoadSelector);
-  if (dataElement) {
-    // Extract the data and send
-    const data = { ...dataElement.dataset };
-    delete data.contentSelectOnLoad;
+  const data = Joomla.getOptions('content-select-on-load');
+  if (data) {
     send(data);
   }
 });
