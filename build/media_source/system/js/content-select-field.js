@@ -105,12 +105,12 @@ const setupField = (container) => {
 
   // Bind the buttons
   container.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-modal-select-field-action]');
+    const button = event.target.closest('[data-button-action]');
     if (!button) return;
     event.preventDefault();
 
     // Extract the data
-    const action = button.dataset.modalSelectFieldAction;
+    const action = button.dataset.buttonAction;
     const dialogConfig = button.dataset.modalConfig ? JSON.parse(button.dataset.modalConfig) : {};
 
     // Handle requested action
