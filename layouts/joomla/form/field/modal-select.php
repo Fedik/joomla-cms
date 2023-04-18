@@ -42,8 +42,10 @@ extract($displayData);
  * @var   string   $value           Value attribute of the field.
  * @var   string   $dataAttribute   Miscellaneous data attributes preprocessed for HTML output
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*
- * @var   string   $urlSelect
  * @var   string   $valueTitle
+ * @var   array    $canDo
+ * @var   string[] $urls
+ * @var   string[] $modalTitles
  */
 
 // Add the field script
@@ -58,7 +60,7 @@ if (!$readonly && !$disabled) {
 $fieldClass = $required ? 'required modal-value' : '';
 ?>
 
-<div class="js-content-select-field <?php echo $class; ?>" <?php echo $dataAttribute; ?>>
+<div class="js-modal-select-field <?php echo $class; ?>" <?php echo $dataAttribute; ?>>
     <div class="input-group">
         <input class="form-control js-input-title" type="text" value="<?php echo $this->escape($valueTitle ?? $value); ?>" readonly
                id="<?php echo $id; ?>_name" name="<?php echo $name; ?>[name]"

@@ -38,7 +38,7 @@ const setValues = (data, inputValue, inputTitle) => {
 const doSelect = (inputValue, inputTitle, dialogConfig) => {
   // Create and show the dialog
   const dialog = new JoomlaDialog(dialogConfig);
-  dialog.classList.add('joomla-content-dialog-field');
+  dialog.classList.add('joomla-modal-select-field');
   dialog.show();
   // Joomla.Modal.setCurrent(dialog);
 
@@ -105,12 +105,12 @@ const setupField = (container) => {
 
   // Bind the buttons
   container.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-content-select-field-action]');
+    const button = event.target.closest('[data-modal-select-field-action]');
     if (!button) return;
     event.preventDefault();
 
     // Extract the data
-    const action = button.dataset.contentSelectFieldAction;
+    const action = button.dataset.modalSelectFieldAction;
     const dialogConfig = button.dataset.modalConfig ? JSON.parse(button.dataset.modalConfig) : {};
 
     // Handle requested action
@@ -133,7 +133,7 @@ const setupField = (container) => {
         handle = (async () => setValues({ id: '', title: '' }, inputValue, inputTitle))();
         break;
       default:
-        throw new Error(`Unknown action ${action} for Content dialog field`);
+        throw new Error(`Unknown action ${action} for Modal select field`);
     }
 
     handle.then(() => {
@@ -158,7 +158,7 @@ const setupField = (container) => {
 };
 
 const setup = (container) => {
-  container.querySelectorAll('.js-content-select-field').forEach((el) => setupField(el));
+  container.querySelectorAll('.js-modal-select-field').forEach((el) => setupField(el));
 };
 
 document.addEventListener('DOMContentLoaded', () => setup(document));

@@ -58,13 +58,14 @@ $wa->addInlineScript('
 window.jSelectArticle_' . $id . ' = function (id, title, catid, object, url, language) {
   window.processModalSelect("Article", "' . $id . '", id, title, catid, object, url, language);
 }',
-    ['name' => 'inline.jSelectArticle_' . $id],
+    ['name' => 'inline.select_article_' . $id],
     ['type' => 'module']
 );
-Text::script('JGLOBAL_ASSOCIATIONS_PROPAGATE_FAILED');
 
 // Language propagate callback name
 if ($canDo['propagate'] ?? false) {
+    Text::script('JGLOBAL_ASSOCIATIONS_PROPAGATE_FAILED');
+
     // Strip off language tag at the end
     $tagLength            = strlen($language);
     $callbackFunctionStem = substr("jSelectArticle_" . $id, 0, -$tagLength);
@@ -93,7 +94,7 @@ $modalEdit = [
 
 <?php if ($modalSelect['src'] && $canDo['select'] ?? true): ?>
 <button type="button" class="btn btn-primary" <?php echo $value ? 'hidden' : ''; ?>
-        data-content-select-field-action="select" data-show-when-value=""
+        data-modal-select-field-action="select" data-show-when-value=""
         data-modal-config="<?php echo $this->escape(json_encode($modalSelect)); ?>">
     <span class="icon-file" aria-hidden="true"></span> <?php echo Text::_('JSELECT'); ?>
 </button>
@@ -101,7 +102,7 @@ $modalEdit = [
 
 <?php if ($modalNew['src'] && $canDo['new'] ?? false): ?>
 <button type="button" class="btn btn-secondary" <?php echo $value ? 'hidden' : ''; ?>
-        data-content-select-field-action="create" data-show-when-value=""
+        data-modal-select-field-action="create" data-show-when-value=""
         data-modal-config="<?php echo $this->escape(json_encode($modalNew)); ?>">
     <span class="icon-plus" aria-hidden="true"></span> <?php echo Text::_('JACTION_CREATE'); ?>
 </button>
@@ -109,16 +110,16 @@ $modalEdit = [
 
 <?php if ($modalEdit['src'] && $canDo['edit'] ?? false): ?>
 <button type="button" class="btn btn-primary" <?php echo $value ? '' : 'hidden'; ?>
-        data-content-select-field-action="edit" data-show-when-value="1"
+        data-modal-select-field-action="edit" data-show-when-value="1"
         data-modal-config="<?php echo $this->escape(json_encode($modalEdit)); ?>"
-        data-checkin-url="<?php echo $this->escape($urlCheckin ?? ''); ?>">
+        data-checkin-url="<?php echo $this->escape($urls['checkin'] ?? ''); ?>">
     <span class="icon-pen-square" aria-hidden="true"></span> <?php echo Text::_('JACTION_EDIT'); ?>
 </button>
 <?php endif; ?>
 
 <?php if ($canDo['clear'] ?? true): ?>
 <button type="button" class="btn btn-secondary" <?php echo $value ? '' : 'hidden'; ?>
-        data-content-select-field-action="clear" data-show-when-value="1">
+        data-modal-select-field-action="clear" data-show-when-value="1">
     <span class="icon-times" aria-hidden="true"></span> <?php echo Text::_('JCLEAR'); ?>
 </button>
 <?php endif; ?>
