@@ -62,7 +62,7 @@ $wa->addInlineScript('
 window.jSelectArticle_' . $id . ' = function (id, title, catid, object, url, language) {
   window.processModalSelect("Article", "' . $id . '", id, title, catid, object, url, language);
 }',
-    [],
+    ['name' => 'inline.jSelectArticle_' . $id],
     ['type' => 'module']
 );
 Text::script('JGLOBAL_ASSOCIATIONS_PROPAGATE_FAILED');
@@ -75,7 +75,6 @@ if ($canDo['propagate'] ?? false) {
 } else {
     $callbackFunctionStem = '';
 }
-
 
 // Prepare options for Modals
 $modalSelect = [
