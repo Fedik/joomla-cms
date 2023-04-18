@@ -51,16 +51,17 @@ class ArticleField extends ModalSelectField
             throw new \UnexpectedValueException(sprintf('%s has no layout assigned.', $this->name));
         }
 
-        $allowNew       = ((string) $this->element['new'] == 'true');
-        $allowEdit      = ((string) $this->element['edit'] == 'true');
-        $allowClear     = ((string) $this->element['clear'] != 'false');
-        $allowSelect    = ((string) $this->element['select'] != 'false');
-        $allowPropagate = ((string) $this->element['propagate'] == 'true');
+        Factory::getApplication()->getLanguage()->load('com_content', JPATH_ADMINISTRATOR);
 
         $languages = LanguageHelper::getContentLanguages([0, 1], false);
-
-        // Load language
-        Factory::getApplication()->getLanguage()->load('com_content', JPATH_ADMINISTRATOR);
+        $language  = (string) $this->element['language'];
+        $canDo     = [
+            'new'       => ((string) $this->element['new'] == 'true'),
+            'edit'      => ((string) $this->element['edit'] == 'true'),
+            'clear'     => ((string) $this->element['clear'] != 'false'),
+            'select'    => ((string) $this->element['select'] != 'false'),
+            'propagate' => ((string) $this->element['propagate'] == 'true') && count($languages) > 2,
+        ];
 
         // Prepare links
         $linkArticles = (new Uri())->setPath(Uri::base(true) . '/index.php');
@@ -81,11 +82,11 @@ class ArticleField extends ModalSelectField
             Session::getFormToken() => 1,
         ]);
 
-        if (isset($this->element['language'])) {
-            $linkArticles->setVar('forcedLanguage', (string) $this->element['language']);
-            $linkArticle->setVar('forcedLanguage', (string) $this->element['language']);
+        if ($language) {
+            $linkArticles->setVar('forcedLanguage', $language);
+            $linkArticle->setVar('forcedLanguage', $language);
 
-            $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE') . ' &#8212; ' . $this->element['label'];
+            $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE') . ' &#8212; ' . $this->getTitle();
         } else {
             $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
         }
@@ -96,13 +97,19 @@ class ArticleField extends ModalSelectField
         $urlNew    = clone $linkArticle;
         $urlNew->setVar('task', 'article.add');
 
-        $data               = $this->getLayoutData();
-        $data['hint']       = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
-        $data['urlSelect']  = $allowSelect ? (string) $urlSelect : '';
-        $data['urlEdit']    = $allowEdit ? (string) $urlEdit : '';
-        $data['urlNew']     = $allowNew ? (string) $urlNew : '';
-        $data['valueTitle'] = $this->getValueTitle();
-        $data['modalTitle'] = $modalTitle;
+        $data                = $this->getLayoutData();
+        $data['hint']        = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
+        $data['canDo']       = $canDo;
+        $data['urlSelect']   = (string) $urlSelect;
+        $data['urlEdit']     = (string) $urlEdit;
+        $data['urlNew']      = (string) $urlNew;
+        $data['urlCheckin']  = (string) $linkCheckin;
+        $data['valueTitle']  = $this->getValueTitle();
+        $data['titleSelect'] = $modalTitle;
+        $data['titleNew']    = Text::_('COM_CONTENT_NEW_ARTICLE');
+        $data['titleEdit']   = Text::_('COM_CONTENT_EDIT_ARTICLE');
+        $data['language']    = $language;
+        $data['languages']   = $languages;
 
         return $this->getRenderer($this->layout)->render($data);
     }

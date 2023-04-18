@@ -44,37 +44,95 @@ extract($displayData);
  * @var   string   $dataAttribute   Miscellaneous data attributes preprocessed for HTML output
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*
  * @var   string   $urlSelect
+ * @var   string   $urlEdit
+ * @var   string   $urlNew
+ * @var   string   $urlCheckin
  * @var   string   $valueTitle
+ * @var   string   $titleSelect
+ * @var   string   $titleNew
+ * @var   string   $titleEdit
+ * @var   array    $canDo
  */
 
-if (!$readonly && !$disabled) {
-    /** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
-    $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-
-    // Scripts for backward compatibility
-    $wa->useScript('field.modal-fields');
-    $wa->addInlineScript('
+// Scripts for backward compatibility
+/** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('field.modal-fields');
+$wa->addInlineScript('
 window.jSelectArticle_' . $id . ' = function (id, title, catid, object, url, language) {
   window.processModalSelect("Article", "' . $id . '", id, title, catid, object, url, language);
 }',
-        [],
-        ['type' => 'module']
-    );
+    [],
+    ['type' => 'module']
+);
+Text::script('JGLOBAL_ASSOCIATIONS_PROPAGATE_FAILED');
 
-    Text::script('JGLOBAL_ASSOCIATIONS_PROPAGATE_FAILED');
+// Language propagate callback name
+if ($canDo['propagate'] ?? false) {
+    // Strip off language tag at the end
+    $tagLength            = strlen($language);
+    $callbackFunctionStem = substr("jSelectArticle_" . $id, 0, -$tagLength);
+} else {
+    $callbackFunctionStem = '';
 }
 
-$optionsSelect = [
+
+// Prepare options for Modals
+$modalSelect = [
     'popupType'  => 'iframe',
     'src'        => $urlSelect,
-    'textHeader' => Text::_('JSELECT'),
+    'textHeader' => $titleSelect ?? Text::_('JSELECT'),
+];
+$modalNew = [
+    'popupType'  => 'iframe',
+    'src'        => $urlNew,
+    'textHeader' => $titleNew ?? Text::_('JACTION_CREATE'),
+];
+$modalEdit = [
+    'popupType'  => 'iframe',
+    'src'        => $urlEdit,
+    'textHeader' => $titleEdit ?? Text::_('JACTION_EDIT'),
 ];
 
 ?>
-<?php if ($urlSelect): ?>
-<button type="button" class="btn btn-primary"
-        data-content-select-field-action="select"
-        data-modal-config="<?php echo $this->escape(json_encode($optionsSelect)); ?>">
+
+<?php if ($urlSelect && $canDo['select'] ?? true): ?>
+<button type="button" class="btn btn-primary" <?php echo $value ? 'hidden' : ''; ?>
+        data-content-select-field-action="select" data-show-when-value=""
+        data-modal-config="<?php echo $this->escape(json_encode($modalSelect)); ?>">
     <span class="icon-file" aria-hidden="true"></span> <?php echo Text::_('JSELECT'); ?>
+</button>
+<?php endif; ?>
+
+<?php if ($urlNew && $canDo['new'] ?? false): ?>
+<button type="button" class="btn btn-secondary" <?php echo $value ? 'hidden' : ''; ?>
+        data-content-select-field-action="create" data-show-when-value=""
+        data-modal-config="<?php echo $this->escape(json_encode($modalNew)); ?>">
+    <span class="icon-plus" aria-hidden="true"></span> <?php echo Text::_('JACTION_CREATE'); ?>
+</button>
+<?php endif; ?>
+
+<?php if ($urlEdit && $canDo['edit'] ?? false): ?>
+<button type="button" class="btn btn-primary" <?php echo $value ? '' : 'hidden'; ?>
+        data-content-select-field-action="edit" data-show-when-value="1"
+        data-modal-config="<?php echo $this->escape(json_encode($modalEdit)); ?>"
+        data-checkin-url="<?php echo $this->escape($urlCheckin ?? ''); ?>">
+    <span class="icon-pen-square" aria-hidden="true"></span> <?php echo Text::_('JACTION_EDIT'); ?>
+</button>
+<?php endif; ?>
+
+<?php if ($canDo['clear'] ?? true): ?>
+<button type="button" class="btn btn-secondary" <?php echo $value ? '' : 'hidden'; ?>
+        data-content-select-field-action="clear" data-show-when-value="1">
+    <span class="icon-times" aria-hidden="true"></span> <?php echo Text::_('JCLEAR'); ?>
+</button>
+<?php endif; ?>
+
+<?php if ($canDo['propagate'] ?? false): ?>
+<button type="button" class="btn btn-primary" <?php echo $value ? '' : 'hidden'; ?>
+        title="<?php echo $this->escape(Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_TIP')); ?>"
+        data-show-when-value="1"
+        onclick="Joomla.propagateAssociation('<?php echo $id; ?>', '<?php echo $callbackFunctionStem; ?>')">
+    <span class="icon-sync" aria-hidden="true"></span> <?php echo Text::_('JGLOBAL_ASSOCIATIONS_PROPAGATE_BUTTON'); ?>
 </button>
 <?php endif; ?>
