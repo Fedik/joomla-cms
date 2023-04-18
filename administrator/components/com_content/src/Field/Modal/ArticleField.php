@@ -90,6 +90,8 @@ class ArticleField extends ModalSelectField
             $linkArticle->setVar('forcedLanguage', $language);
 
             $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE') . ' &#8212; ' . $this->getTitle();
+
+            $this->dataAttributes['data-language'] = $language;
         } else {
             $modalTitle = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
         }
