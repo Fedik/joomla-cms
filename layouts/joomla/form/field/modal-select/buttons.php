@@ -54,9 +54,13 @@ $optionsSelect = [
 
 ?>
 <?php if ($urlSelect): ?>
-<button type="button" class="btn btn-primary"
-        data-content-select-field-action="select"
+<button type="button" class="btn btn-primary" <?php echo $value ? 'hidden' : ''; ?>
+        data-content-select-field-action="select" data-show-when-value=""
         data-modal-config="<?php echo $this->escape(json_encode($optionsSelect)); ?>">
     <span class="icon-file" aria-hidden="true"></span> <?php echo Text::_('JSELECT'); ?>
+</button>
+<button type="button" class="btn btn-secondary" <?php echo $value ? '' : 'hidden'; ?>
+        data-content-select-field-action="clear" data-show-when-value="1">
+    <span class="icon-times" aria-hidden="true"></span> <?php echo Text::_('JCLEAR'); ?>
 </button>
 <?php endif; ?>
