@@ -43,15 +43,11 @@ extract($displayData);
  * @var   string   $value           Value attribute of the field.
  * @var   string   $dataAttribute   Miscellaneous data attributes preprocessed for HTML output
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*
- * @var   string   $urlSelect
- * @var   string   $urlEdit
- * @var   string   $urlNew
- * @var   string   $urlCheckin
  * @var   string   $valueTitle
- * @var   string   $titleSelect
- * @var   string   $titleNew
- * @var   string   $titleEdit
  * @var   array    $canDo
+ * @var   string[] $urls
+ * @var   string[] $modalTitles
+ * @var   string   $language
  */
 
 // Scripts for backward compatibility
@@ -79,23 +75,23 @@ if ($canDo['propagate'] ?? false) {
 // Prepare options for Modals
 $modalSelect = [
     'popupType'  => 'iframe',
-    'src'        => $urlSelect,
-    'textHeader' => $titleSelect ?? Text::_('JSELECT'),
+    'src'        => $urls['select'] ?? '',
+    'textHeader' => $modalTitles['select'] ?? Text::_('JSELECT'),
 ];
 $modalNew = [
     'popupType'  => 'iframe',
-    'src'        => $urlNew,
-    'textHeader' => $titleNew ?? Text::_('JACTION_CREATE'),
+    'src'        => $urls['new'] ?? '',
+    'textHeader' => $modalTitles['new'] ?? Text::_('JACTION_CREATE'),
 ];
 $modalEdit = [
     'popupType'  => 'iframe',
-    'src'        => $urlEdit,
-    'textHeader' => $titleEdit ?? Text::_('JACTION_EDIT'),
+    'src'        => $urls['edit'] ?? '',
+    'textHeader' => $modalTitles['edit'] ?? Text::_('JACTION_EDIT'),
 ];
 
 ?>
 
-<?php if ($urlSelect && $canDo['select'] ?? true): ?>
+<?php if ($modalSelect['src'] && $canDo['select'] ?? true): ?>
 <button type="button" class="btn btn-primary" <?php echo $value ? 'hidden' : ''; ?>
         data-content-select-field-action="select" data-show-when-value=""
         data-modal-config="<?php echo $this->escape(json_encode($modalSelect)); ?>">
@@ -103,7 +99,7 @@ $modalEdit = [
 </button>
 <?php endif; ?>
 
-<?php if ($urlNew && $canDo['new'] ?? false): ?>
+<?php if ($modalNew['src'] && $canDo['new'] ?? false): ?>
 <button type="button" class="btn btn-secondary" <?php echo $value ? 'hidden' : ''; ?>
         data-content-select-field-action="create" data-show-when-value=""
         data-modal-config="<?php echo $this->escape(json_encode($modalNew)); ?>">
@@ -111,7 +107,7 @@ $modalEdit = [
 </button>
 <?php endif; ?>
 
-<?php if ($urlEdit && $canDo['edit'] ?? false): ?>
+<?php if ($modalEdit['src'] && $canDo['edit'] ?? false): ?>
 <button type="button" class="btn btn-primary" <?php echo $value ? '' : 'hidden'; ?>
         data-content-select-field-action="edit" data-show-when-value="1"
         data-modal-config="<?php echo $this->escape(json_encode($modalEdit)); ?>"

@@ -42,23 +42,56 @@ extract($displayData);
  * @var   string   $value           Value attribute of the field.
  * @var   string   $dataAttribute   Miscellaneous data attributes preprocessed for HTML output
  * @var   array    $dataAttributes  Miscellaneous data attribute for eg, data-*
- * @var   string   $urlSelect
  * @var   string   $valueTitle
+ * @var   array    $canDo
+ * @var   string[] $urls
+ * @var   string[] $modalTitles
  */
 
-$optionsSelect = [
+// Prepare options for each Modal
+$modalSelect = [
     'popupType'  => 'iframe',
-    'src'        => $urlSelect,
-    'textHeader' => Text::_('JSELECT'),
+    'src'        => $urls['select'] ?? '',
+    'textHeader' => $modalTitles['select'] ?? Text::_('JSELECT'),
+];
+$modalNew = [
+    'popupType'  => 'iframe',
+    'src'        => $urls['new'] ?? '',
+    'textHeader' => $modalTitles['new'] ?? Text::_('JACTION_CREATE'),
+];
+$modalEdit = [
+    'popupType'  => 'iframe',
+    'src'        => $urls['edit'] ?? '',
+    'textHeader' => $modalTitles['edit'] ?? Text::_('JACTION_EDIT'),
 ];
 
 ?>
-<?php if ($urlSelect): ?>
+<?php if ($modalSelect['src'] && $canDo['select'] ?? true): ?>
 <button type="button" class="btn btn-primary" <?php echo $value ? 'hidden' : ''; ?>
         data-content-select-field-action="select" data-show-when-value=""
-        data-modal-config="<?php echo $this->escape(json_encode($optionsSelect)); ?>">
+        data-modal-config="<?php echo $this->escape(json_encode($modalSelect)); ?>">
     <span class="icon-file" aria-hidden="true"></span> <?php echo Text::_('JSELECT'); ?>
 </button>
+<?php endif; ?>
+
+<?php if ($modalNew['src'] && $canDo['new'] ?? false): ?>
+<button type="button" class="btn btn-secondary" <?php echo $value ? 'hidden' : ''; ?>
+        data-content-select-field-action="create" data-show-when-value=""
+        data-modal-config="<?php echo $this->escape(json_encode($modalNew)); ?>">
+    <span class="icon-plus" aria-hidden="true"></span> <?php echo Text::_('JACTION_CREATE'); ?>
+</button>
+<?php endif; ?>
+
+<?php if ($modalEdit['src'] && $canDo['edit'] ?? false): ?>
+<button type="button" class="btn btn-primary" <?php echo $value ? '' : 'hidden'; ?>
+        data-content-select-field-action="edit" data-show-when-value="1"
+        data-modal-config="<?php echo $this->escape(json_encode($modalEdit)); ?>"
+        data-checkin-url="<?php echo $this->escape($urls['checkin'] ?? ''); ?>">
+    <span class="icon-pen-square" aria-hidden="true"></span> <?php echo Text::_('JACTION_EDIT'); ?>
+</button>
+<?php endif; ?>
+
+<?php if ($canDo['clear'] ?? true): ?>
 <button type="button" class="btn btn-secondary" <?php echo $value ? '' : 'hidden'; ?>
         data-content-select-field-action="clear" data-show-when-value="1">
     <span class="icon-times" aria-hidden="true"></span> <?php echo Text::_('JCLEAR'); ?>

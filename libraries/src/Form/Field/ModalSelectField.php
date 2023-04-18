@@ -39,12 +39,28 @@ class ModalSelectField extends FormField
     protected $layout = 'joomla.form.field.modal-select';
 
     /**
-     * Url to display selectable content in modal
+     * Enabled actions: select, clear, edit, new
      *
-     * @var    string
+     * @var    boolean[]
      * @since  __DEPLOY_VERSION__
      */
-    protected $urlSelect = '';
+    protected $canDo = [];
+
+    /**
+     * Urls to for modal: select, edit, new
+     *
+     * @var    string[]
+     * @since  __DEPLOY_VERSION__
+     */
+    protected $urls = [];
+
+    /**
+     * List of titles for each modal type: select, edit, new
+     *
+     * @var    string[]
+     * @since  __DEPLOY_VERSION__
+     */
+    protected $modalTitles = [];
 
     /**
      * Method to attach a Form object to the field.
@@ -62,9 +78,26 @@ class ModalSelectField extends FormField
     {
         $result = parent::setup($element, $value, $group);
 
-        if ($result === true) {
-            $this->urlSelect = (string) $element['urlSelect'];
+        if (!$result) {
+            return $result;
         }
+
+        // Prepare enabled actions
+        $this->canDo['select'] = ((string) $this->element['select'] != 'false');
+        $this->canDo['new']    = ((string) $this->element['new'] == 'true');
+        $this->canDo['edit']   = ((string) $this->element['edit'] == 'true');
+        $this->canDo['clear']  = ((string) $this->element['clear'] != 'false');
+
+        // Prepare Urls
+        $this->urls['select']  = (string) $element['urlSelect'];
+        $this->urls['new']     = (string) $element['urlNew'];
+        $this->urls['edit']    = (string) $element['urlEdit'];
+        $this->urls['checkin'] = (string) $element['urlCheckin'];
+
+        // Prepare titles
+        $this->modalTitles['select']  = (string) $element['titleSelect'];
+        $this->modalTitles['new']     = (string) $element['titleNew'];
+        $this->modalTitles['edit']    = (string) $element['titleEdit'];
 
         return $result;
     }
@@ -82,8 +115,10 @@ class ModalSelectField extends FormField
             throw new \UnexpectedValueException(sprintf('%s has no layout assigned.', $this->name));
         }
 
-        $data               = $this->getLayoutData();
-        $data['urlSelect']  = $this->urlSelect;
+        // Get the layout data
+        $data = $this->getLayoutData();
+
+        // Load the content title here to avoid a double DB Query
         $data['valueTitle'] = $this->getValueTitle();
 
         return $this->getRenderer($this->layout)->render($data);
@@ -111,5 +146,22 @@ class ModalSelectField extends FormField
     protected function getValueTitle()
     {
         return $this->value;
+    }
+
+    /**
+     * Method to get the data to be passed to the layout for rendering.
+     *
+     * @return  array
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    protected function getLayoutData()
+    {
+        $data                = parent::getLayoutData();
+        $data['canDo']       = $this->canDo;
+        $data['urls']        = $this->urls;
+        $data['modalTitles'] = $this->modalTitles;
+
+        return $data;
     }
 }

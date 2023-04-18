@@ -39,31 +39,34 @@ class ArticleField extends ModalSelectField
     protected $type = 'Modal_Article';
 
     /**
-     * Method to get the field input markup.
+     * Method to attach a Form object to the field.
      *
-     * @return  string  The field input markup.
+     * @param   \SimpleXMLElement  $element  The SimpleXMLElement object representing the `<field>` tag for the form field object.
+     * @param   mixed              $value    The form field value to validate.
+     * @param   string             $group    The field name group control value.
      *
-     * @since   1.6
+     * @return  boolean  True on success.
+     *
+     * @see     FormField::setup()
+     * @since   __DEPLOY_VERSION__
      */
-    protected function getInput()
+    public function setup(\SimpleXMLElement $element, $value, $group = null)
     {
-        if (empty($this->layout)) {
-            throw new \UnexpectedValueException(sprintf('%s has no layout assigned.', $this->name));
+        $result = parent::setup($element, $value, $group);
+
+        if (!$result) {
+            return $result;
         }
 
         Factory::getApplication()->getLanguage()->load('com_content', JPATH_ADMINISTRATOR);
 
         $languages = LanguageHelper::getContentLanguages([0, 1], false);
         $language  = (string) $this->element['language'];
-        $canDo     = [
-            'new'       => ((string) $this->element['new'] == 'true'),
-            'edit'      => ((string) $this->element['edit'] == 'true'),
-            'clear'     => ((string) $this->element['clear'] != 'false'),
-            'select'    => ((string) $this->element['select'] != 'false'),
-            'propagate' => ((string) $this->element['propagate'] == 'true') && count($languages) > 2,
-        ];
 
-        // Prepare links
+        // Prepare enabled actions
+        $this->canDo['propagate']  = ((string) $this->element['propagate'] == 'true') && count($languages) > 2;
+
+        // Prepare Urls
         $linkArticles = (new Uri())->setPath(Uri::base(true) . '/index.php');
         $linkArticles->setQuery([
             'option' => 'com_content',
@@ -97,21 +100,19 @@ class ArticleField extends ModalSelectField
         $urlNew    = clone $linkArticle;
         $urlNew->setVar('task', 'article.add');
 
-        $data                = $this->getLayoutData();
-        $data['hint']        = Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
-        $data['canDo']       = $canDo;
-        $data['urlSelect']   = (string) $urlSelect;
-        $data['urlEdit']     = (string) $urlEdit;
-        $data['urlNew']      = (string) $urlNew;
-        $data['urlCheckin']  = (string) $linkCheckin;
-        $data['valueTitle']  = $this->getValueTitle();
-        $data['titleSelect'] = $modalTitle;
-        $data['titleNew']    = Text::_('COM_CONTENT_NEW_ARTICLE');
-        $data['titleEdit']   = Text::_('COM_CONTENT_EDIT_ARTICLE');
-        $data['language']    = $language;
-        $data['languages']   = $languages;
+        $this->urls['select']  = (string) $urlSelect;
+        $this->urls['new']     = (string) $urlNew;
+        $this->urls['edit']    = (string) $urlEdit;
+        $this->urls['checkin'] = (string) $linkCheckin;
 
-        return $this->getRenderer($this->layout)->render($data);
+        // Prepare titles
+        $this->modalTitles['select']  = $modalTitle;
+        $this->modalTitles['new']     = Text::_('COM_CONTENT_NEW_ARTICLE');
+        $this->modalTitles['edit']    = Text::_('COM_CONTENT_EDIT_ARTICLE');
+
+        $this->hint = $this->hint ?: Text::_('COM_CONTENT_SELECT_AN_ARTICLE');
+
+        return $result;
     }
 
     /**
@@ -144,6 +145,21 @@ class ArticleField extends ModalSelectField
         }
 
         return $title ?: $value;
+    }
+
+    /**
+     * Method to get the data to be passed to the layout for rendering.
+     *
+     * @return  array
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    protected function getLayoutData()
+    {
+        $data             = parent::getLayoutData();
+        $data['language'] = (string) $this->element['language'];
+
+        return $data;
     }
 
     /**
