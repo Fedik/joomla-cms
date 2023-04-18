@@ -89,15 +89,15 @@ class ModalSelectField extends FormField
         $this->canDo['clear']  = ((string) $this->element['clear'] != 'false');
 
         // Prepare Urls
-        $this->urls['select']  = (string) $element['urlSelect'];
-        $this->urls['new']     = (string) $element['urlNew'];
-        $this->urls['edit']    = (string) $element['urlEdit'];
-        $this->urls['checkin'] = (string) $element['urlCheckin'];
+        $this->urls['select']  = (string) $this->element['urlSelect'];
+        $this->urls['new']     = (string) $this->element['urlNew'];
+        $this->urls['edit']    = (string) $this->element['urlEdit'];
+        $this->urls['checkin'] = (string) $this->element['urlCheckin'];
 
         // Prepare titles
-        $this->modalTitles['select']  = (string) $element['titleSelect'];
-        $this->modalTitles['new']     = (string) $element['titleNew'];
-        $this->modalTitles['edit']    = (string) $element['titleEdit'];
+        $this->modalTitles['select']  = (string) $this->element['titleSelect'];
+        $this->modalTitles['new']     = (string) $this->element['titleNew'];
+        $this->modalTitles['edit']    = (string) $this->element['titleEdit'];
 
         return $result;
     }
