@@ -29,7 +29,7 @@ if ($app->isClient('site')) {
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('core')
     ->useScript('multiselect')
-    ->useScript('content-select')
+    ->useScript('modal-content-select')
     ->useScript('com_content.admin-articles-modal');
 
 // TODO: Use of Function and Editor is deprecated and should be removed in 6.0. It stays only for backward compatibility.

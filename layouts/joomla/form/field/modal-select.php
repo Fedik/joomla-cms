@@ -52,15 +52,13 @@ extract($displayData);
 if (!$readonly && !$disabled) {
     /** @var \Joomla\CMS\WebAsset\WebAssetManager $wa */
     $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-    $wa->useScript('content-select-field')
-        // Script for backward compatibility
-        ->useScript('field.modal-fields');
+    $wa->useScript('modal-content-select-field');
 }
 
 $fieldClass = $required ? 'required modal-value' : '';
 ?>
 
-<div class="js-modal-select-field <?php echo $class; ?>" <?php echo $dataAttribute; ?>>
+<div class="js-modal-content-select-field <?php echo $class; ?>" <?php echo $dataAttribute; ?>>
     <div class="input-group">
         <input class="form-control js-input-title" type="text" value="<?php echo $this->escape($valueTitle ?? $value); ?>" readonly
                id="<?php echo $id; ?>_name" name="<?php echo $name; ?>[name]"

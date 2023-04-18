@@ -27,7 +27,7 @@ if ($this->item) {
 // Add Content select script
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = $this->document->getWebAssetManager();
-$wa->useScript('content-select');
+$wa->useScript('modal-content-select');
 
 // The data for Content select script
 $this->document->addScriptOptions('content-select-on-load', $data, false);

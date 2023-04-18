@@ -38,7 +38,7 @@ const setValues = (data, inputValue, inputTitle) => {
 const doSelect = (inputValue, inputTitle, dialogConfig) => {
   // Create and show the dialog
   const dialog = new JoomlaDialog(dialogConfig);
-  dialog.classList.add('joomla-modal-select-field');
+  dialog.classList.add('joomla-modal-content-select-field');
   dialog.show();
   // Joomla.Modal.setCurrent(dialog);
 
@@ -158,7 +158,7 @@ const setupField = (container) => {
 };
 
 const setup = (container) => {
-  container.querySelectorAll('.js-modal-select-field').forEach((el) => setupField(el));
+  container.querySelectorAll('.js-modal-content-select-field').forEach((el) => setupField(el));
 };
 
 document.addEventListener('DOMContentLoaded', () => setup(document));
