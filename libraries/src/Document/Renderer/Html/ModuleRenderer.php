@@ -10,6 +10,7 @@
 namespace Joomla\CMS\Document\Renderer\Html;
 
 use Joomla\CMS\Document\DocumentRenderer;
+use Joomla\CMS\Exception\ExceptionHandler;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\Registry\Registry;
@@ -37,6 +38,30 @@ class ModuleRenderer extends DocumentRenderer
      * @since   3.5
      */
     public function render($module, $attribs = [], $content = null)
+    {
+        try {
+            return $this->doRender($module, $attribs, $content);
+        } catch (\Throwable $e) {
+            return ExceptionHandler::handleExceptionInline($e, [
+                'context' => 'extension.module',
+                'name'    => \is_object($module) ? $module->module : $module,
+                'title'   => \is_object($module) ? $module->title : '',
+            ]);
+        }
+    }
+
+    /**
+     * Renders a module script and returns the results as a string
+     *
+     * @param   string  $module   The name of the module to render
+     * @param   array   $attribs  Associative array of values
+     * @param   string  $content  If present, module information from the buffer will be used
+     *
+     * @return  string  The output of the script
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private function doRender($module, $attribs = [], $content = null)
     {
         if (!\is_object($module)) {
             $title = $attribs['title'] ?? null;

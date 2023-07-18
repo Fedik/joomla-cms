@@ -12,6 +12,7 @@ namespace Joomla\CMS\Exception;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Error\AbstractRenderer;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Log\Log;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -70,6 +71,22 @@ class ExceptionHandler
     {
         static::logException($error);
         static::render($error);
+    }
+
+    /**
+     * Handles exceptions: logs errors and return rendered error.
+     *
+     * @param   \Throwable  $error     An Exception or Throwable (PHP 7+) object for which to render the error page.
+     * @param   array       $context   Additional information about the error. Example ['context' => 'extension.module', 'name' => 'mod_example'].
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function handleExceptionInline(\Throwable $error, array $context = [])
+    {
+        static::logException($error);
+        return static::renderInline($error, $context);
     }
 
     /**
@@ -171,6 +188,29 @@ class ExceptionHandler
         } else {
             throw $error;
         }
+    }
+
+    /**
+     * Render the error based on an exception.
+     *
+     * @param   \Throwable  $error     An Exception or Throwable (PHP 7+) object for which to render the error page.
+     * @param   array       $context   Additional information about the error. Example ['context' => 'extension.module', 'name' => 'mod_example'].
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function renderInline(\Throwable $error, array $context = [])
+    {
+        $backtrace = $error->getTrace();
+        array_unshift($backtrace, ['file' => $error->getFile(), 'line' => $error->getLine(), 'function' => '']);
+
+        return LayoutHelper::render('joomla.error.exception-inline', [
+            'error'     => $error,
+            'debug'     => JDEBUG,
+            'backtrace' => $backtrace,
+            'context'   => $context,
+        ]);
     }
 
     /**
