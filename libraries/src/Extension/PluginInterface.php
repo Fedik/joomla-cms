@@ -28,6 +28,8 @@ interface PluginInterface extends DispatcherAwareInterface
      * @return  void
      *
      * @since   4.0.0
+     *
+     * @deprecated 5.0 will be removed in 6.0. Plugin should implement Joomla\Event\SubscriberInterface, and be registered to Dispatcher outside.
      */
     public function registerListeners();
 }

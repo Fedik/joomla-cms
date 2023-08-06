@@ -13,6 +13,7 @@ use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
 use Joomla\CMS\Factory;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Event\DispatcherInterface;
+use Joomla\Event\SubscriberInterface;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -239,6 +240,13 @@ abstract class PluginHelper
             return;
         }
 
+        // Plugins which are SubscriberInterface implementations
+        if ($plugin instanceof SubscriberInterface) {
+            $dispatcher->addSubscriber($plugin);
+        }
+
+        // Have to always call Register legacy listeners for backward compatibility
+        // Until it will be removed
         $plugin->registerListeners();
     }
 

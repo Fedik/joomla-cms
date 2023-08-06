@@ -198,13 +198,13 @@ abstract class CMSPlugin implements DispatcherAwareInterface, PluginInterface, L
      * @return  void
      *
      * @since   4.0.0
+     *
+     * @deprecated See Joomla\CMS\Extension\PluginInterface::registerListeners method description
      */
     public function registerListeners()
     {
-        // Plugins which are SubscriberInterface implementations are handled without legacy layer support
+        // Plugins which are SubscriberInterface implementations are handled outside
         if ($this instanceof SubscriberInterface) {
-            $this->getDispatcher()->addSubscriber($this);
-
             return;
         }
 
