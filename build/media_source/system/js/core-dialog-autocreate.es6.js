@@ -4,18 +4,18 @@
  */
 
 // eslint-disable-next-line import/no-unresolved
-import JoomlaDialog from 'joomla.dialog';
+import JoomlaDialog from 'core.dialog';
 
 /**
  * Auto create a popup dynamically on click, eg:
  *
- * <button type="button" data-joomla-dialog='{"popupType": "iframe", "src": "content/url.html"}'>Click</button>
- * <button type="button" data-joomla-dialog='{"popupType": "inline", "popupContent": "#id-of-content-element"}'>Click</button>
- * <a href="content/url.html" data-joomla-dialog>Click</a>
+ * <button type="button" data-core-dialog='{"popupType": "iframe", "src": "content/url.html"}'>Click</button>
+ * <button type="button" data-core-dialog='{"popupType": "inline", "popupContent": "#id-of-content-element"}'>Click</button>
+ * <a href="content/url.html" data-core-dialog>Click</a>
  */
-const delegateSelector = '[data-joomla-dialog]';
-const configDataAttr = 'joomlaDialog';
-const configCacheFlag = 'joomlaDialogCache';
+const delegateSelector = '[data-core-dialog]';
+const configDataAttr = 'coreDialog';
+const configCacheFlag = 'coreDialogCache';
 
 document.addEventListener('click', (event) => {
   const triggerEl = event.target.closest(delegateSelector);
