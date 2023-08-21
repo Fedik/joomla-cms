@@ -125,6 +125,16 @@ trait CoreEventAware
         'onPrepareModuleList'    => Module\PrepareModuleListEvent::class,
         'onAfterModuleList'      => Module\AfterModuleListEvent::class,
         'onAfterCleanModuleList' => Module\AfterCleanModuleListEvent::class,
+        // Extension and Installer
+        'onExtensionBeforeInstall'   => Extension\BeforeInstallEvent::class,
+        'onExtensionAfterInstall'    => Extension\AfterInstallEvent::class,
+        'onExtensionBeforeUninstall' => Extension\BeforeUninstallEvent::class,
+        'onExtensionAfterUninstall'  => Extension\AfterUninstallEvent::class,
+        'onExtensionBeforeUpdate'    => Extension\BeforeUpdateEvent::class,
+        'onExtensionAfterUpdate'     => Extension\AfterUpdateEvent::class,
+        'onExtensionBeforeSave'      => Model\BeforeSaveEvent::class,
+        'onExtensionAfterSave'       => Model\AfterSaveEvent::class,
+        'onExtensionAfterDelete'     => Model\AfterDeleteEvent::class,
     ];
 
     /**
