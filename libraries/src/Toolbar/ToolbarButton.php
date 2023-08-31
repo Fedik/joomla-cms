@@ -30,8 +30,8 @@ use Joomla\Utilities\ArrayHelper;
  * @method self listCheckMessage(string $value)
  * @method self form(string $value)
  * @method self formValidation(bool $value)
- * @method self showOnKey(string $value)
- * @method self hideOnKey(string $value)
+ * @method self toggleHiddenOnKey(string $value)
+ * @method self hidden(bool $value)
  * @method string  getText()
  * @method string  getTask()
  * @method string  getIcon()
@@ -42,8 +42,8 @@ use Joomla\Utilities\ArrayHelper;
  * @method string  getListCheckMessage()
  * @method string  getForm()
  * @method bool    getFormValidation()
- * @method string  getShowOnKey()
- * @method string  getHideOnKey()
+ * @method string  getToggleHiddenOnKey()
+ * @method bool    getHidden()
  *
  * @since  4.0.0
  */
@@ -518,8 +518,8 @@ abstract class ToolbarButton
             'listCheckMessage',
             'form',
             'formValidation',
-            'hideOnKey',
-            'showOnKey',
+            'hidden',
+            'toggleHiddenOnKey',
         ];
     }
 }

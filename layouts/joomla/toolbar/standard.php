@@ -24,13 +24,13 @@ extract($displayData, EXTR_OVERWRITE);
  * @var   string  $btnClass
  * @var   string  $tagName
  * @var   string  $htmlAttributes
- * @var   string  $task             The task which should be executed
- * @var   bool    $listCheck        Boolean, whether selection from a list is needed
- * @var   string  $form             CSS selector for a target form
- * @var   bool    $formValidation   Whether the form need to be validated before run the task
- * @var   string  $showOnKey        Toggle button visibility: make it visible when key is pressed
- * @var   string  $hideOnKey        Toggle button visibility: make it hidden when key is pressed
- * @var   string  $message          Confirmation message before run the task
+ * @var   string  $task               The task which should be executed
+ * @var   bool    $listCheck          Boolean, whether selection from a list is needed
+ * @var   string  $form               CSS selector for a target form
+ * @var   bool    $formValidation     Whether the form need to be validated before run the task
+ * @var   string  $toggleHiddenOnKey  Toggle button visibility: make it visible when key is pressed
+ * @var   bool    $hidden             Toggle button visibility: make it hidden when key is pressed
+ * @var   string  $message            Confirmation message before run the task
  */
 
 $wa = Factory::getDocument()->getWebAssetManager();
@@ -45,8 +45,8 @@ $listAttr        = !empty($listCheck) ? ' list-selection' : '';
 $formAttr        = !empty($form) ? ' form="' . $this->escape($form) . '"' : '';
 $validate        = !empty($formValidation) ? ' form-validation' : '';
 $msgAttr         = !empty($message) ? ' confirm-message="' . $this->escape($message) . '"' : '';
-$showOnKeyAttr   = !empty($showOnKey) ? ' hidden show-on-key="' . $this->escape($showOnKey) . '"' : '';
-$hideOnKeyAttr   = !empty($hideOnKey) ? ' hide-on-key="' . $this->escape($hideOnKey) . '"' : '';
+$hiddenAttr      = !empty($hidden) ? ' hidden' : '';
+$toggleKeyAttr   = !empty($toggleHiddenOnKey) ? ' toggle-hidden-on-key="' . $this->escape($toggleHiddenOnKey) . '"' : '';
 
 if (!empty($task)) {
     $taskAttr = ' task="' . $task . '"';
@@ -55,7 +55,7 @@ if (!empty($task)) {
 }
 
 ?>
-<joomla-toolbar-button <?php echo $idAttr . $taskAttr . $listAttr . $formAttr . $validate . $msgAttr . $showOnKeyAttr . $hideOnKeyAttr; ?>>
+<joomla-toolbar-button <?php echo $idAttr . $taskAttr . $listAttr . $formAttr . $validate . $msgAttr . $toggleKeyAttr . $hiddenAttr; ?>>
 <?php if (!empty($group)) : ?>
 <a href="#" class="dropdown-item">
     <span class="<?php echo trim($class ?? ''); ?>"></span>

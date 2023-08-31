@@ -18,7 +18,7 @@ const eventCodeToKeysMap = {
  * @param {String[]} keys
  * @returns {boolean}
  */
-const doesKeysMatch = (event, keys) => {
+const doTheKeysMatch = (event, keys) => {
   const eventKeys = eventCodeToKeysMap[event.code];
   if (!eventKeys) {
     return false;
@@ -45,18 +45,13 @@ window.customElements.define('joomla-toolbar-button', class extends HTMLElement 
 
   get confirmMessage() { return this.getAttribute('confirm-message'); }
 
-  get hideOnKey() { return this.getAttribute('hide-on-key'); }
-
-  get showOnKey() { return this.getAttribute('show-on-key'); }
+  get toggleHiddenOnKey() { return this.getAttribute('toggle-hidden-on-key'); }
 
   /**
    * Lifecycle
    */
   constructor() {
     super();
-
-    this.keysShowOnKey = [];
-    this.keysHideOnKey = [];
 
     this.onChange = this.onChange.bind(this);
     this.executeTask = this.executeTask.bind(this);
@@ -92,36 +87,28 @@ window.customElements.define('joomla-toolbar-button', class extends HTMLElement 
     }
 
     // Toggle button visibility on key press
-    if (this.showOnKey || this.hideOnKey) {
-      this.keysShowOnKey = this.showOnKey ? this.showOnKey.split(',') : [];
-      this.keysHideOnKey = this.hideOnKey ? this.hideOnKey.split(',') : [];
+    if (this.toggleHiddenOnKey) {
+      this.keysToggleHiddenOnKey = this.toggleHiddenOnKey.split(',');
+      const initiallyHidden = this.hidden;
+
       this.visibilityTogglerListener = (event) => {
-        const matchShow = this.keysShowOnKey.length ? doesKeysMatch(event, this.keysShowOnKey) : false;
-        const matchHide = this.keysHideOnKey.length ? doesKeysMatch(event, this.keysHideOnKey) : false;
-        const anotherToolBtnInFocus = matchShow || matchHide ? document.activeElement.closest('joomla-toolbar-button') : false;
-        if (matchShow) {
-          if (event.type === 'keydown') {
-            this.removeAttribute('hidden');
-            // Switch focus to current
-            if (anotherToolBtnInFocus) {
-              this.buttonElement.focus();
-            }
-          } else {
-            this.setAttribute('hidden', '');
-          }
+        if (!doTheKeysMatch(event, this.keysToggleHiddenOnKey)) {
+          return;
         }
-        if (matchHide) {
-          if (event.type === 'keydown') {
-            this.setAttribute('hidden', '');
-          } else {
-            this.removeAttribute('hidden');
-            // Switch focus to current
-            if (anotherToolBtnInFocus) {
-              this.buttonElement.focus();
-            }
-          }
+        const btnInFocus = document.activeElement.closest('joomla-toolbar-button');
+
+        if (event.type === 'keydown') {
+          this.toggleAttribute('hidden', !initiallyHidden);
+        } else {
+          this.toggleAttribute('hidden', initiallyHidden);
+        }
+
+        // Check for focus of opposite button
+        if (btnInFocus && !this.hidden && btnInFocus.toggleHiddenOnKey === this.toggleHiddenOnKey) {
+          this.buttonElement.focus();
         }
       };
+
       document.addEventListener('keydown', this.visibilityTogglerListener);
       document.addEventListener('keyup', this.visibilityTogglerListener);
     }

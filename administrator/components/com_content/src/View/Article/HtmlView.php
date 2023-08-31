@@ -145,8 +145,8 @@ class HtmlView extends BaseHtmlView
         // For new records, check the create permission.
         if ($isNew && (count($user->getAuthorisedCategories('com_content', 'core.create')) > 0)) {
             // Toggleable buttons
-            $toolbar->apply('article.apply')->hideOnKey('Shift');
-            $toolbar->save2new('article.save2new')->showOnKey('Shift');
+            $toolbar->apply('article.apply')->toggleHiddenOnKey('Shift');
+            $toolbar->save2new('article.save2new')->hidden(true)->toggleHiddenOnKey('Shift');
 
             $saveGroup = $toolbar->dropdownButton('save-group');
 

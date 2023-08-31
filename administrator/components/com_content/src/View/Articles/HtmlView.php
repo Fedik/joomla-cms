@@ -234,12 +234,13 @@ class HtmlView extends BaseHtmlView
                     } else {
                         $childBar->trash('articles.trash')
                             ->listCheck(true)
-                            ->hideOnKey('Shift');
+                            ->toggleHiddenOnKey('Shift');
 
                         $childBar->delete('articles.delete', 'JTOOLBAR_DELETE')
                             ->message('JGLOBAL_CONFIRM_DELETE')
                             ->listCheck(true)
-                            ->showOnKey('Shift');
+                            ->hidden(true)
+                            ->toggleHiddenOnKey('Shift');
                     }
                 }
             }
