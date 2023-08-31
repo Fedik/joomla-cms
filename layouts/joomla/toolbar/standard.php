@@ -28,12 +28,12 @@ extract($displayData, EXTR_OVERWRITE);
  * @var   bool    $listCheck          Boolean, whether selection from a list is needed
  * @var   string  $form               CSS selector for a target form
  * @var   bool    $formValidation     Whether the form need to be validated before run the task
- * @var   string  $toggleHiddenOnKey  Toggle button visibility: make it visible when key is pressed
- * @var   bool    $hidden             Toggle button visibility: make it hidden when key is pressed
+ * @var   string  $toggleHiddenOnKey  Toggle "hidden" state of the button
+ * @var   bool    $hidden             Whether the button is hidden
  * @var   string  $message            Confirmation message before run the task
  */
 
-$wa = Factory::getDocument()->getWebAssetManager();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('core')
     ->useScript('webcomponent.toolbar-button');
 

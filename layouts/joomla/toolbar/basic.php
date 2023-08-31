@@ -37,6 +37,8 @@ extract($displayData, EXTR_OVERWRITE);
  * @var   string  $hasButtons
  * @var   string  $caretClass
  * @var   string  $toggleSplit
+ * @var   string  $toggleHiddenOnKey Toggle "hidden" state of the button
+ * @var   bool    $hidden            Whether the button is hidden
  */
 $tagName = $tagName ?? 'button';
 
@@ -47,12 +49,8 @@ $listAttr        = !empty($listCheck) ? ' list-selection' : '';
 $formAttr        = !empty($form) ? ' form="' . $this->escape($form) . '"' : '';
 $validate        = !empty($formValidation) ? ' form-validation' : '';
 $msgAttr         = !empty($message) ? ' confirm-message="' . $this->escape($message) . '"' : '';
-$alternativeAttr = !empty($alternativeGroup) ? ' data-alternative-group="' . $this->escape($alternativeGroup) . '"' : '';
-$alternativeAttr .= !empty($alternativeKeys) ? ' data-alternative-keys="' . $this->escape($alternativeKeys) . '"' : '';
-
-if (!empty($alternativeAttr)) {
-    $wa->useScript('joomla.alternative');
-}
+$hiddenAttr      = !empty($hidden) ? ' hidden' : '';
+$toggleKeyAttr   = !empty($toggleHiddenOnKey) ? ' toggle-hidden-on-key="' . $this->escape($toggleHiddenOnKey) . '"' : '';
 
 if ($id === 'toolbar-help') {
     $title = ' title="' . Text::_('JGLOBAL_OPENS_IN_A_NEW_WINDOW') . '"';
@@ -66,7 +64,7 @@ if (!empty($task)) {
 
 $direction = Factory::getLanguage()->isRtl() ? 'dropdown-menu-end' : '';
 ?>
-<joomla-toolbar-button <?php echo $idAttr . $taskAttr . $listAttr . $formAttr . $validate . $msgAttr . $alternativeAttr; ?>>
+<joomla-toolbar-button <?php echo $idAttr . $taskAttr . $listAttr . $formAttr . $validate . $msgAttr . $toggleKeyAttr . $hiddenAttr; ?>>
 <<?php echo $tagName; ?>
     class="<?php echo $btnClass ?? ''; ?>"
     <?php echo $htmlAttributes ?? ''; ?>
