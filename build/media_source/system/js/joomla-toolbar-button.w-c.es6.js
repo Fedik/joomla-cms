@@ -98,9 +98,14 @@ window.customElements.define('joomla-toolbar-button', class extends HTMLElement 
       this.visibilityTogglerListener = (event) => {
         const matchShow = this.keysShowOnKey.length ? doesKeysMatch(event, this.keysShowOnKey) : false;
         const matchHide = this.keysHideOnKey.length ? doesKeysMatch(event, this.keysHideOnKey) : false;
+        const anotherToolBtnInFocus = matchShow || matchHide ? document.activeElement.closest('joomla-toolbar-button') : false;
         if (matchShow) {
           if (event.type === 'keydown') {
             this.removeAttribute('hidden');
+            // Switch focus to current
+            if (anotherToolBtnInFocus) {
+              this.buttonElement.focus();
+            }
           } else {
             this.setAttribute('hidden', '');
           }
@@ -110,6 +115,10 @@ window.customElements.define('joomla-toolbar-button', class extends HTMLElement 
             this.setAttribute('hidden', '');
           } else {
             this.removeAttribute('hidden');
+            // Switch focus to current
+            if (anotherToolBtnInFocus) {
+              this.buttonElement.focus();
+            }
           }
         }
       };
@@ -127,6 +136,11 @@ window.customElements.define('joomla-toolbar-button', class extends HTMLElement 
     }
 
     this.buttonElement.removeEventListener('click', this.executeTask);
+
+    if (this.visibilityTogglerListener) {
+      document.removeEventListener('keydown', this.visibilityTogglerListener);
+      document.removeEventListener('keyup', this.visibilityTogglerListener);
+    }
   }
 
   onChange({ target }) {
