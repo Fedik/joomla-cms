@@ -28,6 +28,8 @@ extract($displayData, EXTR_OVERWRITE);
  * @var   bool    $listCheck        Boolean, whether selection from a list is needed
  * @var   string  $form             CSS selector for a target form
  * @var   bool    $formValidation   Whether the form need to be validated before run the task
+ * @var   string  $showOnKey        Toggle button visibility: make it visible when key is pressed
+ * @var   string  $hideOnKey        Toggle button visibility: make it hidden when key is pressed
  * @var   string  $message          Confirmation message before run the task
  */
 
@@ -43,12 +45,8 @@ $listAttr        = !empty($listCheck) ? ' list-selection' : '';
 $formAttr        = !empty($form) ? ' form="' . $this->escape($form) . '"' : '';
 $validate        = !empty($formValidation) ? ' form-validation' : '';
 $msgAttr         = !empty($message) ? ' confirm-message="' . $this->escape($message) . '"' : '';
-$alternativeAttr = !empty($alternativeGroup) ? ' data-alternative-group="' . $this->escape($alternativeGroup) . '"' : '';
-$alternativeAttr .= !empty($alternativeKeys) ? ' data-alternative-keys="' . $this->escape($alternativeKeys) . '"' : '';
-
-if (!empty($alternativeAttr)) {
-    $wa->useScript('joomla.alternative');
-}
+$showOnKeyAttr   = !empty($showOnKey) ? ' hidden show-on-key="' . $this->escape($showOnKey) . '"' : '';
+$hideOnKeyAttr   = !empty($hideOnKey) ? ' hide-on-key="' . $this->escape($hideOnKey) . '"' : '';
 
 if (!empty($task)) {
     $taskAttr = ' task="' . $task . '"';
@@ -57,7 +55,7 @@ if (!empty($task)) {
 }
 
 ?>
-<joomla-toolbar-button <?php echo $idAttr . $taskAttr . $listAttr . $formAttr . $validate . $msgAttr . $alternativeAttr; ?>>
+<joomla-toolbar-button <?php echo $idAttr . $taskAttr . $listAttr . $formAttr . $validate . $msgAttr . $showOnKeyAttr . $hideOnKeyAttr; ?>>
 <?php if (!empty($group)) : ?>
 <a href="#" class="dropdown-item">
     <span class="<?php echo trim($class ?? ''); ?>"></span>

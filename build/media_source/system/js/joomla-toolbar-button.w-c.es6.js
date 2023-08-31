@@ -3,6 +3,36 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+const eventCodeToKeysMap = {
+  AltLeft: ['Alt', 'AltLeft'],
+  AltRight: ['Alt', 'AltRight'],
+  ControlLeft: ['Control', 'ControlLeft'],
+  ControlRight: ['Control', 'ControlRight'],
+  ShiftLeft: ['Shift', 'ShiftLeft'],
+  ShiftRight: ['Shift', 'ShiftRight'],
+};
+
+/**
+ * Checking whether the keys match the pressed key
+ * @param {KeyboardEvent} event
+ * @param {String[]} keys
+ * @returns {boolean}
+ */
+const doesKeysMatch = (event, keys) => {
+  const eventKeys = eventCodeToKeysMap[event.code];
+  if (!eventKeys) {
+    return false;
+  }
+  // Check if one of keys exist in eventKeys
+  for (let i = 0, l = keys.length; i < l; i += 1) {
+    if (eventKeys.includes(keys[i])) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 window.customElements.define('joomla-toolbar-button', class extends HTMLElement {
   // Attribute getters
   get task() { return this.getAttribute('task'); }
@@ -15,15 +45,18 @@ window.customElements.define('joomla-toolbar-button', class extends HTMLElement 
 
   get confirmMessage() { return this.getAttribute('confirm-message'); }
 
+  get hideOnKey() { return this.getAttribute('hide-on-key'); }
+
+  get showOnKey() { return this.getAttribute('show-on-key'); }
+
   /**
    * Lifecycle
    */
   constructor() {
     super();
 
-    if (!Joomla) {
-      throw new Error('Joomla API is not properly initiated');
-    }
+    this.keysShowOnKey = [];
+    this.keysHideOnKey = [];
 
     this.onChange = this.onChange.bind(this);
     this.executeTask = this.executeTask.bind(this);
@@ -56,6 +89,32 @@ window.customElements.define('joomla-toolbar-button', class extends HTMLElement 
 
       // Watch on list selection
       this.formElement.boxchecked.addEventListener('change', this.onChange);
+    }
+
+    // Toggle button visibility on key press
+    if (this.showOnKey || this.hideOnKey) {
+      this.keysShowOnKey = this.showOnKey ? this.showOnKey.split(',') : [];
+      this.keysHideOnKey = this.hideOnKey ? this.hideOnKey.split(',') : [];
+      this.visibilityTogglerListener = (event) => {
+        const matchShow = this.keysShowOnKey.length ? doesKeysMatch(event, this.keysShowOnKey) : false;
+        const matchHide = this.keysHideOnKey.length ? doesKeysMatch(event, this.keysHideOnKey) : false;
+        if (matchShow) {
+          if (event.type === 'keydown') {
+            this.removeAttribute('hidden');
+          } else {
+            this.setAttribute('hidden', '');
+          }
+        }
+        if (matchHide) {
+          if (event.type === 'keydown') {
+            this.setAttribute('hidden', '');
+          } else {
+            this.removeAttribute('hidden');
+          }
+        }
+      };
+      document.addEventListener('keydown', this.visibilityTogglerListener);
+      document.addEventListener('keyup', this.visibilityTogglerListener);
     }
   }
 
