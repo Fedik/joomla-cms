@@ -11,11 +11,14 @@
 namespace Joomla\Component\Menus\Administrator\Field\Modal;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\FileLayout;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Database\ParameterType;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -27,7 +30,7 @@ use Joomla\Database\ParameterType;
  *
  * @since  3.7.0
  */
-class MenuField extends FormField
+class MenuField extends ModalSelectField
 {
     /**
      * The form field type.
@@ -42,7 +45,7 @@ class MenuField extends FormField
      *
      * @var     boolean
      * @since   3.7.0
-     */
+     * /
     protected $allowSelect = true;
 
     /**
@@ -50,7 +53,7 @@ class MenuField extends FormField
      *
      * @var     boolean
      * @since   3.7.0
-     */
+     * /
     protected $allowClear = true;
 
     /**
@@ -58,7 +61,7 @@ class MenuField extends FormField
      *
      * @var     boolean
      * @since   3.7.0
-     */
+     * /
     protected $allowNew = false;
 
     /**
@@ -66,7 +69,7 @@ class MenuField extends FormField
      *
      * @var     boolean
      * @since   3.7.0
-     */
+     * /
     protected $allowEdit = false;
 
     /**
@@ -74,8 +77,9 @@ class MenuField extends FormField
      *
      * @var     boolean
      * @since   3.9.0
-     */
+     * /
     protected $allowPropagate = false;
+     */
 
     /**
      * Method to get certain otherwise inaccessible properties from the form field object.
@@ -85,7 +89,7 @@ class MenuField extends FormField
      * @return  mixed  The property value or null.
      *
      * @since   3.7.0
-     */
+     * /
     public function __get($name)
     {
         switch ($name) {
@@ -98,7 +102,7 @@ class MenuField extends FormField
         }
 
         return parent::__get($name);
-    }
+    }*/
 
     /**
      * Method to set certain otherwise inaccessible properties of the form field object.
@@ -109,7 +113,7 @@ class MenuField extends FormField
      * @return  void
      *
      * @since   3.7.0
-     */
+     * /
     public function __set($name, $value)
     {
         switch ($name) {
@@ -125,7 +129,7 @@ class MenuField extends FormField
             default:
                 parent::__set($name, $value);
         }
-    }
+    }*/
 
     /**
      * Method to attach a JForm object to the field.
@@ -145,18 +149,141 @@ class MenuField extends FormField
     {
         $return = parent::setup($element, $value, $group);
 
-        if ($return) {
-            $this->allowSelect    = ((string) $this->element['select']) !== 'false';
-            $this->allowClear     = ((string) $this->element['clear']) !== 'false';
-            $this->allowPropagate = ((string) $this->element['propagate']) === 'true';
-
-            // Creating/editing menu items is not supported in frontend.
-            $isAdministrator = Factory::getApplication()->isClient('administrator');
-            $this->allowNew  = $isAdministrator ? ((string) $this->element['new']) === 'true' : false;
-            $this->allowEdit = $isAdministrator ? ((string) $this->element['edit']) === 'true' : false;
+        if (!$return) {
+            return $return;
         }
 
+        $app = Factory::getApplication();
+
+        $app->getLanguage()->load('com_menus', JPATH_ADMINISTRATOR);
+
+        $languages = LanguageHelper::getContentLanguages([0, 1], false);
+        $language  = (string) $this->element['language'];
+        $clientId  = (int) $this->element['clientid'];
+
+        // Prepare enabled actions
+        $this->canDo['propagate']  = ((string) $this->element['propagate'] == 'true') && count($languages) > 2;
+
+        // Creating/editing menu items is not supported in frontend.
+        if (!$app->isClient('administrator')) {
+            $this->canDo['new']  = false;
+            $this->canDo['edit'] = false;
+        }
+
+        // Prepare Urls
+        $linkItems = (new Uri())->setPath(Uri::base(true) . '/index.php');
+        $linkItems->setQuery([
+            'option'                => 'com_menus',
+            'view'                  => 'items',
+            'layout'                => 'modal',
+            'tmpl'                  => 'component',
+            'client_id'             => $clientId,
+            Session::getFormToken() => 1,
+        ]);
+        $linkItem = clone $linkItems;
+        $linkItem->setVar('view', 'item');
+        $linkCheckin = (new Uri())->setPath(Uri::base(true) . '/index.php');
+        $linkCheckin->setQuery([
+            'option'                => 'com_menus',
+            'task'                  => 'items.checkin',
+            'format'                => 'json',
+            Session::getFormToken() => 1,
+        ]);
+
+        if ($language) {
+            $linkItems->setVar('forcedLanguage', $language);
+            $linkItem->setVar('forcedLanguage', $language);
+
+            $modalTitle = Text::_('COM_MENUS_SELECT_A_MENUITEM') . ' &#8212; ' . $this->getTitle();
+
+            $this->dataAttributes['data-language'] = $language;
+        } else {
+            $modalTitle = Text::_('COM_MENUS_SELECT_A_MENUITEM');
+        }
+
+        $urlSelect = $linkItems;
+        $urlEdit   = clone $linkItem;
+        $urlEdit->setVar('task', 'item.edit');
+        $urlNew    = clone $linkItem;
+        $urlNew->setVar('task', 'item.add');
+
+        $this->urls['select']  = (string) $urlSelect;
+        $this->urls['new']     = (string) $urlNew;
+        $this->urls['edit']    = (string) $urlEdit;
+        $this->urls['checkin'] = (string) $linkCheckin;
+
+        // Prepare titles
+        $this->modalTitles['select']  = $modalTitle;
+        $this->modalTitles['new']     = Text::_('COM_MENUS_NEW_MENUITEM');
+        $this->modalTitles['edit']    = Text::_('COM_MENUS_EDIT_MENUITEM');
+
+        $this->hint = $this->hint ?: Text::_('COM_MENUS_SELECT_A_MENUITEM');
+
         return $return;
+    }
+
+    /**
+     * Method to retrieve the title of selected item.
+     *
+     * @return string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function getValueTitle()
+    {
+        $value = (int) $this->value ?: '';
+        $title = '';
+
+        if ($value) {
+            try {
+                $db    = $this->getDatabase();
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('title'))
+                    ->from($db->quoteName('#__menu'))
+                    ->where($db->quoteName('id') . ' = :id')
+                    ->bind(':id', $value, ParameterType::INTEGER);
+                $db->setQuery($query);
+
+                $title = $db->loadResult();
+            } catch (\Throwable $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            }
+        }
+
+        return $title ?: $value;
+    }
+
+    /**
+     * Method to get the data to be passed to the layout for rendering.
+     *
+     * @return  array
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    protected function getLayoutData()
+    {
+        $data             = parent::getLayoutData();
+        $data['language'] = (string) $this->element['language'];
+
+        return $data;
+    }
+
+    /**
+     * Get the renderer
+     *
+     * @param   string  $layoutId  Id to load
+     *
+     * @return  FileLayout
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function getRenderer($layoutId = 'default')
+    {
+        $layout = parent::getRenderer($layoutId);
+        $layout->setComponent('com_menus');
+        $layout->setClient(1);
+
+        return $layout;
     }
 
     /**
@@ -166,7 +293,7 @@ class MenuField extends FormField
      *
      * @since   3.7.0
      */
-    protected function getInput()
+    protected function getInput1()
     {
         $clientId    = (int) $this->element['clientid'];
         $languages   = LanguageHelper::getContentLanguages([0, 1], false);
@@ -331,78 +458,78 @@ class MenuField extends FormField
         }
 
         // Select menu item modal
-        if ($this->allowSelect) {
-            $html .= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'ModalSelect' . $modalId,
-                [
-                    'title'      => $modalTitle,
-                    'url'        => $urlSelect,
-                    'height'     => '400px',
-                    'width'      => '800px',
-                    'bodyHeight' => 70,
-                    'modalWidth' => 80,
-                    'footer'     => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
-                                        . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>',
-                ]
-            );
-        }
-
-        // New menu item modal
-        if ($this->allowNew) {
-            $html .= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'ModalNew' . $modalId,
-                [
-                    'title'       => Text::_('COM_MENUS_NEW_MENUITEM'),
-                    'backdrop'    => 'static',
-                    'keyboard'    => false,
-                    'closeButton' => false,
-                    'url'         => $urlNew,
-                    'height'      => '400px',
-                    'width'       => '800px',
-                    'bodyHeight'  => 70,
-                    'modalWidth'  => 80,
-                    'footer'      => '<button type="button" class="btn btn-secondary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'item\', \'cancel\', \'item-form\'); return false;">'
-                            . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>'
-                            . '<button type="button" class="btn btn-primary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'item\', \'save\', \'item-form\'); return false;">'
-                            . Text::_('JSAVE') . '</button>'
-                            . '<button type="button" class="btn btn-success"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'item\', \'apply\', \'item-form\'); return false;">'
-                            . Text::_('JAPPLY') . '</button>',
-                ]
-            );
-        }
-
-        // Edit menu item modal
-        if ($this->allowEdit) {
-            $html .= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'ModalEdit' . $modalId,
-                [
-                    'title'       => Text::_('COM_MENUS_EDIT_MENUITEM'),
-                    'backdrop'    => 'static',
-                    'keyboard'    => false,
-                    'closeButton' => false,
-                    'url'         => $urlEdit,
-                    'height'      => '400px',
-                    'width'       => '800px',
-                    'bodyHeight'  => 70,
-                    'modalWidth'  => 80,
-                    'footer'      => '<button type="button" class="btn btn-secondary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'item\', \'cancel\', \'item-form\'); return false;">'
-                            . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>'
-                            . '<button type="button" class="btn btn-primary"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'item\', \'save\', \'item-form\'); return false;">'
-                            . Text::_('JSAVE') . '</button>'
-                            . '<button type="button" class="btn btn-success"'
-                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'item\', \'apply\', \'item-form\'); return false;">'
-                            . Text::_('JAPPLY') . '</button>',
-                ]
-            );
-        }
+//        if ($this->allowSelect) {
+//            $html .= HTMLHelper::_(
+//                'bootstrap.renderModal',
+//                'ModalSelect' . $modalId,
+//                [
+//                    'title'      => $modalTitle,
+//                    'url'        => $urlSelect,
+//                    'height'     => '400px',
+//                    'width'      => '800px',
+//                    'bodyHeight' => 70,
+//                    'modalWidth' => 80,
+//                    'footer'     => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+//                                        . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>',
+//                ]
+//            );
+//        }
+//
+//        // New menu item modal
+//        if ($this->allowNew) {
+//            $html .= HTMLHelper::_(
+//                'bootstrap.renderModal',
+//                'ModalNew' . $modalId,
+//                [
+//                    'title'       => Text::_('COM_MENUS_NEW_MENUITEM'),
+//                    'backdrop'    => 'static',
+//                    'keyboard'    => false,
+//                    'closeButton' => false,
+//                    'url'         => $urlNew,
+//                    'height'      => '400px',
+//                    'width'       => '800px',
+//                    'bodyHeight'  => 70,
+//                    'modalWidth'  => 80,
+//                    'footer'      => '<button type="button" class="btn btn-secondary"'
+//                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'item\', \'cancel\', \'item-form\'); return false;">'
+//                            . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>'
+//                            . '<button type="button" class="btn btn-primary"'
+//                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'item\', \'save\', \'item-form\'); return false;">'
+//                            . Text::_('JSAVE') . '</button>'
+//                            . '<button type="button" class="btn btn-success"'
+//                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'add\', \'item\', \'apply\', \'item-form\'); return false;">'
+//                            . Text::_('JAPPLY') . '</button>',
+//                ]
+//            );
+//        }
+//
+//        // Edit menu item modal
+//        if ($this->allowEdit) {
+//            $html .= HTMLHelper::_(
+//                'bootstrap.renderModal',
+//                'ModalEdit' . $modalId,
+//                [
+//                    'title'       => Text::_('COM_MENUS_EDIT_MENUITEM'),
+//                    'backdrop'    => 'static',
+//                    'keyboard'    => false,
+//                    'closeButton' => false,
+//                    'url'         => $urlEdit,
+//                    'height'      => '400px',
+//                    'width'       => '800px',
+//                    'bodyHeight'  => 70,
+//                    'modalWidth'  => 80,
+//                    'footer'      => '<button type="button" class="btn btn-secondary"'
+//                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'item\', \'cancel\', \'item-form\'); return false;">'
+//                            . Text::_('JLIB_HTML_BEHAVIOR_CLOSE') . '</button>'
+//                            . '<button type="button" class="btn btn-primary"'
+//                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'item\', \'save\', \'item-form\'); return false;">'
+//                            . Text::_('JSAVE') . '</button>'
+//                            . '<button type="button" class="btn btn-success"'
+//                            . ' onclick="window.processModalEdit(this, \'' . $this->id . '\', \'edit\', \'item\', \'apply\', \'item-form\'); return false;">'
+//                            . Text::_('JAPPLY') . '</button>',
+//                ]
+//            );
+//        }
 
         // Note: class='required' for client side validation.
         $class = $this->required ? ' class="required modal-value"' : '';
@@ -427,7 +554,7 @@ class MenuField extends FormField
      *
      * @since   3.7.0
      */
-    protected function getLabel()
+    protected function getLabel1()
     {
         return str_replace($this->id, $this->id . '_name', parent::getLabel());
     }
