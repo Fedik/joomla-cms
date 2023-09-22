@@ -68,17 +68,36 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null)
     {
+        $this->state = $this->get('State');
+
+        // A case when was pushed "cancel", we have to do an extra check earlier because $model->getItem() require extension.id
+        if (!$this->state->get('module.id') && $this->getLayout() === 'modalreturn') {
+            parent::display($tpl);
+
+            return;
+        }
+
         $this->form  = $this->get('Form');
         $this->item  = $this->get('Item');
-        $this->state = $this->get('State');
         $this->canDo = ContentHelper::getActions('com_modules', 'module', $this->item->id);
+
+        if ($this->getLayout() === 'modalreturn') {
+            parent::display($tpl);
+
+            return;
+        }
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
-        $this->addToolbar();
+        if ($this->getLayout() !== 'modal') {
+            $this->addToolbar();
+        } else {
+            $this->addModalToolbar();
+        }
+
         parent::display($tpl);
     }
 
@@ -160,5 +179,27 @@ class HtmlView extends BaseHtmlView
 
         $toolbar->inlinehelp();
         $toolbar->help($help->key, false, $url);
+    }
+
+    /**
+     * Add the modal toolbar.
+     *
+     * @return  void
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function addModalToolbar()
+    {
+        $canDo   = $this->canDo;
+        $toolbar = Toolbar::getInstance();
+
+        ToolbarHelper::title(Text::sprintf('COM_MODULES_MANAGER_MODULE', Text::_($this->item->module)), 'cube module');
+
+        if ($canDo->get('core.create') || $canDo->get('core.edit')) {
+            $toolbar->apply('module.apply');
+            $toolbar->save('module.save');
+        }
+
+        $toolbar->cancel('module.cancel', 'JTOOLBAR_CANCEL');
     }
 }

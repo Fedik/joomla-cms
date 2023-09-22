@@ -35,20 +35,24 @@ Text::script('JNO');
 Text::script('JALL');
 Text::script('JTRASHED');
 
-$this->document->addScriptOptions('module-edit', ['itemId' => $this->item->id, 'state' => (int) $this->item->id == 0 ? 'Add' : 'Edit']);
+// @TODO: Fix Menu module editing
+// $this->document->addScriptOptions('module-edit', ['itemId' => $this->item->id, 'state' => (int) $this->item->id == 0 ? 'Add' : 'Edit']);
 
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate')
-    ->useScript('com_modules.admin-module-edit');
+    // @TODO: Fix Menu module editing
+    // ->useScript('com_modules.admin-module-edit')
+;
 
 $input = Factory::getApplication()->getInput();
 
 // In case of modal
 $isModal = $input->get('layout') === 'modal';
 $layout  = $isModal ? 'modal' : 'edit';
-$tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=component' : '';
+$tmpl    = $input->get('tmpl');
+$tmpl    = $tmpl ? '&tmpl=' . $tmpl : '';
 
 ?>
 

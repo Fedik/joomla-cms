@@ -92,6 +92,13 @@ class ModuleController extends FormController
             }
 
             $this->app->redirect($return);
+        } elseif ($result && $this->input->get('layout') === 'modal') {
+            // When editing in modal then redirect to modalreturn layout
+            $id     = $this->input->get('id');
+            $return = 'index.php?option=' . $this->option . '&view=' . $this->view_item . $this->getRedirectToItemAppend($id)
+                . '&layout=modalreturn&from-task=cancel';
+
+            $this->setRedirect(Route::_($return, false));
         }
 
         return $result;
@@ -190,6 +197,18 @@ class ModuleController extends FormController
         switch ($task) {
             case 'save2new':
                 $this->app->setUserState('com_modules.add.module.extension_id', $model->getState('module.extension_id'));
+                break;
+
+            case 'save':
+                // When editing in modal then redirect to modalreturn layout
+                if ($this->input->get('layout') === 'modal') {
+                    $item   = $model->getItem();
+                    $id     = $item ? $item->id : 0;
+                    $return = 'index.php?option=' . $this->option . '&view=' . $this->view_item . $this->getRedirectToItemAppend($id)
+                        . '&layout=modalreturn&from-task=save';
+
+                    $this->setRedirect(Route::_($return, false));
+                }
                 break;
 
             default:

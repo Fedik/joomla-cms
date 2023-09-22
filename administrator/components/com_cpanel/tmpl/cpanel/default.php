@@ -27,7 +27,7 @@ Text::script('COM_CPANEL_UNPUBLISH_MODULE_ERROR');
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('com_cpanel.admin-cpanel')
-    ->useScript('com_cpanel.admin-addmodule')
+    //->useScript('com_cpanel.admin-addmodule')
     ->useScript('joomla.dialog-autocreate');
 
 $user = $this->getCurrentUser();
