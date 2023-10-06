@@ -576,6 +576,8 @@ class JoomlaDialog extends HTMLElement {
         onClick: () => popup.close(),
       }];
       popup.classList.add('joomla-dialog-alert');
+      // Workaround Safari bug, do not support height:fit-content correctly
+      popup.classList.add('fit-content-height');
       popup.addEventListener('joomla-dialog:close', () => {
         popup.destroy();
         resolve();
@@ -619,6 +621,8 @@ class JoomlaDialog extends HTMLElement {
       ];
       popup.cancelable = false;
       popup.classList.add('joomla-dialog-confirm');
+      // Workaround Safari bug, do not support height:fit-content correctly
+      popup.classList.add('fit-content-height');
       popup.addEventListener('joomla-dialog:close', () => resolve(result));
       popup.show();
     });

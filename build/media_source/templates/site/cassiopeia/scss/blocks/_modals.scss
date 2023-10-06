@@ -38,7 +38,6 @@ joomla-dialog {
   dialog {
     width: 96vw;
     max-width: 1700px;
-    height: 96vh;
     padding: 0;
     border: 1px solid var(--border-color-translucent);
     border-radius: .3rem;
@@ -46,7 +45,17 @@ joomla-dialog {
 
     @include media-breakpoint-up(xxl) {
       width: 80vw;
-      height: 80vh;
+    }
+  }
+
+  // Set height separately due to Safari bug with support of height:fit-content;
+  &:not(.fit-content-height) {
+    dialog {
+      height: 96vh;
+
+      @include media-breakpoint-up(xxl) {
+        height: 80vh;
+      }
     }
   }
 
@@ -192,7 +201,6 @@ joomla-dialog dialog[open] {
   dialog {
     width: 600px;
     max-width: 80vw;
-    height: fit-content;
   }
 
   .joomla-dialog-body {
@@ -201,7 +209,7 @@ joomla-dialog dialog[open] {
 }
 
 // Dialog for content select field
-.joomla-dialog-content-select-field {
+joomla-dialog.joomla-dialog-content-select-field {
   dialog {
     @include media-breakpoint-up(xxl) {
       width: 90vw;
