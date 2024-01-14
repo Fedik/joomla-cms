@@ -50,7 +50,7 @@ class ScriptsRenderer extends DocumentRenderer
         $tab          = $this->_doc->_getTab();
         $buffer       = '';
         $wam          = $this->_doc->getWebAssetManager();
-        $assets       = $wam->getAssets('script', true);
+        $assets       = $wam->getAssetsCached('script');
 
         // Get a list of inline assets and their relation with regular assets
         $inlineAssets   = $wam->filterOutInlineAssets($assets);

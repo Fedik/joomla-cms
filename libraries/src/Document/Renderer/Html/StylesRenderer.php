@@ -48,7 +48,7 @@ class StylesRenderer extends DocumentRenderer
         $tab          = $this->_doc->_getTab();
         $buffer       = '';
         $wam          = $this->_doc->getWebAssetManager();
-        $assets       = $wam->getAssets('style', true);
+        $assets       = $wam->getAssetsCached('style');
 
         // Get a list of inline assets and their relation with regular assets
         $inlineAssets   = $wam->filterOutInlineAssets($assets);

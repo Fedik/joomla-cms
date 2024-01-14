@@ -109,6 +109,15 @@ class WebAssetManager implements WebAssetManagerInterface
     protected $dependenciesIsActual = false;
 
     /**
+     * In memory cache for getAssetsCached() method
+     *
+     * @var    array
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    private static $cachedAssets = [];
+
+    /**
      * Class constructor
      *
      * @param   WebAssetRegistry  $registry  The WebAsset Registry instance
@@ -574,6 +583,38 @@ class WebAssetManager implements WebAssetManagerInterface
         }
 
         return $assets;
+    }
+
+    /**
+     * Similar to getAssets() but cache the result in memory, to avoid unneeded re-calculation.
+     * Get sorted list of all active assets.
+     *
+     * @param   string  $type        The asset type, script or style
+     * @param   bool    $resetCache  Reset cache
+     *
+     * @return  WebAssetItem[]
+     *
+     * @throws  UnknownAssetException  When Asset cannot be found
+     * @throws  UnsatisfiedDependencyException When Dependency cannot be found
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    public function getAssetsCached(string $type, bool $resetCache = false): array
+    {
+        // Make sure that all dependencies are active
+        if (!$this->dependenciesIsActual) {
+            $this->enableDependencies();
+        }
+
+        $oid    = spl_object_id($this);
+        $active = $this->activeAssets[$type] ?? [];
+        $key    = $type . md5(implode(array_keys($active)) . implode($active));
+
+        if (empty(self::$cachedAssets[$oid][$key]) || $resetCache) {
+            self::$cachedAssets[$oid][$key] = $this->getAssets($type, true);
+        }
+
+        return self::$cachedAssets[$oid][$key];
     }
 
     /**
