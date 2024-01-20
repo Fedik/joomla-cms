@@ -27,7 +27,7 @@ use Joomla\Registry\Registry;
  *
  * @since  1.7.0
  */
-class CalendarField extends FormField
+class CalendarField extends DatetimeField
 {
     /**
      * The form field type.
@@ -50,24 +50,27 @@ class CalendarField extends FormField
      *
      * @var    string
      * @since  3.2
-     */
+     * /
     protected $format;
+    */
 
     /**
      * The format will be used to filter submitted date and time.
      *
      * @var    string
      * @since  4.0.1
-     */
+     * /
     protected $filterFormat;
+    */
 
     /**
      * The filter.
      *
      * @var    string
      * @since  3.2
-     */
+     * /
     protected $filter;
+    */
 
     /**
      * The minimum year number to subtract/add from the current year
@@ -114,7 +117,7 @@ class CalendarField extends FormField
      *
      * @var    string
      * @since  4.3.0
-     */
+     * /
     protected $filltable;
 
     /**
@@ -122,7 +125,7 @@ class CalendarField extends FormField
      *
      * @var    integer
      * @since  4.3.0
-     */
+     * /
     protected $timeformat;
 
     /**
@@ -130,8 +133,9 @@ class CalendarField extends FormField
      *
      * @var    string
      * @since  4.3.0
-     */
+     * /
     protected $singleheader;
+    */
 
     /**
      * Name of the layout being used to render the field
@@ -146,8 +150,9 @@ class CalendarField extends FormField
      *
      * @var  string
      * @since 4.0.0
-     */
+     * /
     protected $parentclass;
+    */
 
     /**
      * Method to get certain otherwise inaccessible properties from the form field object.
@@ -157,7 +162,7 @@ class CalendarField extends FormField
      * @return  mixed  The property value or null.
      *
      * @since   3.2
-     */
+     * /
     public function __get($name)
     {
         switch ($name) {
@@ -188,7 +193,7 @@ class CalendarField extends FormField
      * @return  void
      *
      * @since   3.2
-     */
+     * /
     public function __set($name, $value)
     {
         switch ($name) {
@@ -235,7 +240,7 @@ class CalendarField extends FormField
      *
      * @see     FormField::setup()
      * @since   3.2
-     */
+     * /
     public function setup(\SimpleXMLElement $element, $value, $group = null)
     {
         $return = parent::setup($element, $value, $group);
@@ -287,7 +292,7 @@ class CalendarField extends FormField
      * @return  string  The field input markup.
      *
      * @since   1.7.0
-     */
+     * /
     protected function getInput()
     {
         $user = Factory::getApplication()->getIdentity();
@@ -344,7 +349,7 @@ class CalendarField extends FormField
      * @return  array
      *
      * @since  3.7.0
-     */
+     * /
     protected function getLayoutData()
     {
         $data      = parent::getLayoutData();
@@ -393,7 +398,7 @@ class CalendarField extends FormField
      * @return  mixed   The filtered value.
      *
      * @since   4.0.0
-     */
+     * /
     public function filter($value, $group = null, Registry $input = null)
     {
         // Make sure there is a valid SimpleXMLElement.
@@ -435,4 +440,5 @@ class CalendarField extends FormField
 
         return $return;
     }
+     */
 }

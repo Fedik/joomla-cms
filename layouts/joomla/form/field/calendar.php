@@ -98,20 +98,20 @@ if (is_array($attributes)) {
 }
 
 $calendarAttrs = [
-    'data-inputfield'      => $id,
-    'data-button'          => $id . '_btn',
-    'data-date-format'     => $format,
-    'data-firstday'        => empty($firstday) ? '' : $firstday,
-    'data-weekend'         => empty($weekend) ? '' : implode(',', $weekend),
-    'data-today-btn'       => $todaybutton,
-    'data-week-numbers'    => $weeknumbers,
-    'data-show-time'       => $showtime,
-    'data-show-others'     => $filltable,
-    'data-time24'          => $timeformat,
-    'data-only-months-nav' => $singleheader,
-    'data-min-year'        => $minYear,
-    'data-max-year'        => $maxYear,
-    'data-date-type'       => strtolower($calendar),
+//    'data-inputfield'      => $id,
+//    'data-button'          => $id . '_btn',
+//    'data-date-format'     => $format,
+//    'data-firstday'        => empty($firstday) ? '' : $firstday,
+//    'data-weekend'         => empty($weekend) ? '' : implode(',', $weekend),
+//    'data-today-btn'       => $todaybutton,
+//    'data-week-numbers'    => $weeknumbers,
+//    'data-show-time'       => $showtime,
+//    'data-show-others'     => $filltable,
+//    'data-time24'          => $timeformat,
+//    'data-only-months-nav' => $singleheader,
+//    'data-min-year'        => $minYear,
+//    'data-max-year'        => $maxYear,
+//    'data-date-type'       => strtolower($calendar),
 ];
 
 $calendarAttrsStr = ArrayHelper::toString($calendarAttrs);
@@ -147,14 +147,17 @@ if ($lang->hasKey('JLIB_HTML_BEHAVIOR_PM')) {
 }
 
 // Redefine locale/helper assets to use correct path, and load calendar assets
-$document->getWebAssetManager()
-    ->registerAndUseScript('field.calendar.helper', $helperPath, [], ['defer' => true])
-    ->useStyle('field.calendar' . ($direction === 'rtl' ? '-rtl' : ''))
-    ->useScript('field.calendar');
+//$document->getWebAssetManager()
+//    ->registerAndUseScript('field.calendar.helper', $helperPath, [], ['defer' => true])
+//    ->useStyle('field.calendar' . ($direction === 'rtl' ? '-rtl' : ''))
+//    ->useScript('field.calendar');
 
 ?>
 <div class="field-calendar">
-    <?php if (!$readonly && !$disabled) : ?>
+    <?php echo '<input type="datetime-local" name="' . $name . '" id="' . $id . '" value="' . $this->escape($value) . '"'
+        . $attributes . ' />';
+    ?>
+    <?php /*if (!$readonly && !$disabled) : ?>
     <div class="input-group">
     <?php endif; ?>
         <input
@@ -176,5 +179,5 @@ $document->getWebAssetManager()
         </button>
         <?php if (!$readonly && !$disabled) : ?>
     </div>
-        <?php endif; ?>
+        <?php endif;*/ ?>
 </div>
