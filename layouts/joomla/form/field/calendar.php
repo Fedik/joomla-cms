@@ -101,7 +101,7 @@ if (is_array($attributes)) {
     $attributes = ArrayHelper::toString($attributes);
 }
 
-$calendarAttrs = [
+//$calendarAttrs = [
 //    'data-inputfield'      => $id,
 //    'data-button'          => $id . '_btn',
 //    'data-date-format'     => $format,
@@ -116,9 +116,16 @@ $calendarAttrs = [
 //    'data-min-year'        => $minYear,
 //    'data-max-year'        => $maxYear,
 //    'data-date-type'       => strtolower($calendar),
-];
+//];
+//
+//$calendarAttrsStr = ArrayHelper::toString($calendarAttrs);
 
-$calendarAttrsStr = ArrayHelper::toString($calendarAttrs);
+$calendarConfig = [
+    'enableTime'  => !!$showtime,
+    'weekNumbers' => !!$weeknumbers,
+    'time_24hr'   => $timeformat === 24,
+    'firstDay'    => $firstday,
+];
 
 // Add language strings
 $strings = [
@@ -132,7 +139,7 @@ $strings = [
     'JANUARY_SHORT', 'FEBRUARY_SHORT', 'MARCH_SHORT', 'APRIL_SHORT', 'MAY_SHORT', 'JUNE_SHORT',
     'JULY_SHORT', 'AUGUST_SHORT', 'SEPTEMBER_SHORT', 'OCTOBER_SHORT', 'NOVEMBER_SHORT', 'DECEMBER_SHORT',
     // Buttons
-    'JCLOSE', 'JCLEAR', 'JLIB_HTML_BEHAVIOR_TODAY',
+    //'JCLOSE', 'JCLEAR', 'JLIB_HTML_BEHAVIOR_TODAY',
     // Miscellaneous
     'JLIB_HTML_BEHAVIOR_WK',
 ];
@@ -151,7 +158,10 @@ if ($lang->hasKey('JLIB_HTML_BEHAVIOR_PM')) {
 }
 
 // Redefine locale/helper assets to use correct path, and load calendar assets
-//$document->getWebAssetManager()
+$document->getWebAssetManager()
+    ->useStyle('flatpickr')
+    ->useScript('flatpickr')
+    ->useScript('field.calendar-field');
 //    ->registerAndUseScript('field.calendar.helper', $helperPath, [], ['defer' => true])
 //    ->useStyle('field.calendar' . ($direction === 'rtl' ? '-rtl' : ''))
 //    ->useScript('field.calendar');
@@ -159,10 +169,17 @@ if ($lang->hasKey('JLIB_HTML_BEHAVIOR_PM')) {
 $inputType = $showtime ? 'datetime-local' : 'date';
 
 ?>
-<div class="field-calendar">
-    <?php echo '<input type="' . $inputType . '" name="' . $name . '" id="' . $id . '" value="' . $this->escape($value) . '"'
-        . $attributes . $dataAttribute . ' />';
-    ?>
+<div class="field-calendar" data-calendar-field="<?php echo $this->escape(json_encode($calendarConfig, JSON_UNESCAPED_SLASHES)); ?>">
+    <div class="input-group">
+        <?php
+            echo '<input type="' . $inputType . '" name="' . $name . '" id="' . $id . '" value="' . $this->escape($value) . '"'
+                . $attributes . $dataAttribute . ' data-input/>';
+        ?>
+        <button type="button" class="btn btn-primary<?php echo ($readonly || $disabled) ? ' hidden' : ''; ?>" data-toggle>
+            <span class="icon-calendar" aria-hidden="true"></span>
+            <span class="visually-hidden"><?php echo Text::_('JLIB_HTML_BEHAVIOR_OPEN_CALENDAR'); ?></span>
+        </button>
+    </div>
     <?php /*if (!$readonly && !$disabled) : ?>
     <div class="input-group">
     <?php endif; ?>

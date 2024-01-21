@@ -251,10 +251,10 @@ class CalendarField extends DatetimeField
 //            $this->filterFormat = (string) $this->element['filterformat'] ? (string) $this->element['filterformat'] : '';
             $this->filter       = (string) $this->element['filter'] ? (string) $this->element['filter'] : 'USER_UTC';
 //            $this->todaybutton  = (string) $this->element['todaybutton'] ? (string) $this->element['todaybutton'] : 'true';
-//            $this->weeknumbers  = (string) $this->element['weeknumbers'] ? (string) $this->element['weeknumbers'] : 'true';
+            $this->weeknumbers  = (string) $this->element['weeknumbers'] ? (string) $this->element['weeknumbers'] : 'false';
             $this->showtime     = (string) $this->element['showtime'] ? (string) $this->element['showtime'] : 'false';
 //            $this->filltable    = (string) $this->element['filltable'] ? (string) $this->element['filltable'] : 'true';
-//            $this->timeformat   = (int) $this->element['timeformat'] ? (int) $this->element['timeformat'] : 24;
+            $this->timeformat   = (int) $this->element['timeformat'] ? (int) $this->element['timeformat'] : 24;
 //            $this->singleheader = (string) $this->element['singleheader'] ? (string) $this->element['singleheader'] : 'false';
             $this->minyear      = \strlen((string) $this->element['minyear']) ? (int) $this->element['minyear'] : null;
             $this->maxyear      = \strlen((string) $this->element['maxyear']) ? (int) $this->element['maxyear'] : null;
@@ -403,10 +403,10 @@ class CalendarField extends DatetimeField
 //            'format'       => $this->format,
 //            'filter'       => $this->filter,
 //            'todaybutton'  => ($this->todaybutton === 'true') ? 1 : 0,
-//            'weeknumbers'  => ($this->weeknumbers === 'true') ? 1 : 0,
+            'weeknumbers'  => ($this->weeknumbers === 'true') ? 1 : 0,
             'showtime'     => ($this->showtime === 'true') ? 1 : 0,
 //            'filltable'    => ($this->filltable === 'true') ? 1 : 0,
-//            'timeformat'   => $this->timeformat,
+            'timeformat'   => $this->timeformat,
 //            'singleheader' => ($this->singleheader === 'true') ? 1 : 0,
 //            'helperPath'   => $helperPath,
 //            'minYear'      => $this->minyear,

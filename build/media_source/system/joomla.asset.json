@@ -276,6 +276,18 @@
       ]
     },
     {
+      "name": "field.calendar-field",
+      "type": "script",
+      "uri": "system/fields/calendar-field.min.js",
+      "attributes": {
+        "type": "module"
+      },
+      "dependencies": [
+        "flatpickr",
+        "core"
+      ]
+    },
+    {
       "name": "field.color-slider",
       "type": "script",
       "uri": "system/fields/joomla-field-color-slider.min.js",

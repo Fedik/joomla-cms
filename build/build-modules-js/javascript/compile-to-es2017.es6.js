@@ -60,6 +60,7 @@ const collectExternals = () => {
     'joomla.dialog',
     'editor-api',
     'editor-decorator',
+    'flatpickr',
   );
 
   // Codemirror modules
