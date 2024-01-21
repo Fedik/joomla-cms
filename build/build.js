@@ -37,6 +37,7 @@ const { cssVersioning } = require('./build-modules-js/css-versioning.es6.js');
 const { versioning } = require('./build-modules-js/versioning.es6.js');
 const { Timer } = require('./build-modules-js/utils/timer.es6.js');
 const { compileCodemirror } = require('./build-modules-js/javascript/build-codemirror.es6.js');
+const { compileFlatpickr } = require('./build-modules-js/javascript/build-flatpickr.es6.js');
 
 // The settings
 const options = require('../package.json');
@@ -76,6 +77,7 @@ Program
   .option('--compile-css, --compile-css path', 'Compiles all the scss files to css')
   .option('--compile-bs', 'Compiles all the Bootstrap component scripts.')
   .option('--compile-codemirror', 'Compiles all the codemirror modules.')
+  .option('--compile-flatpickr', 'Compiles the Flatpickr modules.')
   .option('--watch', 'Watch file changes and re-compile (ATM only works for the js in the media_source).')
   .option('--com-media', 'Compile the Media Manager client side App.')
   .option('--watch-com-media', 'Watch and Compile the Media Manager client side App.')
@@ -136,6 +138,11 @@ if (cliOptions.compileCodemirror) {
   compileCodemirror();
 }
 
+// Compile Flatpickr
+if (cliOptions.compileFlatpickr) {
+  compileFlatpickr();
+}
+
 // Gzip js/css files
 if (cliOptions.gzip) {
   compressFiles();
@@ -179,6 +186,7 @@ if (cliOptions.prepare) {
     .then(() => mediaManager())
     .then(() => bootstrapJs())
     .then(() => compileCodemirror())
+    .then(() => compileFlatpickr())
     .then(() => bench.stop('Build'))
     .catch((err) => handleError(err, -1));
 }

@@ -784,6 +784,27 @@
             ]
           }
         ]
+      },
+      "flatpickr": {
+        "name": "flatpickr",
+        "licenseFilename": "LICENSE.md",
+        "css": {
+          "dist/flatpickr.css": "css/flatpickr.css",
+          "dist/flatpickr.min.css": "css/flatpickr.min.css"
+        },
+        "provideAssets": [
+          {
+            "name": "flatpickr",
+            "type": "style",
+            "uri": "flatpickr.min.css"
+          },
+          {
+            "name": "flatpickr",
+            "type": "script",
+            "uri": "flatpickr.min.js",
+            "importmap": true
+          }
+        ]
       }
     },
     "errorPages": {
