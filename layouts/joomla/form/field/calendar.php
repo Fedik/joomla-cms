@@ -67,6 +67,8 @@ $lang     = Factory::getApplication()->getLanguage();
  * @var   array    $weekend         The weekends days
  * @var   integer  $firstday        The first day of the week
  * @var   string   $format          The format of date and time
+ * @var   string   $min
+ * @var   string   $max
  */
 
 $inputvalue = '';
@@ -74,21 +76,23 @@ $inputvalue = '';
 // Build the attributes array.
 $attributes = [];
 
-empty($size)      ? null : $attributes['size'] = $size;
+empty($size)      ? null : $attributes['size']      = $size;
 empty($maxlength) ? null : $attributes['maxlength'] = $maxLength;
 empty($class)     ? $attributes['class'] = 'form-control' : $attributes['class'] = 'form-control ' . $class;
 !$readonly        ? null : $attributes['readonly'] = 'readonly';
 !$disabled        ? null : $attributes['disabled'] = 'disabled';
 empty($onchange)  ? null : $attributes['onchange'] = $onchange;
+empty($min)       ? null : $attributes['min']      = $min;
+empty($max)       ? null : $attributes['max']      = $max;
 
 if ($required) {
     $attributes['required'] = '';
 }
 
-// Handle the special case for "now".
-if (strtoupper($value) === 'NOW') {
-    $value = Factory::getDate()->format('Y-m-d H:i:s');
-}
+//// Handle the special case for "now".
+//if (strtoupper($value) === 'NOW') {
+//    $value = Factory::getDate()->format('Y-m-d H:i:s');
+//}
 
 $readonly = isset($attributes['readonly']) && $attributes['readonly'] === 'readonly';
 $disabled = isset($attributes['disabled']) && $attributes['disabled'] === 'disabled';
@@ -152,10 +156,12 @@ if ($lang->hasKey('JLIB_HTML_BEHAVIOR_PM')) {
 //    ->useStyle('field.calendar' . ($direction === 'rtl' ? '-rtl' : ''))
 //    ->useScript('field.calendar');
 
+$inputType = $showtime ? 'datetime-local' : 'date';
+
 ?>
 <div class="field-calendar">
-    <?php echo '<input type="datetime-local" name="' . $name . '" id="' . $id . '" value="' . $this->escape($value) . '"'
-        . $attributes . ' />';
+    <?php echo '<input type="' . $inputType . '" name="' . $name . '" id="' . $id . '" value="' . $this->escape($value) . '"'
+        . $attributes . $dataAttribute . ' />';
     ?>
     <?php /*if (!$readonly && !$disabled) : ?>
     <div class="input-group">

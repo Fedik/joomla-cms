@@ -225,7 +225,7 @@ class CalendarField extends DatetimeField
             default:
                 parent::__set($name, $value);
         }
-    }
+    }*/
 
     /**
      * Method to attach a Form object to the field.
@@ -240,47 +240,47 @@ class CalendarField extends DatetimeField
      *
      * @see     FormField::setup()
      * @since   3.2
-     * /
+     */
     public function setup(\SimpleXMLElement $element, $value, $group = null)
     {
         $return = parent::setup($element, $value, $group);
 
         if ($return) {
             $this->maxlength    = (int) $this->element['maxlength'] ? (int) $this->element['maxlength'] : 45;
-            $this->format       = (string) $this->element['format'] ? (string) $this->element['format'] : '%Y-%m-%d';
-            $this->filterFormat = (string) $this->element['filterformat'] ? (string) $this->element['filterformat'] : '';
+//            $this->format       = (string) $this->element['format'] ? (string) $this->element['format'] : '%Y-%m-%d';
+//            $this->filterFormat = (string) $this->element['filterformat'] ? (string) $this->element['filterformat'] : '';
             $this->filter       = (string) $this->element['filter'] ? (string) $this->element['filter'] : 'USER_UTC';
-            $this->todaybutton  = (string) $this->element['todaybutton'] ? (string) $this->element['todaybutton'] : 'true';
-            $this->weeknumbers  = (string) $this->element['weeknumbers'] ? (string) $this->element['weeknumbers'] : 'true';
+//            $this->todaybutton  = (string) $this->element['todaybutton'] ? (string) $this->element['todaybutton'] : 'true';
+//            $this->weeknumbers  = (string) $this->element['weeknumbers'] ? (string) $this->element['weeknumbers'] : 'true';
             $this->showtime     = (string) $this->element['showtime'] ? (string) $this->element['showtime'] : 'false';
-            $this->filltable    = (string) $this->element['filltable'] ? (string) $this->element['filltable'] : 'true';
-            $this->timeformat   = (int) $this->element['timeformat'] ? (int) $this->element['timeformat'] : 24;
-            $this->singleheader = (string) $this->element['singleheader'] ? (string) $this->element['singleheader'] : 'false';
+//            $this->filltable    = (string) $this->element['filltable'] ? (string) $this->element['filltable'] : 'true';
+//            $this->timeformat   = (int) $this->element['timeformat'] ? (int) $this->element['timeformat'] : 24;
+//            $this->singleheader = (string) $this->element['singleheader'] ? (string) $this->element['singleheader'] : 'false';
             $this->minyear      = \strlen((string) $this->element['minyear']) ? (int) $this->element['minyear'] : null;
             $this->maxyear      = \strlen((string) $this->element['maxyear']) ? (int) $this->element['maxyear'] : null;
 
-            if ($this->maxyear < 0 || $this->minyear > 0) {
-                $this->todaybutton = 'false';
-            }
+//            if ($this->maxyear < 0 || $this->minyear > 0) {
+//                $this->todaybutton = 'false';
+//            }
 
-            $translateFormat = (string) $this->element['translateformat'];
+//            $translateFormat = (string) $this->element['translateformat'];
 
-            if ($translateFormat && $translateFormat !== 'false') {
-                $showTime = (string) $this->element['showtime'];
-
-                $lang  = Factory::getLanguage();
-                $debug = $lang->setDebug(false);
-
-                if ($showTime && $showTime !== 'false') {
-                    $this->format       = Text::_('DATE_FORMAT_CALENDAR_DATETIME');
-                    $this->filterFormat = Text::_('DATE_FORMAT_FILTER_DATETIME');
-                } else {
-                    $this->format       = Text::_('DATE_FORMAT_CALENDAR_DATE');
-                    $this->filterFormat = Text::_('DATE_FORMAT_FILTER_DATE');
-                }
-
-                $lang->setDebug($debug);
-            }
+//            if ($translateFormat && $translateFormat !== 'false') {
+//                $showTime = (string) $this->element['showtime'];
+//
+//                $lang  = Factory::getLanguage();
+//                $debug = $lang->setDebug(false);
+//
+//                if ($showTime && $showTime !== 'false') {
+//                    $this->format       = Text::_('DATE_FORMAT_CALENDAR_DATETIME');
+//                    $this->filterFormat = Text::_('DATE_FORMAT_FILTER_DATETIME');
+//                } else {
+//                    $this->format       = Text::_('DATE_FORMAT_CALENDAR_DATE');
+//                    $this->filterFormat = Text::_('DATE_FORMAT_FILTER_DATE');
+//                }
+//
+//                $lang->setDebug($debug);
+//            }
         }
 
         return $return;
@@ -292,8 +292,8 @@ class CalendarField extends DatetimeField
      * @return  string  The field input markup.
      *
      * @since   1.7.0
-     * /
-    protected function getInput()
+     */
+    /*protected function getInput()
     {
         $user = Factory::getApplication()->getIdentity();
 
@@ -341,6 +341,39 @@ class CalendarField extends DatetimeField
         }
 
         return $this->getRenderer($this->layout)->render($this->getLayoutData());
+    }*/
+    protected function getInput()
+    {
+        $data = $this->getLayoutData();
+
+        if ($this->value) {
+            $app    = Factory::getApplication();
+            $value  = Factory::getDate($this->value, 'UTC');
+            $format = $data['showtime'] ? 'Y-m-d\TH:i' : 'Y-m-d';
+
+            switch (strtoupper($this->filter)) {
+                case 'SERVER_UTC':
+                    // Convert a date to UTC based on the server timezone.
+                    $value->setTimezone(new \DateTimeZone($app->get('offset')));
+
+                    // Transform the date string.
+                    $data['value'] = $value->format($format, true, false);
+                    break;
+
+                case 'USER_UTC':
+                    // Convert a date to UTC based on the user timezone.
+                    $value->setTimezone(new \DateTimeZone($app->getIdentity()->getParam('timezone', $app->get('offset'))));
+
+                    // Transform the date string.
+                    $data['value'] = $value->format($format, true, false);
+                    break;
+
+                default:
+                    $data['value'] = $value->format($format, false, false);
+            }
+        }
+
+        return $this->getRenderer($this->layout)->render($data);
     }
 
     /**
@@ -349,7 +382,7 @@ class CalendarField extends DatetimeField
      * @return  array
      *
      * @since  3.7.0
-     * /
+     */
     protected function getLayoutData()
     {
         $data      = parent::getLayoutData();
@@ -358,31 +391,43 @@ class CalendarField extends DatetimeField
         $direction = strtolower(Factory::getDocument()->getDirection());
 
         // Get the appropriate file for the current language date helper
-        $helperPath = 'system/fields/calendar-locales/date/gregorian/date-helper.min.js';
-
-        if ($calendar && is_dir(JPATH_ROOT . '/media/system/js/fields/calendar-locales/date/' . strtolower($calendar))) {
-            $helperPath = 'system/fields/calendar-locales/date/' . strtolower($calendar) . '/date-helper.min.js';
-        }
+//        $helperPath = 'system/fields/calendar-locales/date/gregorian/date-helper.min.js';
+//
+//        if ($calendar && is_dir(JPATH_ROOT . '/media/system/js/fields/calendar-locales/date/' . strtolower($calendar))) {
+//            $helperPath = 'system/fields/calendar-locales/date/' . strtolower($calendar) . '/date-helper.min.js';
+//        }
 
         $extraData = [
             'value'        => $this->value,
-            'maxLength'    => $this->maxlength,
-            'format'       => $this->format,
-            'filter'       => $this->filter,
-            'todaybutton'  => ($this->todaybutton === 'true') ? 1 : 0,
-            'weeknumbers'  => ($this->weeknumbers === 'true') ? 1 : 0,
+//            'maxLength'    => $this->maxlength,
+//            'format'       => $this->format,
+//            'filter'       => $this->filter,
+//            'todaybutton'  => ($this->todaybutton === 'true') ? 1 : 0,
+//            'weeknumbers'  => ($this->weeknumbers === 'true') ? 1 : 0,
             'showtime'     => ($this->showtime === 'true') ? 1 : 0,
-            'filltable'    => ($this->filltable === 'true') ? 1 : 0,
-            'timeformat'   => $this->timeformat,
-            'singleheader' => ($this->singleheader === 'true') ? 1 : 0,
-            'helperPath'   => $helperPath,
-            'minYear'      => $this->minyear,
-            'maxYear'      => $this->maxyear,
+//            'filltable'    => ($this->filltable === 'true') ? 1 : 0,
+//            'timeformat'   => $this->timeformat,
+//            'singleheader' => ($this->singleheader === 'true') ? 1 : 0,
+//            'helperPath'   => $helperPath,
+//            'minYear'      => $this->minyear,
+//            'maxYear'      => $this->maxyear,
             'direction'    => $direction,
             'calendar'     => $calendar,
             'firstday'     => $lang->getFirstDay(),
             'weekend'      => explode(',', $lang->getWeekEnd()),
         ];
+
+        // Calculate date min/max when needed
+        $year = (int) date('Y');
+        $day  = date('m-d') . ($extraData['showtime'] ? 'T00:00' : '');
+
+        if (!$data['min'] && $this->minyear) {
+            $data['min'] = ($year + $this->minyear) . '-' . $day;
+        }
+
+        if (!$data['max'] && $this->minyear) {
+            $data['max'] = ($year + $this->maxyear) . '-' . $day;
+        }
 
         return array_merge($data, $extraData);
     }
