@@ -30,8 +30,9 @@ $assoc = Associations::isEnabled();
 // Are associations implemented for this extension?
 $extensionassoc = array_key_exists('item_associations', $this->form->getFieldsets());
 
+$fieldsets              = $this->form->getFieldsets();
 // Fieldsets to not automatically render by /layouts/joomla/edit/params.php
-$this->ignore_fieldsets = ['jmetadata', 'item_associations'];
+$this->ignore_fieldsets = ['jmetadata', 'item_associations', 'content-before', 'content-after'];
 
 $c = Factory::getApplication()->bootComponent($this->state->get('category.extension'));
 
@@ -60,8 +61,24 @@ $tmpl    = $isModal || $input->get('tmpl', '', 'cmd') === 'component' ? '&tmpl=c
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'general', Text::_('JCATEGORY')); ?>
         <div class="row">
             <div class="col-lg-9">
-                <?php echo $this->form->getLabel('description'); ?>
-                <?php echo $this->form->getInput('description'); ?>
+                <?php if (!empty($fieldsets['content-before'])): ?>
+                <fieldset class="content-before mb-4">
+                    <?php $this->fieldset = 'content-before'; ?>
+                    <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>
+                    <?php $this->fieldset = null; ?>
+                </fieldset>
+                <?php endif; ?>
+                <fieldset class="adminform mb-4">
+                    <?php echo $this->form->getLabel('description'); ?>
+                    <?php echo $this->form->getInput('description'); ?>
+                </fieldset>
+                <?php if (!empty($fieldsets['content-after'])): ?>
+                <fieldset class="content-after mb-4">
+                    <?php $this->fieldset = 'content-after'; ?>
+                    <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>
+                    <?php $this->fieldset = null; ?>
+                </fieldset>
+                <?php endif; ?>
             </div>
             <div class="col-lg-3">
                 <?php echo LayoutHelper::render('joomla.edit.global', $this); ?>
