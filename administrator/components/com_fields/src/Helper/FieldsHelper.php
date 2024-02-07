@@ -318,14 +318,15 @@ class FieldsHelper
         $context = $parts[0] . '.' . $parts[1];
 
         // When no fields available return here
-        $fields = self::getFields($parts[0] . '.' . $parts[1], new CMSObject());
+        $fields = self::getFields($context, $data);
 
         if (! $fields) {
             return true;
         }
 
-        $component = $parts[0];
-        $section   = $parts[1];
+        $fieldTypes = self::getFieldTypes();
+        $component  = $parts[0];
+        $section    = $parts[1];
 
         $assignedCatids = $data->catid ?? $data->fieldscatid ?? $form->getValue('catid');
 
@@ -361,15 +362,6 @@ class FieldsHelper
             $form->setFieldAttribute('catid', 'refresh-cat-id', $assignedCatids);
             $form->setFieldAttribute('catid', 'refresh-section', $section);
         }
-
-        // Getting the fields
-        $fields = self::getFields($parts[0] . '.' . $parts[1], $data);
-
-        if (!$fields) {
-            return true;
-        }
-
-        $fieldTypes = self::getFieldTypes();
 
         // Creating the dom
         $xml        = new \DOMDocument('1.0', 'UTF-8');
