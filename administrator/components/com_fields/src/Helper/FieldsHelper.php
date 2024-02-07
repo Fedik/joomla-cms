@@ -317,9 +317,10 @@ class FieldsHelper
 
         $context = $parts[0] . '.' . $parts[1];
 
-        // When no fields available return here
+        // Getting the fields
         $fields = self::getFields($context, $data);
 
+        // When no fields available return here
         if (! $fields) {
             return true;
         }
