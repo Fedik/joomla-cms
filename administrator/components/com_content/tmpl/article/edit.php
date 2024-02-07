@@ -27,11 +27,12 @@ $wa->useScript('keepalive')
     ->useScript('form.validate')
     ->useScript('com_contenthistory.admin-history-versions');
 
+$fieldsets              = $this->form->getFieldsets();
 $this->configFieldsets  = ['editorConfig'];
 $this->hiddenFieldsets  = ['basic-limited'];
-$fieldsetsInImages = ['image-intro', 'image-full'];
-$fieldsetsInLinks = ['linka', 'linkb', 'linkc'];
-$this->ignore_fieldsets = array_merge(['jmetadata', 'item_associations'], $fieldsetsInImages, $fieldsetsInLinks);
+$fieldsetsInImages      = ['image-intro', 'image-full'];
+$fieldsetsInLinks       = ['linka', 'linkb', 'linkc'];
+$this->ignore_fieldsets = array_merge(['jmetadata', 'item_associations', 'content-before', 'content-after'], $fieldsetsInImages, $fieldsetsInLinks);
 $this->useCoreUI = true;
 
 // Create shortcut to parameters.
@@ -68,10 +69,24 @@ $tmpl    = $tmpl ? '&tmpl=' . $tmpl : '';
         <div class="row">
             <div class="col-lg-9">
                 <div>
-                    <fieldset class="adminform">
+                    <?php if (!empty($fieldsets['content-before'])): ?>
+                    <fieldset class="content-before mb-4">
+                        <?php $this->fieldset = 'content-before'; ?>
+                        <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>
+                        <?php $this->fieldset = null; ?>
+                    </fieldset>
+                    <?php endif; ?>
+                    <fieldset class="adminform mb-4">
                         <?php echo $this->form->getLabel('articletext'); ?>
                         <?php echo $this->form->getInput('articletext'); ?>
                     </fieldset>
+                    <?php if (!empty($fieldsets['content-after'])): ?>
+                    <fieldset class="content-after mb-4">
+                        <?php $this->fieldset = 'content-after'; ?>
+                        <?php echo LayoutHelper::render('joomla.edit.fieldset', $this); ?>
+                        <?php $this->fieldset = null; ?>
+                    </fieldset>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="col-lg-3">
