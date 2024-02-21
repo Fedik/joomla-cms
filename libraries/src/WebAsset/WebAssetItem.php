@@ -60,6 +60,14 @@ class WebAssetItem implements WebAssetItemInterface, WebAssetItemCrossDependenci
     protected $attributes = [];
 
     /**
+     * Unparsed dependencies
+     *
+     * @var    string[]
+     * @since  __DEPLOY_VERSION__
+     */
+    private $rawDependencies = [];
+
+    /**
      * Asset dependencies
      *
      * @var    string[]
@@ -127,10 +135,10 @@ class WebAssetItem implements WebAssetItemInterface, WebAssetItemCrossDependenci
         }
 
         if (\array_key_exists('dependencies', $options)) {
-            $this->dependencies = (array) $options['dependencies'];
+            $this->rawDependencies = (array) $options['dependencies'];
             unset($options['dependencies']);
         } else {
-            $this->dependencies = $dependencies;
+            $this->rawDependencies = $dependencies;
         }
 
         if (\array_key_exists('crossDependencies', $options)) {
@@ -176,6 +184,27 @@ class WebAssetItem implements WebAssetItemInterface, WebAssetItemCrossDependenci
      */
     public function getDependencies(): array
     {
+        if ($this->rawDependencies && !$this->dependencies) {
+            // Check for Dependencies which may come in ["name1", "name2#type"] format
+            foreach ($this->rawDependencies as $dependency) {
+                $pos     = strrpos($dependency, '#');
+                $depType = $pos ? substr($dependency, $pos + 1) : '';
+                $depName = $pos ? substr($dependency, 0, $pos) : $dependency;
+
+                // Checking for cross dependency
+                if (!$depType) {
+                    $this->dependencies[] = $depName;
+                } else {
+                    if (empty($this->crossDependencies[$depType])) {
+                        $this->crossDependencies[$depType] = [];
+                    }
+
+                    $this->crossDependencies[$depType][] = $depName;
+                }
+            }
+            $this->rawDependencies = [];
+        }
+
         return $this->dependencies;
     }
 

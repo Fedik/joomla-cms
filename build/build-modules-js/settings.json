@@ -27,7 +27,7 @@
             "attributes": {
               "defer": true
             },
-            "crossDependencies": [
+            "dependencies": [
               "awesomplete#style"
             ]
           },
@@ -225,7 +225,7 @@
             "type": "script",
             "uri": "cropper.esm.js",
             "importmap": true,
-            "crossDependencies": [
+            "dependencies": [
               "cropperjs#style"
             ]
           },
@@ -237,7 +237,7 @@
             "attributes": {
               "defer": true
             },
-            "crossDependencies": [
+            "dependencies": [
               "cropperjs#style"
             ]
           },
@@ -282,7 +282,7 @@
             "attributes": {
               "defer": true
             },
-            "crossDependencies": [
+            "dependencies": [
               "choicesjs#style"
             ]
           },
@@ -341,7 +341,7 @@
             "attributes": {
               "defer": true
             },
-            "crossDependencies": [
+            "dependencies": [
               "dragula#style"
             ]
           },

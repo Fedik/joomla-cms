@@ -366,31 +366,20 @@ class WebAssetManager implements WebAssetManagerInterface
      */
     protected function usePresetItems($name): WebAssetManagerInterface
     {
-        // Get the asset object
-        $asset = $this->registry->get('preset', $name);
+        // Get the asset object, and its dependencies
+        $asset           = $this->registry->get('preset', $name);
+        $allDependencies = $this->getAllDependenciesForAsset('preset', $asset, true);
 
-        // Call useAsset() to each of its dependency
-        foreach ($asset->getDependencies() as $dependency) {
-            $depType = '';
-            $depName = $dependency;
-            $pos     = strrpos($dependency, '#');
-
-            // Check for cross-dependency "dependency-name#type" case
-            if ($pos) {
-                $depType = substr($dependency, $pos + 1);
-                $depName = substr($dependency, 0, $pos);
+        // Set dependencies state to "Active"
+        // Each dependency of the preset has same state as direct call of useAsset() on it
+        foreach ($allDependencies as $depType => $depItems) {
+            foreach ($depItems as $depItem) {
+                $this->activeAssets[$depType][$depItem->getName()] = static::ASSET_STATE_ACTIVE;
             }
+        }
 
-            $depType = $depType ?: 'preset';
-
-            // Make sure dependency exists
-            if (!$this->registry->exists($depType, $depName)) {
-                throw new UnsatisfiedDependencyException(
-                    sprintf('Unsatisfied dependency "%s" for an asset "%s" of type "%s"', $dependency, $name, 'preset')
-                );
-            }
-
-            $this->useAsset($depType, $depName);
+        if ($allDependencies) {
+            $this->dependenciesIsActual = false;
         }
 
         return $this;
@@ -409,31 +398,14 @@ class WebAssetManager implements WebAssetManagerInterface
      */
     protected function disablePresetItems($name): WebAssetManagerInterface
     {
-        // Get the asset object
-        $asset = $this->registry->get('preset', $name);
+        // Get the asset object, and its dependencies
+        $asset           = $this->registry->get('preset', $name);
+        $allDependencies = $this->getAllDependenciesForAsset('preset', $asset, true);
 
-        // Call disableAsset() to each of its dependency
-        foreach ($asset->getDependencies() as $dependency) {
-            $depType = '';
-            $depName = $dependency;
-            $pos     = strrpos($dependency, '#');
-
-            // Check for cross-dependency "dependency-name#type" case
-            if ($pos) {
-                $depType = substr($dependency, $pos + 1);
-                $depName = substr($dependency, 0, $pos);
+        foreach ($allDependencies as $depType => $depItems) {
+            foreach ($depItems as $depItem) {
+                unset($this->activeAssets[$depType][$depItem->getName()]);
             }
-
-            $depType = $depType ?: 'preset';
-
-            // Make sure dependency exists
-            if (!$this->registry->exists($depType, $depName)) {
-                throw new UnsatisfiedDependencyException(
-                    sprintf('Unsatisfied dependency "%s" for an asset "%s" of type "%s"', $dependency, $name, 'preset')
-                );
-            }
-
-            $this->disableAsset($depType, $depName);
         }
 
         return $this;
@@ -1009,7 +981,7 @@ class WebAssetManager implements WebAssetManagerInterface
      * @param   boolean                $recursively    Whether to search for dependency recursively
      * @param   array                  $visited        The list of checked assets visited while resolving recursive dependencies
      *
-     * @return  array
+     * @return  WebAssetItemInterface[][]
      *
      * @throws  UnsatisfiedDependencyException When Dependency cannot be found
      *
