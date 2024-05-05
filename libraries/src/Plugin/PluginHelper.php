@@ -240,8 +240,14 @@ abstract class PluginHelper
             return;
         }
 
+        // Register event listeners
         // @TODO: Starting from 7.0 it should use $dispatcher->addSubscriber($plugin);, for plugins which implements SubscriberInterface.
         $plugin->registerListeners();
+
+        // Register private event listeners
+        if ($dispatcher && $plugin instanceof PrivateListenersProviderInterface) {
+            $plugin->registerPrivateListeners($dispatcher);
+        }
     }
 
     /**
