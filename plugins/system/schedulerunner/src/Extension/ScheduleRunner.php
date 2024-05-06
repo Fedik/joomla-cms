@@ -70,17 +70,17 @@ final class ScheduleRunner extends CMSPlugin implements ConfigurableSubscriberIn
             $config = ComponentHelper::getParams('com_scheduler');
 
             // Common listeners
-            $dispatcher->addListener('onBeforeCompileHead', 'injectLazyJS');
-            $dispatcher->addListener('onAjaxRunSchedulerLazy', 'runLazyCron');
+            $dispatcher->addListener('onBeforeCompileHead', [$this, 'injectLazyJS']);
+            $dispatcher->addListener('onAjaxRunSchedulerLazy', [$this, 'runLazyCron']);
 
             if ($app->isClient('administrator')) {
                 // Only allowed in the administrator
-                $dispatcher->addListener('onContentPrepareForm', 'enhanceSchedulerConfig');
-                $dispatcher->addListener('onExtensionBeforeSave', 'generateWebcronKey');
-                $dispatcher->addListener('onAjaxRunSchedulerTest', 'runTestCron');
+                $dispatcher->addListener('onContentPrepareForm', [$this, 'enhanceSchedulerConfig']);
+                $dispatcher->addListener('onExtensionBeforeSave', [$this, 'generateWebcronKey']);
+                $dispatcher->addListener('onAjaxRunSchedulerTest', [$this, 'runTestCron']);
             } elseif ($app->isClient('site') && $config->get('webcron.enabled')) {
                 // Only allowed in the site
-                $dispatcher->addListener('onAjaxRunSchedulerWebcron', 'runWebCron');
+                $dispatcher->addListener('onAjaxRunSchedulerWebcron', [$this, 'runWebCron']);
             }
         }
     }
