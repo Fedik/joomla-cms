@@ -27,7 +27,7 @@ interface ConfigurableSubscriberInterface
      * (such as LazyServiceEventListener, private listeners etc.).
      * And/or set the listeners only when specific environment requirement are meets (such as the app client id).
      *
-     * @param  \Joomla\Event\DispatcherInterface  $dispatcher  The dispatcher instance
+     * @param  \Joomla\Event\DispatcherInterface  $dispatcher  The dispatcher instance.
      *
      * @return void
      *
