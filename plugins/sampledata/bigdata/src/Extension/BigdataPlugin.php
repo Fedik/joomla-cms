@@ -162,7 +162,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
      *
      * @since  __DEPLOY_VERSION__
      */
-    private function addCategories(array $categories, string $extension): array
+    protected function addCategories(array $categories, string $extension): array
     {
         $app      = $this->getApplication();
         $catModel = $app->bootComponent('com_categories')->getMVCFactory()->createModel('Category', 'Administrator', ['ignore_request' => true]);
@@ -170,17 +170,12 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $user     = $app->getIdentity();
 
         foreach ($categories as $category) {
-            $category['id']              = 0;
-            $category['published']       = 1;
-            $category['access']          = 1;
+            $category = $this->checkDefaultValues($category);
+
+            $category['description']     = $category['description'] ?? str_repeat('<p>' . $this->text() . '</p>', 10);
             $category['created_user_id'] = $category['created_user_id'] ?? $user->id;
             $category['extension']       = $extension;
             $category['level']           = $category['level'] ?? 1;
-            $category['associations']    = [];
-            $category['params']          = [];
-            $category['language']        = $category['language'] ?? '*';
-            $category['title']           = $category['title'] ?? $this->sentence();
-            $category['description']     = $category['description'] ?? str_repeat($this->text(), 10);
 
             if (!$catModel->save($category)) {
                 throw new \Exception($catModel->getError());
@@ -204,7 +199,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
      *
      * @since  __DEPLOY_VERSION__
      */
-    private function addArticles(array $articles): array
+    protected function addArticles(array $articles): array
     {
         $app        = $this->getApplication();
         $user       = $app->getIdentity();
@@ -215,19 +210,11 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
             /** @var \Joomla\Component\Content\Administrator\Model\ArticleModel $model */
             $model = $mvcFactory->createModel('Article', 'Administrator', ['ignore_request' => true]);
 
-            $article['title']     = $article['title'] ?? $this->sentence();
-            $article['introtext'] = $article['introtext'] ?? str_repeat('<p>' . $this->text() . '</p>', 10);
-            $article['fulltext']  = $article['fulltext'] ?? str_repeat('<p>' . $this->text() . '</p>', 100);
+            $article = $this->checkDefaultValues($article);
 
-            $article['id']              = 0;
-            $article['access']          = 1;
-            $article['state']           = 1;
+            $article['introtext']       = $article['introtext'] ?? str_repeat('<p>' . $this->text() . '</p>', 10);
+            $article['fulltext']        = $article['fulltext'] ?? str_repeat('<p>' . $this->text() . '</p>', 100);
             $article['created_user_id'] = $article['created_user_id'] ?? $user->id;
-            $article['language']        = '*';
-            $article['associations']    = [];
-            $article['metakey']         = '';
-            $article['metadesc']        = '';
-            $article['xreference']      = '';
             $article['featured']        = $article['featured'] ?? 0;
 
             // Set images to empty if not set.
@@ -248,9 +235,34 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         return $ids;
     }
 
-    private function text($min = 30, $max = 120): string
+    /**
+     * Check default values
+     *
+     * @param array $item  Content item
+     *
+     * @return  array
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    protected function checkDefaultValues(array $item): array
     {
-        $s = "Aliquam lectus nulla, eleifend ut tellus in, euismod porttitor arcu. Aliquam erat volutpat. Morbi massa sapien, condimentum ultrices pretium porta, semper ac lacus. Nulla pharetra, urna a lacinia facilisis, neque libero placerat turpis, vel tincidunt massa nunc ac nunc. In nec volutpat ligula. Sed hendrerit ligula vel felis venenatis egestas. Duis sit amet pharetra erat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi rutrum vel magna et tincidunt. Curabitur mattis, sem eget suscipit porta, nibh enim auctor mi, eu lacinia magna velit eu quam. Donec commodo ultrices lorem vel ultrices. Aliquam erat volutpat. Praesent in libero bibendum, euismod dui quis, volutpat purus. Fusce non est egestas, volutpat ipsum ut, cursus augue. In hac habitasse platea dictumst. Mum volutpat.";
+        $item['id']           = 0;
+        $item['access']       = $item['access'] ?? 1;
+        $item['state']        = $item['state'] ?? 1;
+        $item['language']     = $item['language'] ?? '*';
+        $item['associations'] = [];
+        $item['metakey']      = '';
+        $item['metadesc']     = '';
+        $item['xreference']   = '';
+        $item['params']       = [];
+        $item['title']        = $item['title'] ?? $this->sentence();
+
+        return $item;
+    }
+
+    protected function text($min = 30, $max = 120): string
+    {
+        $s = 'Aliquam lectus nulla, eleifend ut tellus in, euismod porttitor arcu. Aliquam erat volutpat. Morbi massa sapien, condimentum ultrices pretium porta, semper ac lacus. Nulla pharetra, urna a lacinia facilisis, neque libero placerat turpis, vel tincidunt massa nunc ac nunc. In nec volutpat ligula. Sed hendrerit ligula vel felis venenatis egestas. Duis sit amet pharetra erat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi rutrum vel magna et tincidunt. Curabitur mattis, sem eget suscipit porta, nibh enim auctor mi, eu lacinia magna velit eu quam. Donec commodo ultrices lorem vel ultrices. Aliquam erat volutpat. Praesent in libero bibendum, euismod dui quis, volutpat purus. Fusce non est egestas, volutpat ipsum ut, cursus augue. In hac habitasse platea dictumst. Mum volutpat.';
         $s = explode(' ', $s);
         shuffle($s);
         $s = implode(' ', $s);
@@ -259,7 +271,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         return $s;
     }
 
-    private function words($max = 5, $cmin = 2, $cmax = 6): string
+    protected function words($max = 5, $cmin = 2, $cmax = 6): string
     {
         $t = array();
 
@@ -271,7 +283,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         return implode(' ', $t);
     }
 
-    private function sentence($min = 3, $max = 10): string
+    protected function sentence($min = 3, $max = 10): string
     {
         $l = rand($min, $max);
 
