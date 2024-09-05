@@ -249,6 +249,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $item['id']           = 0;
         $item['access']       = $item['access'] ?? 1;
         $item['state']        = $item['state'] ?? 1;
+        $item['published']    = $item['published'] ?? 1;
         $item['language']     = $item['language'] ?? '*';
         $item['associations'] = [];
         $item['metakey']      = '';
