@@ -116,7 +116,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
                 $catIds = $this->addCategories([[
                     'title'     => 'Big data at ' . date('Y-m-d H:i:s'),
                     'parent_id' => 1,
-                ]], 'com_content', 1);
+                ]], 'com_content');
 
                 $app->setUserState('sampledata.bigdata.catids', $catIds);
             }
