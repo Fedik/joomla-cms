@@ -36,7 +36,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
      *
      * @since   __DEPLOY_VERSION__
      */
-    protected static $steps = 100;
+    protected static $steps = 221;
 
     /**
      * Returns an array of events this subscriber will listen to.
@@ -172,7 +172,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         foreach ($categories as $category) {
             $category = $this->checkDefaultValues($category);
 
-            $category['description']     = $category['description'] ?? str_repeat('<p>' . $this->text() . '</p>', 10);
+            $category['description']     = $category['description'] ?? str_repeat($this->text(), 10);
             $category['created_user_id'] = $category['created_user_id'] ?? $user->id;
             $category['extension']       = $extension;
             $category['level']           = $category['level'] ?? 1;
@@ -212,8 +212,8 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
 
             $article = $this->checkDefaultValues($article);
 
-            $article['introtext']       = $article['introtext'] ?? str_repeat('<p>' . $this->text() . '</p>', 10);
-            $article['fulltext']        = $article['fulltext'] ?? str_repeat('<p>' . $this->text() . '</p>', 100);
+            $article['introtext']       = $article['introtext'] ?? str_repeat($this->text(), 10);
+            $article['fulltext']        = $article['fulltext'] ?? str_repeat($this->text(), 100);
             $article['created_user_id'] = $article['created_user_id'] ?? $user->id;
             $article['featured']        = $article['featured'] ?? 0;
 
