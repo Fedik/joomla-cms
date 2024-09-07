@@ -161,8 +161,13 @@ $assoc = Associations::isEnabled();
                             $canExecuteTransition = $user->authorise('core.execute.transition', 'com_content.article.' . $item->id);
                             $canEditCat           = $user->authorise('core.edit', 'com_content.category.' . $item->catid);
                             $canEditOwnCat        = $user->authorise('core.edit.own', 'com_content.category.' . $item->catid) && $item->category_uid == $userId;
-                            $canEditParCat        = $user->authorise('core.edit', 'com_content.category.' . $item->parent_category_id);
-                            $canEditOwnParCat     = $user->authorise('core.edit.own', 'com_content.category.' . $item->parent_category_id) && $item->parent_category_uid == $userId;
+                            if ($item->parent_category_id > 1) {
+                                $canEditParCat    = $user->authorise('core.edit', 'com_content.category.' . $item->parent_category_id);
+                                $canEditOwnParCat = $user->authorise('core.edit.own', 'com_content.category.' . $item->parent_category_id) && $item->parent_category_uid == $userId;
+                            } else {
+                                $canEditParCat    = $canEditCat;
+                                $canEditOwnParCat = $canEditOwnCat;
+                            }
 
                             // Transition button options
                             $options = [
