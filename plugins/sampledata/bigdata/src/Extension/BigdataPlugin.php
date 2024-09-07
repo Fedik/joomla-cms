@@ -39,6 +39,15 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
     protected static $steps = 221;
 
     /**
+     * Lorem ipsum dolor sit amet.
+     *
+     * @var string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected $lorem = '';
+
+    /**
      * Returns an array of events this subscriber will listen to.
      *
      * @return  array
@@ -111,6 +120,9 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
 
         try
         {
+            // Load lorem text
+            $this->lorem = file_get_contents(__DIR__ . '/lorem.txt');
+
             // Create a category
             if ($step === 1) {
                 $catIds = $this->addCategories([[
@@ -172,7 +184,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         foreach ($categories as $category) {
             $category = $this->checkDefaultValues($category);
 
-            $category['description']     = $category['description'] ?? str_repeat($this->text(), 10);
+            $category['description']     = $category['description'] ?? $this->text(30, 80);
             $category['created_user_id'] = $category['created_user_id'] ?? $user->id;
             $category['extension']       = $extension;
             $category['level']           = $category['level'] ?? 1;
@@ -212,8 +224,8 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
 
             $article = $this->checkDefaultValues($article);
 
-            $article['introtext']       = $article['introtext'] ?? str_repeat($this->text(), 10);
-            $article['fulltext']        = $article['fulltext'] ?? str_repeat($this->text(), 100);
+            $article['introtext']       = $article['introtext'] ?? $this->text(30, 80);
+            $article['fulltext']        = $article['fulltext'] ?? $this->text(30, 300);
             $article['created_user_id'] = $article['created_user_id'] ?? $user->id;
             $article['featured']        = $article['featured'] ?? 0;
 
@@ -257,38 +269,29 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $item['xreference']   = '';
         $item['params']       = [];
         $item['title']        = $item['title'] ?? $this->sentence();
+        $item['alias']        = $item['title'] . '-' . rand(0, time());
 
         return $item;
     }
 
     protected function text($min = 30, $max = 120): string
     {
-        $s = 'Aliquam lectus nulla, eleifend ut tellus in, euismod porttitor arcu. Aliquam erat volutpat. Morbi massa sapien, condimentum ultrices pretium porta, semper ac lacus. Nulla pharetra, urna a lacinia facilisis, neque libero placerat turpis, vel tincidunt massa nunc ac nunc. In nec volutpat ligula. Sed hendrerit ligula vel felis venenatis egestas. Duis sit amet pharetra erat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi rutrum vel magna et tincidunt. Curabitur mattis, sem eget suscipit porta, nibh enim auctor mi, eu lacinia magna velit eu quam. Donec commodo ultrices lorem vel ultrices. Aliquam erat volutpat. Praesent in libero bibendum, euismod dui quis, volutpat purus. Fusce non est egestas, volutpat ipsum ut, cursus augue. In hac habitasse platea dictumst. Mum volutpat.';
-        $s = explode(' ', $s);
+        $s = $this->lorem;
+        $s = explode('.', $s);
         shuffle($s);
-        $s = implode(' ', $s);
-        $s = ucfirst(substr($s, 0, rand($min, $max)));
+        $s = implode('.', $s);
+        $s = ucfirst(substr($s, 0, rand($min, $max))) . '.';
 
         return $s;
     }
 
-    protected function words($max = 5, $cmin = 2, $cmax = 6): string
+    protected function sentence($min = 10, $max = 30): string
     {
-        $t = array();
+        $s = $this->lorem;
+        $s = explode('.', $s);
+        shuffle($s);
 
-        for ($a = 0; $a <= ($max - 1); $a++)
-        {
-            $t[] = str_replace(array(',', '.'), array('', ''), $this->text($cmin, ($cmax + 2)));
-        }
-
-        return implode(' ', $t);
-    }
-
-    protected function sentence($min = 3, $max = 10): string
-    {
-        $l = rand($min, $max);
-
-        $w = ucfirst(strtolower($this->words($l))) . '.';
+        $w = substr($s[0], 0, rand($min, $max)) . '.';
 
         return $w;
     }
