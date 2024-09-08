@@ -82,12 +82,10 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
      */
     public function onSampledataGetOverview(\Joomla\Event\Event $event): void
     {
-        $this->loadLanguage();
-
         $data              = new \stdClass();
         $data->name        = $this->_name;
-        $data->title       = Text::_('PLG_SAMPLEDATA_BIGDATA_OVERVIEW_TITLE');
-        $data->description = Text::_('PLG_SAMPLEDATA_BIGDATA_OVERVIEW_DESC');
+        $data->title       = 'Big Data sample';
+        $data->description = 'Generates random content: one category (per run) with articles (10 per step), and menu item for each article. Can be run multiple times.';
         $data->icon        = 'bolt';
         $data->steps       = self::$steps;
 
