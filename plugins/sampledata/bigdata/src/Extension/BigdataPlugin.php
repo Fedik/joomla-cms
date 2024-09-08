@@ -10,6 +10,8 @@
 
 namespace Joomla\Plugin\SampleData\Bigdata\Extension;
 
+use Joomla\CMS\Application\ApplicationHelper;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\Plugin\AjaxEvent;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -118,6 +120,8 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $response['success'] = true;
         $response['message'] = '';
 
+        $createMenu = true;
+
         try
         {
             // Load lorem text
@@ -125,12 +129,32 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
 
             // Create a category
             if ($step === 1) {
-                $catIds = $this->addCategories([[
-                    'title'     => 'Big data at ' . date('Y-m-d H:i:s'),
+                $catTitle = 'Big data at ' . date('Y-m-d H:i:s');
+                $catIds   = $this->addCategories([[
+                    'title'     => $catTitle,
                     'parent_id' => 1,
                 ]], 'com_content');
 
                 $app->setUserState('sampledata.bigdata.catids', $catIds);
+
+                if ($createMenu) {
+                    // Create a menu
+                    $menutypes = $this->addMenus([[
+                        'title'    => $catTitle,
+                        'menutype' => 'bigd-' . date('YmdHis'),
+                    ]]);
+
+                    $app->setUserState('sampledata.bigdata.menutypes', $menutypes);
+
+                    // Create a menu item for the category
+                    $this->addMenuItems([[
+                        'menutype'     => reset($menutypes),
+                        'title'        => $catTitle,
+                        'link'         => 'index.php?option=com_content&view=category&layout=blog&id=' . $catIds[0],
+                        'component_id' => ComponentHelper::getComponent('com_content')->id,
+                        'access'       => 1,
+                    ]]);
+                }
             }
 
             // Create an articles
@@ -205,7 +229,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
      *
      * @param   array  $articles  Array holding the article arrays.
      *
-     * @return  array  IDs of the inserted categories.
+     * @return  array  IDs of the inserted items.
      *
      * @throws  \Exception
      *
@@ -245,6 +269,83 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         }
 
         return $ids;
+    }
+
+    /**
+     * Adds menus.
+     *
+     * @param   array  $menus  Array holding the menus arrays.
+     *
+     * @return  array  Menutypes of the inserted items: id => menutype
+     *
+     * @throws  \Exception
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    protected function addMenus(array $menus): array
+    {
+        /** @var \Joomla\Component\Menus\Administrator\Model\MenuModel $model */
+        $factory   = $this->getApplication()->bootComponent('com_menus')->getMVCFactory();
+        $model     = $factory->createModel('Menu', 'Administrator', ['ignore_request' => true]);
+        $menuTypes = [];
+
+        foreach ($menus as $menu) {
+            $menu['title']    = $menu['title'] ?? $this->sentence();
+            $menu['menutype'] = ApplicationHelper::stringURLSafe($menu['menutype'] ?? $menu['title']);
+
+            if (!$model->save($menu)) {
+                throw new \Exception(Text::_($model->getError()));
+            }
+
+            $mid = $model->getState('menu.id');
+
+            $menuTypes[$mid] = $menu['menutype'];
+        }
+
+        return $menuTypes;
+    }
+
+    /**
+     * Adds menu items.
+     *
+     * @param   array  $menuItems  Array holding the menus arrays.
+     *
+     * @return  array  Ids of the inserted items.
+     *
+     * @throws  \Exception
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    protected function addMenuItems(array $menuItems): array
+    {
+        $app      = $this->getApplication();
+        $user     = $app->getIdentity();
+        $factory  = $app->bootComponent('com_menus')->getMVCFactory();
+        $itemIds  = [];
+
+        foreach ($menuItems as $item) {
+            /** @var \Joomla\Component\Menus\Administrator\Model\ItemModel $model */
+            $model = $factory->createModel('Item', 'Administrator', ['ignore_request' => true]);
+
+            $item = $this->checkDefaultValues($item);
+
+            $item['type']              = $item['type'] ?? 'component';
+            $item['created_user_id']   = $item['created_user_id'] ?? $user->id;
+            $item['browserNav']        = 0;
+            $item['client_id']         = 0;
+            $item['level']             = 1;
+            $item['parent_id']         = $item['parent_id'] ?? 1;
+            $item['home']              = 0;
+            $item['template_style_id'] = $item['template_style_id'] ?? 0;
+
+            if (!$model->save($item)) {
+                throw new \Exception(Text::_($model->getError()));
+            }
+
+            $itemIds[] = $model->getstate('item.id');
+        }
+
+        return $itemIds;
     }
 
     /**
@@ -291,7 +392,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $s = explode('.', $s);
         shuffle($s);
 
-        $w = substr($s[0], 0, rand($min, $max)) . '.';
+        $w = trim(substr(trim($s[0]), 0, rand($min, $max)), ',') . '.';
 
         return $w;
     }
