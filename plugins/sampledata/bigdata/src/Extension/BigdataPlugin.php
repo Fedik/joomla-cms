@@ -129,7 +129,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
 
             // Create a category
             if ($step === 1) {
-                $catTitle = 'Big data at ' . date('Y-m-d H:i:s');
+                $catTitle = 'Big data ' . date('Y-m-d H:i:s');
                 $catIds   = $this->addCategories([[
                     'title'     => $catTitle,
                     'parent_id' => 1,
@@ -152,7 +152,6 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
                         'title'        => $catTitle,
                         'link'         => 'index.php?option=com_content&view=category&layout=blog&id=' . $catIds[0],
                         'component_id' => ComponentHelper::getComponent('com_content')->id,
-                        'access'       => 1,
                     ]]);
                 }
             }
@@ -174,7 +173,29 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
                     ];
                 }
 
-                $this->addArticles($articles);
+                $articles = $this->addArticles($articles);
+
+                // Create menu item for each article
+                if ($createMenu) {
+                    $menutypes = $app->getUserState('sampledata.bigdata.menutypes', []);
+                    $menutype  = reset($menutypes);
+                    $menuitems = [];
+
+                    if (!$menutype) {
+                        throw new \UnexpectedValueException('Menutype not found');
+                    }
+
+                    foreach ($articles as $artId => $article) {
+                        $menuitems[] = [
+                            'menutype'     => $menutype,
+                            'title'        => $article['title'],
+                            'link'         => 'index.php?option=com_content&view=article&id=' . $artId,
+                            'component_id' => ComponentHelper::getComponent('com_content')->id,
+                        ];
+                    }
+
+                    $this->addMenuItems($menuitems);
+                }
             }
 
             $response['message'] = 'Step ' . $step . ' finished with great success!';
@@ -229,7 +250,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
      *
      * @param   array  $articles  Array holding the article arrays.
      *
-     * @return  array  IDs of the inserted items.
+     * @return  array[]  Array of the inserted items, id => article
      *
      * @throws  \Exception
      *
@@ -265,7 +286,11 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
             }
 
             // Get ID from category we just added
-            $ids[] = $model->getState($model->getName() . '.id');
+            $id = $model->getState($model->getName() . '.id');
+
+            $article['id'] = $id;
+
+            $ids[$id] = $article;
         }
 
         return $ids;
