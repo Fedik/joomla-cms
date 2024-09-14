@@ -225,20 +225,22 @@ class Access
         // Compare to skip already preloaded
         if ($key === 'id') {
             $assetsList = array_diff($assetsList, array_keys(self::$preloadedAssets));
+            $bindAs     = \Joomla\Database\ParameterType::INTEGER;
         } else {
             $assetsList = array_diff($assetsList, self::$preloadedAssets);
+            $bindAs     = \Joomla\Database\ParameterType::STRING;
         }
 
-        if (!$assetsList) return;
+        if (!$assetsList) {
+            return;
+        }
 
         $db    = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+        /** @var \Joomla\Database\Mysql\MysqlQuery  $query */
         $query = $db->getQuery(true);
         $query->select($db->quoteName(['id', 'name', 'rules', 'parent_id']))
             ->from($db->quoteName('#__assets'))
-            ->where(
-                $db->quoteName($key) . ' IN ('
-                . implode(',', $query->bindArray($assetsList, \Joomla\Database\ParameterType::STRING)) . ')'
-            );
+            ->whereIn($db->quoteName($key), $assetsList, $bindAs);
 
         // @TODO: Should also select the parents, with lft, rgt query ???
 //        $query->select($db->quoteName(['b.id', 'b.name', 'b.rules', 'b.parent_id']))
