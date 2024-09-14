@@ -244,16 +244,14 @@ class Access
 
         // @TODO: Should also select the parents, with lft, rgt query ???
 //        $query->select($db->quoteName(['b.id', 'b.name', 'b.rules', 'b.parent_id']))
+//        //$query->select('DISTINCT b.id, b.name, b.rules, b.parent_id')
 //            ->from($db->quoteName('#__assets', 'a'))
 //            ->join(
 //                'LEFT',
-//                $db->quoteName('#__assets', 'b'),
+//                $db->quoteName('#__assets', 'b'), // . ' USE INDEX(idx_lft_rgt)',
 //                $db->quoteName('b.lft') . ' <= ' . $db->quoteName('a.lft') . ' AND ' . $db->quoteName('b.rgt') . ' >= ' . $db->quoteName('a.rgt')
 //            )
-//            ->where(
-//                $db->quoteName('a.' . $key) . ' IN ('
-//                . implode(',', $query->bindArray($assetsList, \Joomla\Database\ParameterType::STRING)) . ')'
-//            );
+//            ->whereIn($db->quoteName('a.' . $key), $assetsList, $bindAs);
 
         $assets = $db->setQuery($query)->loadObjectList();
         $pids   = [];
