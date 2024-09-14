@@ -242,6 +242,16 @@ class Access
             ->from($db->quoteName('#__assets'))
             ->whereIn($db->quoteName($key), $assetsList, $bindAs);
 
+//        $queryStr = 'WITH RECURSIVE `assets` (`id`, `name`, `parent_id`, `level`, `rules`) AS (
+//  SELECT `id`, `name`, `parent_id`, `level`, `rules`
+//  FROM `bd5_assets`
+//  WHERE `name` IN (\'' . implode('\',\'', $assetsList) . '\')
+//  UNION ALL
+//  SELECT a.`id`, a.`name`, a.`parent_id`, a.`level`, a.`rules`
+//  FROM `bd5_assets` a
+//  INNER JOIN `assets` on a.`id` = `assets`.`parent_id`
+//) SELECT DISTINCT `id`, `name`, `parent_id`, `level`, `rules` FROM `assets` ORDER BY `level`';
+
         // @TODO: Should also select the parents, with lft, rgt query ???
 //        $query->select($db->quoteName(['b.id', 'b.name', 'b.rules', 'b.parent_id']))
 //        //$query->select('DISTINCT b.id, b.name, b.rules, b.parent_id')
