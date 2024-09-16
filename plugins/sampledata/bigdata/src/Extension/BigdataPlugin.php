@@ -41,6 +41,24 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
     protected static $steps = 221;
 
     /**
+     * Whether create the menu for Category and for every Article.
+     *
+     * @var bool
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected  $createMenu = true;
+
+    /**
+     * Whether create the custom fields for Articles.
+     *
+     * @var bool
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected  $createFields = true;
+
+    /**
      * Lorem ipsum dolor sit amet.
      *
      * @var string
@@ -118,8 +136,6 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $response['success'] = true;
         $response['message'] = '';
 
-        $createMenu = true;
-
         try
         {
             // Load lorem text
@@ -135,7 +151,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
 
                 $app->setUserState('sampledata.bigdata.catids', $catIds);
 
-                if ($createMenu) {
+                if ($this->createMenu) {
                     // Create a menu
                     $menutypes = $this->addMenus([[
                         'title'    => $catTitle,
@@ -151,6 +167,19 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
                         'link'         => 'index.php?option=com_content&view=category&layout=blog&id=' . $catIds[0],
                         'component_id' => ComponentHelper::getComponent('com_content')->id,
                     ]]);
+                }
+
+                if ($this->createFields) {
+                    $fieldsAmount = 10;
+                    $fields       = [];
+
+                    for($i = 1; $i <= $fieldsAmount; $i++) {
+                        $fields[] = [
+                            'assigned_cat_ids' => $catIds,
+                        ];
+                    }
+
+                    $articles = $this->addFields($fields);
                 }
             }
 
@@ -174,7 +203,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
                 $articles = $this->addArticles($articles);
 
                 // Create menu item for each article
-                if ($createMenu) {
+                if ($this->createMenu) {
                     $menutypes = $app->getUserState('sampledata.bigdata.menutypes', []);
                     $menutype  = reset($menutypes);
                     $menuitems = [];
@@ -289,6 +318,58 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
             $article['id'] = $id;
 
             $ids[$id] = $article;
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Adds Fields.
+     *
+     * @param   array  $fields  Array holding the items arrays.
+     *
+     * @return  array[]  Array of the inserted items, id => item
+     *
+     * @throws  \Exception
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    protected function addFields(array $fields): array
+    {
+        $app        = $this->getApplication();
+        $user       = $app->getIdentity();
+        $mvcFactory = $app->bootComponent('com_fields')->getMVCFactory();
+        $ids        = [];
+
+        foreach ($fields as $field) {
+            /** @var \Joomla\Component\Fields\Administrator\Model\FieldModel $model */
+            $model = $mvcFactory->createModel('Field', 'Administrator', ['ignore_request' => true]);
+
+            $field['context']  = $field['context'] ?? 'com_content.article';
+            $field['group_id'] = $field['group_id'] ?? 0;
+            $field['type']     = $field['type'] ?? 'text';
+            $field['label']    = $field['label'] ?? $this->sentence(4, 10);
+            $field['title']    = $field['title'] ?? $field['label'];
+            $field['name']     = $field['name'] ?? str_replace(' ', '', $field['label']) . '-' . rand(0, time());
+            $field['state']    = $field['state'] ?? 1;
+            $field['access']   = $field['access'] ?? 1;
+            $field['language'] = $field['language'] ?? '*';
+            $field['params']   = $field['params'] ?? [];
+
+            $field['fieldparams']     = $field['fieldparams'] ?? [];
+            $field['description']     = $field['description'] ?? '';
+            $field['created_user_id'] = $field['created_user_id'] ?? $user->id;
+
+            if (!$model->save($field)) {
+                throw new \Exception(Text::_($model->getError()));
+            }
+
+            // Get ID from category we just added
+            $id = $model->getState($model->getName() . '.id');
+
+            $field['id'] = $id;
+
+            $ids[$id] = $field;
         }
 
         return $ids;
@@ -415,7 +496,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $s = explode('.', $s);
         shuffle($s);
 
-        $w = trim(substr(trim($s[0]), 0, rand($min, $max)), ',') . '.';
+        $w = trim(substr(trim($s[0]), 0, rand($min, $max)), ' ,');
 
         return $w;
     }
