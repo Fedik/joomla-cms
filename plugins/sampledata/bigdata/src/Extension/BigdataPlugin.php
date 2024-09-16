@@ -179,7 +179,11 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
                         ];
                     }
 
-                    $articles = $this->addFields($fields);
+                    $fieldNames = array_map(function($field) {
+                        return $field['name'];
+                    }, $this->addFields($fields));
+
+                    $app->setUserState('sampledata.bigdata.fieldnames', $fieldNames);
                 }
             }
 
@@ -187,16 +191,24 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
             else {
                 $amount   = 10;
                 $articles = [];
-                $catIds   = $app->getUserState('sampledata.bigdata.catids', []);
-                $catId    = reset($catIds);
+                $catIds     = $app->getUserState('sampledata.bigdata.catids', []);
+                $catId      = reset($catIds);
+
 
                 if (!$catId) {
                     throw new \UnexpectedValueException('Category ID not found');
                 }
 
+                $fields = [];
+                if ($this->createFields) {
+                    $fieldNames = $app->getUserState('sampledata.bigdata.fieldnames', []);
+                    $fields     = array_fill_keys($fieldNames, '');
+                }
+
                 for($i = 1; $i <= $amount; $i++) {
                     $articles[] = [
-                        'catid' => $catId,
+                        'catid'      => $catId,
+                        'com_fields' => $fields,
                     ];
                 }
 
@@ -307,6 +319,15 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
                 $article['images'] = json_encode($article['images']);
             }
 
+            // Add field values
+            if (!empty($article['com_fields'])) {
+                foreach ($article['com_fields'] as $fieldName => $fieldValue) {
+                    if ($fieldValue) continue;
+
+                    $article['com_fields'][$fieldName] = $this->sentence();
+                }
+            }
+
             if (!$model->save($article)) {
                 $app->getLanguage()->load('com_content');
                 throw new \Exception(Text::_($model->getError()));
@@ -350,7 +371,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
             $field['type']     = $field['type'] ?? 'text';
             $field['label']    = $field['label'] ?? $this->sentence(4, 10);
             $field['title']    = $field['title'] ?? $field['label'];
-            $field['name']     = $field['name'] ?? str_replace(' ', '', $field['label']) . '-' . rand(0, time());
+            $field['name']     = strtolower($field['name'] ?? str_replace(' ', '', $field['label']) . '-' . rand(0, time()));
             $field['state']    = $field['state'] ?? 1;
             $field['access']   = $field['access'] ?? 1;
             $field['language'] = $field['language'] ?? '*';
