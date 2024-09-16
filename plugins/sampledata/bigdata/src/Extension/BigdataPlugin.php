@@ -103,7 +103,7 @@ final class BigdataPlugin extends CMSPlugin implements SubscriberInterface
         $data              = new \stdClass();
         $data->name        = $this->_name;
         $data->title       = 'Big Data sample';
-        $data->description = 'Generates random content: one category (per run) with articles (10 per step), and menu item for each article. Can be run multiple times.';
+        $data->description = 'Generates random content: one category (per run) with articles (10 per step), and menu item and custom fields for each article. Can be run multiple times.';
         $data->icon        = 'bolt';
         $data->steps       = self::$steps;
 
